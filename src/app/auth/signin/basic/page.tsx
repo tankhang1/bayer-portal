@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import {
   Button,
   Typography,
 } from "@/components/MaterialTailwind";
+import { redirect } from "next/navigation";
 
 export default function BasicPage() {
   return (
@@ -17,32 +19,32 @@ export default function BasicPage() {
         <div className="tw-w-full">
           <div className="tw-text-center">
             <Typography variant="h2" className="!tw-font-bold tw-mb-4">
-              Sign In
+              Đăng nhập
             </Typography>
             <Typography className="tw-text-lg !tw-font-normal !tw-text-blue-gray-500">
-              Enter your email and password to Sign In.
+              Nhập tài khoản và mật khẩu của bạn
             </Typography>
           </div>
           <form className="tw-mt-8 tw-mb-2 tw-mx-auto tw-w-80 tw-max-w-screen-lg lg:tw-w-1/2">
-            <div className="tw-mb-1 tw-flex tw-flex-col tw-gap-6">
+            <div className="tw-mb-1 tw-flex tw-flex-col tw-gap-4">
               <Typography
                 variant="small"
                 color="blue-gray"
                 className="-tw-mb-3 !tw-font-medium"
               >
-                Your email
+                Tên tài khoản
               </Typography>
-              <Input size="lg" label="Your email" />
+              <Input size="lg" label="Tên tài khoản" />
               <Typography
                 variant="small"
                 color="blue-gray"
                 className="-mb!-3 font-medium"
               >
-                Password
+                Mật khẩu
               </Typography>
-              <Input type="password" size="lg" label="Password" />
+              <Input type="password" size="lg" label="Mật khẩu" />
             </div>
-            <Checkbox
+            {/* <Checkbox
               label={
                 <Typography
                   variant="small"
@@ -58,12 +60,14 @@ export default function BasicPage() {
                 </Typography>
               }
               containerProps={{ className: "-tw-ml-2.5" }}
-            />
-            <Button className="tw-mt-6" fullWidth>
-              Sign In
-            </Button>
+            /> */}
+            <Link href={"/dashboard/sales"}>
+              <Button className="tw-mt-6" fullWidth>
+                Đăng nhập
+              </Button>
+            </Link>
 
-            <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-mt-6">
+            {/* <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-mt-6">
               <Checkbox
                 label={
                   <Typography
@@ -146,13 +150,13 @@ export default function BasicPage() {
               >
                 Create account
               </Link>
-            </Typography>
+            </Typography> */}
           </form>
         </div>
       </div>
       <div className="tw-p-8 tw-hidden xl:tw-block">
         <img
-          src="/img/pattern.png"
+          src="/img/bayer.jpg"
           alt="image"
           className="tw-object-cover tw-object-center tw-max-h-[calc(100vh-4rem)] tw-w-full tw-rounded-2xl"
         />

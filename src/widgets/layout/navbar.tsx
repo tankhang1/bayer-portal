@@ -587,7 +587,7 @@ export function Navbar() {
           variant="h6"
           className="tw-cursor-pointer tw-py-1.5"
         >
-          Material Tailwind PRO
+          Yis Martech
         </Typography>
         <div className="tw-hidden lg:tw-block">
           <NavList />

@@ -37,6 +37,12 @@ import {
   setOpenSidenav,
 } from "@/context";
 
+const MAP_HEADER = new Map([
+  ["/dashboard/sales", "Thống kê"],
+  ["/iqr/iqr-list", "Quản lý iQr"],
+  ["/topup/topup-list", "Quản lý topup"],
+  ["/report", "Báo cáo"],
+]);
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
@@ -72,19 +78,19 @@ export function DashboardNavbar() {
             >
               {layout}
             </Typography>
-            <Typography
+            {/* <Typography
               variant="small"
               color="blue-gray"
               className="!tw-font-normal"
             >
               {page?.split("-").join(" ")}
-            </Typography>
+            </Typography> */}
           </Breadcrumbs>
           <Typography variant="h6" color="blue-gray">
-            {page?.split("-").join(" ")}
+            {MAP_HEADER.get(pathname)}
           </Typography>
         </div>
-        <div className="!tw-flex tw-items-center">
+        {/* <div className="!tw-flex tw-items-center">
           <div className="tw-mr-auto md:tw-mr-4 md:tw-w-56">
             <Input label="Search" />
           </div>
@@ -149,7 +155,7 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
-        </div>
+        </div> */}
       </div>
     </Navbar>
   );

@@ -31,11 +31,8 @@ export default function RootLayout({
           data-site="YOUR_DOMAIN_HERE"
           src="https://api.nepcha.com/js/nepcha-analytics.js"
         />
-        <link rel="icon" type="image/svg+xml" href="/img/favicon.png" />
-        <title>
-          Material Tailwind Dashboard NextJS PRO: Premium Tailwind CSS and
-          NextJS Admin Template
-        </title>
+        <link rel="icon" type="image/svg+xml" href="/img/logo-yis.png" />
+        <title>Yis Martech</title>
       </head>
       <body className={roboto.className}>
         <ThemeProvider value={theme}>

@@ -32,9 +32,7 @@ export default function InnerContent({
         <Sidenav
           routes={routes}
           brandImg={
-            sidenavType === "dark"
-              ? "/img/logo-ct.png"
-              : "/img/logo-ct-dark.png"
+            sidenavType === "dark" ? "/img/logo-yis.png" : "/img/logo-yis.png"
           }
         />
       )}
@@ -55,11 +53,11 @@ export default function InnerContent({
           </>
         )}
         {children}
-        {!isSimpleLayout && (
+        {/* {!isSimpleLayout && (
           <div className="tw-text-blue-gray-600">
             <Footer />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

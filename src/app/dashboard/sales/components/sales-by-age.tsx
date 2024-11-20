@@ -12,7 +12,19 @@ import {
 // widgets
 import { HorizontalBarChart } from "@/widgets/charts";
 type Props = {};
-
+type TData = {
+  name?: string;
+  total: number;
+  activated: number;
+  used: number;
+};
+const data: TData[] = [
+  { name: "Nativo 10gr", total: 1000, activated: 200, used: 30 },
+  { name: "Nativo 60gr", total: 3000, activated: 400, used: 10 },
+  { name: "Nativo 120gr", total: 5000, activated: 500, used: 40 },
+  { name: "Vayago 50ml", total: 7000, activated: 800, used: 90 },
+  { name: "Vayago 75ml", total: 9000, activated: 1000, used: 70 },
+];
 export default function SalesByAge({}: Props) {
   return (
     <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm">
@@ -22,22 +34,48 @@ export default function SalesByAge({}: Props) {
         className="tw-flex tw-justify-between tw-gap-8 tw-overflow-visible"
       >
         <Typography variant="h6" color="blue-gray">
-          Sales by age
+          Mức độ tiêu thụ
         </Typography>
       </CardHeader>
       <CardBody className="!tw-p-0">
         <HorizontalBarChart
           height={295}
-          colors="#344868"
+          colors={["#E57373", "#9575CD", "#64B5F6"]}
           options={{
+            chart: {
+              stacked: true,
+            },
+            plotOptions: {
+              bar: {
+                horizontal: true,
+                barHeight: "70%",
+              },
+            },
             xaxis: {
-              categories: ["16-20", "21-25", "26-30", "31-36", "36-42", "42+"],
+              categories: data.map((item) => item.name),
+            },
+            tooltip: {
+              shared: true,
+              intersect: false,
+            },
+            legend: {
+              show: true,
+              position: "top",
             },
           }}
+          //@ts-expect-error no check
           series={[
             {
-              name: "Sales",
-              data: [10, 20, 30, 40, 50, 60],
+              name: "Tổng mã",
+              data: data.map((item) => item.total),
+            },
+            {
+              name: "Mã kích hoạt",
+              data: data.map((item) => item.activated),
+            },
+            {
+              name: "Mã sử dụng",
+              data: data.map((item) => item.used),
             },
           ]}
         />

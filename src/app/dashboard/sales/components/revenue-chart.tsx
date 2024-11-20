@@ -30,19 +30,37 @@ export default function RevenueChart({}: Props) {
         >
           <div>
             <Typography variant="h6" color="blue-gray">
-              Revenue
+              Thống kế sự biến động
             </Typography>
             <div className="tw-mt-2 tw-flex tw-items-center tw-gap-8">
               <div className="tw-flex tw-items-center tw-gap-2">
-                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-blue-600" />
+                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-[#1E88E5]" />
                 <Typography className="tw-text-xs !tw-font-normal !tw-text-blue-gray-500">
-                  Facebook Ads
+                  Hồ Chí Minh
                 </Typography>
               </div>
               <div className="tw-flex tw-items-center tw-gap-2">
-                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-blue-gray-700" />
+                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-[#D81B60]" />
                 <Typography className="tw-text-xs !tw-font-normal !tw-text-blue-gray-500">
-                  Google Ads
+                  Hà Nội
+                </Typography>
+              </div>
+              <div className="tw-flex tw-items-center tw-gap-2">
+                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-[#FFC107]" />
+                <Typography className="tw-text-xs !tw-font-normal !tw-text-blue-gray-500">
+                  Đà Nẵng
+                </Typography>
+              </div>
+              <div className="tw-flex tw-items-center tw-gap-2">
+                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-[#43A047]" />
+                <Typography className="tw-text-xs !tw-font-normal !tw-text-blue-gray-500">
+                  Cần Thơ
+                </Typography>
+              </div>
+              <div className="tw-flex tw-items-center tw-gap-2">
+                <span className="tw-h-2 tw-w-2 tw-rounded-full tw-bg-[#6A1B9A]" />
+                <Typography className="tw-text-xs !tw-font-normal !tw-text-blue-gray-500">
+                  Hải Phòng
                 </Typography>
               </div>
             </div>
@@ -57,30 +75,46 @@ export default function RevenueChart({}: Props) {
         <CardBody className="tw-p-0">
           {/** Line Chart */}
           <LineChart
-            colors={["#1874e9", "#344767", "#e91e63"]}
+            colors={[
+              "#1E88E5", // Hồ Chí Minh
+              "#D81B60", // Hà Nội
+              "#FFC107", // Đà Nẵng
+              "#43A047", // Cần Thơ
+              "#6A1B9A", // Hải Phòng
+            ]}
             options={{
               xaxis: {
                 categories: [
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
+                  "Thứ Hai",
+                  "Thứ Ba",
+                  "Thứ Tư",
+                  "Thứ Năm",
+                  "Thứ Sáu",
+                  "Thứ Bảy",
+                  "Chủ Nhật",
                 ],
               },
             }}
             series={[
               {
-                name: "Facebook Ads",
-                data: [50, 100, 200, 190, 400, 350, 500, 450, 700],
+                name: "Hồ Chí Minh",
+                data: [150, 170, 160, 180, 200, 220, 240],
               },
               {
-                name: "Google Ads",
-                data: [10, 30, 40, 120, 150, 240, 280, 250, 280],
+                name: "Hà Nội",
+                data: [120, 140, 130, 150, 160, 180, 200],
+              },
+              {
+                name: "Đà Nẵng",
+                data: [80, 90, 85, 95, 100, 110, 120],
+              },
+              {
+                name: "Cần Thơ",
+                data: [60, 70, 65, 75, 80, 85, 90],
+              },
+              {
+                name: "Hải Phòng",
+                data: [70, 75, 72, 78, 85, 90, 95],
               },
             ]}
           />

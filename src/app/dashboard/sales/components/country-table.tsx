@@ -12,7 +12,7 @@ type Props = {};
 
 export default function CountryTable({}: Props) {
   return (
-    <div className="tw-col-span-1 tw-overflow-scroll">
+    <div className="tw-col-span-1 tw-h-80 tw-overflow-scroll">
       <Table data={countriesData} />{" "}
     </div>
   );

@@ -23,7 +23,7 @@ type ContextType = [State, React.Dispatch<Action>];
 
 const initialState: State = {
   openSidenav: false,
-  sidenavColor: "dark",
+  sidenavColor: "orange",
   sidenavType: "white",
   transparentNavbar: true,
   fixedNavbar: false,

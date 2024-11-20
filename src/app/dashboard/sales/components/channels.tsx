@@ -29,9 +29,9 @@ export default function Channels({}: Props) {
           className="tw-mb-6 tw-flex tw-justify-between tw-gap-8 tw-overflow-visible"
         >
           <Typography variant="h6" color="blue-gray">
-            Channels
+            Vùng tiêu thụ nổi bật
           </Typography>
-          <Tooltip content="See traffic channels" placement="left">
+          <Tooltip content="Số lượng tiêu thụ" placement="left">
             <ExclamationCircleIcon
               strokeWidth={1}
               className="tw-w-8 tw-h-8 !tw-text-blue-gray-600"
@@ -41,9 +41,21 @@ export default function Channels({}: Props) {
         <CardBody>
           <PieChart
             height={238}
-            series={[20, 20, 20, 75]}
-            labels={["Facebook", "Direct", "Organic", "Referral"]}
-            colors={["#49a3f1", "#d81b60", "#191919", "#495361"]}
+            series={[1500, 1200, 1100, 950, 800]}
+            labels={[
+              "Hồ Chí Minh",
+              "Hà Nội",
+              "Đà Nẵng",
+              "Cần Thơ",
+              "Hải Phòng",
+            ]}
+            colors={[
+              "#1E88E5", // Hồ Chí Minh
+              "#D81B60", // Hà Nội
+              "#FFC107", // Đà Nẵng
+              "#43A047", // Cần Thơ
+              "#6A1B9A", // Hải Phòng
+            ]}
             options={{
               legend: {
                 show: true,
@@ -75,12 +87,11 @@ export default function Channels({}: Props) {
           <div className="tw-mt-10 tw-mb-4 tw-flex tw-items-end tw-justify-between tw-px-4">
             <Typography
               variant="small"
-              className="!tw-text-blue-gray-500 !tw-font-normal tw-w-64"
+              className="!tw-text-blue-gray-500 !tw-font-normal tw-w-full"
             >
-              More than <strong>1,200,000</strong> sales are made using referral
-              marketing, and <strong>700,000</strong> are from social media.
+              Hơn <strong>800.000</strong> giao dịch đã được thực hiện nhờ chiến
+              lược bán hàng khu vực hiệu quả.
             </Typography>
-            <Button>read more</Button>
           </div>
         </CardBody>
       </Card>

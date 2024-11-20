@@ -44,7 +44,7 @@ export default function SalesPage() {
           <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm">
             <CardHeader floated={false} shadow={false}>
               <Typography variant="h6" color="blue-gray">
-                Sales by Country
+                Mật độ theo từng khu vực
               </Typography>
             </CardHeader>
             <CardBody className="tw-grid tw-grid-cols-1 tw-items-center tw-justify-between !tw-p-0">
@@ -53,7 +53,7 @@ export default function SalesPage() {
           </Card>
         </div>
       </div>
-      <ProductTable />
+      {/* <ProductTable /> */}
     </div>
   );
 }

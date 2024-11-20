@@ -2,27 +2,27 @@ import { color } from "@material-tailwind/react/types/components/card";
 
 export const salesData = [
   {
-    title: "Sales",
-    value: "$230.220",
+    title: "iQr đã sử dụng",
+    value: "10.000 mã",
     percentage: "+55%",
     percentageColor: "green" as color,
-    percentageLabel: "since last month",
+    percentageLabel: "so với hôm qua",
     refunds: "6 May - 7 May",
   },
   {
-    title: "Customers",
-    value: "3.200",
+    title: "Số lượng khách trúng giải thưởng",
+    value: "3.200 người",
     percentage: "+12%",
     percentageColor: "green" as color,
-    percentageLabel: "since last month",
+    percentageLabel: "so với hôm qua",
     refunds: "6 May - 7 May",
   },
   {
-    title: "Avg. Revenue",
-    value: "$1.200",
-    percentage: "+$213",
-    percentageColor: "current" as color,
-    percentageLabel: "since last month",
+    title: "Số lượt quét trung bình",
+    value: "1000 mã / ngày",
+    percentage: "-20%",
+    percentageColor: "red" as color,
+    percentageLabel: "so với hôm qua",
     refunds: "6 May - 7 May",
   },
 ];
