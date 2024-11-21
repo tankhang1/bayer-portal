@@ -42,6 +42,7 @@ const MAP_HEADER = new Map([
   ["/iqr/iqr-list", "Quản lý iQr"],
   ["/topup/topup-list", "Quản lý topup"],
   ["/report", "Báo cáo"],
+  ["/sms/sms-list", "Quản lý SMS"],
 ]);
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();

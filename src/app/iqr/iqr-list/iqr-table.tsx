@@ -38,6 +38,7 @@ import {
   ChevronUpDownIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 type Props = {};
@@ -326,8 +327,16 @@ export default function IQrTable({}: Props) {
         </div>
       </div>
       <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center">
-          <Typography variant="h3">Thông tin duyệt bằng trúng giải</Typography>
+        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+          <Typography variant="h3">Thông tin trúng giải</Typography>
+          <Typography variant="h3">Chạy xuân 2024</Typography>
+          <IconButton
+            variant="text"
+            className="!tw-absolute tw-top-5 tw-right-5"
+            onClick={() => setOpenDialog(false)}
+          >
+            <XMarkIcon color="red" width={24} height={24} />
+          </IconButton>
         </DialogHeader>
 
         <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
@@ -345,9 +354,7 @@ export default function IQrTable({}: Props) {
               <Typography variant="h5" color="gray">
                 Nativo WG75 10gr
               </Typography>
-              <Typography variant="h3" color="green">
-                Chạy xuân 2024
-              </Typography>
+
               <Typography variant="paragraph" color="black">
                 Lê Biên
               </Typography>
@@ -381,7 +388,7 @@ export default function IQrTable({}: Props) {
                 color="black"
                 className="tw-text-nowrap tw-w-2/3"
               >
-                Địa chỉ nhận giải:
+                Địa chỉ:
               </Typography>
               <div className="tw-flex tw-w-full tw-bg-gray-200 tw-justify-center tw-items-center tw-py-2 tw-text-black tw-rounded-sm">
                 xxxxxxxx

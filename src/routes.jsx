@@ -12,6 +12,7 @@ import {
   CubeTransparentIcon,
   QrCodeIcon,
   ChartBarIcon,
+  ChatBubbleOvalLeftIcon,
 } from "@heroicons/react/24/solid";
 import { GiftIcon } from "@heroicons/react/24/outline";
 
@@ -95,6 +96,11 @@ export const routes = [
     name: "Topup",
     icon: <GiftIcon {...icon} />,
     path: "/topup/topup-list",
+  },
+  {
+    name: "SMS",
+    icon: <ChatBubbleOvalLeftIcon {...icon} />,
+    path: "/sms/sms-list",
   },
   {
     name: "Báo cáo",
