@@ -4,15 +4,41 @@ import React from "react";
 import Link from "next/link";
 
 // @material-tailwind/react
-import {
-  Input,
-  Checkbox,
-  Button,
-  Typography,
-} from "@/components/MaterialTailwind";
-import { redirect } from "next/navigation";
+import { Input, Button, Typography } from "@/components/MaterialTailwind";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { TAuthREQ } from "@/redux/api/auth/auth.request";
+import { useLoginMutation } from "@/redux/api/auth/auth.api";
+import { useDispatch } from "react-redux";
+import { updateInfo, updateToken } from "@/redux/slices/appSlices";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function BasicPage() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<TAuthREQ>();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [login, { isLoading: isLoadingLogin }] = useLoginMutation();
+  const onSubmit: SubmitHandler<TAuthREQ> = async (data) => {
+    await login(data)
+      .unwrap()
+      .then((value) => {
+        dispatch(updateToken(value.token));
+        dispatch(updateInfo(value.username));
+        toast.success("Đăng nhập thành công");
+        router.push("/dashboard/sales");
+      })
+      .catch((e) => {
+        toast.error(
+          "Đăng nhập thất bại, vui lòng kiểm tra thông tin đăng nhập"
+        );
+      });
+  };
+
   return (
     <section className="tw-grid tw-grid-cols-1 xl:tw-grid-cols-2 tw-items-center tw-h-full">
       <div className="tw-w-full tw-min-h-screen tw-grid tw-place-items-center">
@@ -25,24 +51,34 @@ export default function BasicPage() {
               Nhập tài khoản và mật khẩu của bạn
             </Typography>
           </div>
-          <form className="tw-mt-8 tw-mb-2 tw-mx-auto tw-w-80 tw-max-w-screen-lg lg:tw-w-1/2">
+          <div className="tw-mt-8 tw-mb-2 tw-mx-auto tw-w-80 tw-max-w-screen-lg lg:tw-w-1/2">
             <div className="tw-mb-1 tw-flex tw-flex-col tw-gap-4">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="-tw-mb-3 !tw-font-medium"
-              >
-                Tên tài khoản
-              </Typography>
-              <Input size="lg" label="Tên tài khoản" />
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="-mb!-3 font-medium"
-              >
-                Mật khẩu
-              </Typography>
-              <Input type="password" size="lg" label="Mật khẩu" />
+              <Input
+                size="lg"
+                label="Tên tài khoản"
+                {...register("username", { required: true })}
+              />
+              {errors.password && (
+                <span className="tw-text-red-700 tw-text-sm">
+                  {errors.password.type === "required"
+                    ? "Trường thông tin bắt buộc"
+                    : "Lỗi không xác định"}
+                </span>
+              )}
+
+              <Input
+                type="password"
+                size="lg"
+                label="Mật khẩu"
+                {...register("password", { required: true })}
+              />
+              {errors.password && (
+                <span className="tw-text-red-700 tw-text-sm">
+                  {errors.password.type === "required"
+                    ? "Trường thông tin bắt buộc"
+                    : "Lỗi không xác định"}
+                </span>
+              )}
             </div>
             {/* <Checkbox
               label={
@@ -61,11 +97,16 @@ export default function BasicPage() {
               }
               containerProps={{ className: "-tw-ml-2.5" }}
             /> */}
-            <Link href={"/dashboard/sales"}>
-              <Button className="tw-mt-6" fullWidth>
-                Đăng nhập
-              </Button>
-            </Link>
+            {/* <Link href={"/dashboard/sales"}> */}
+            <Button
+              className="tw-mt-6 !tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+              fullWidth
+              loading={isLoadingLogin}
+              onClick={() => handleSubmit(onSubmit)()}
+            >
+              Đăng nhập
+            </Button>
+            {/* </Link> */}
 
             {/* <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-mt-6">
               <Checkbox
@@ -151,7 +192,7 @@ export default function BasicPage() {
                 Create account
               </Link>
             </Typography> */}
-          </form>
+          </div>
         </div>
       </div>
       <div className="tw-p-8 tw-hidden xl:tw-block">

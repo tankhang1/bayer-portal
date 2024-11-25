@@ -6,6 +6,9 @@ module.exports = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    domains: ["reactive.yis.vn"], // Add your image domain here
+  },
   webpack: (
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }

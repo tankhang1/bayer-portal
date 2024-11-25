@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogBody,
+  Spinner,
 } from "@material-tailwind/react";
 
 // @heroicons/react
@@ -41,6 +42,13 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import { useIqrTodayQuery } from "@/redux/api/iqr/iqr.api";
+import { TIqrRES } from "@/redux/api/iqr/iqr.response";
+import {
+  useConfirmIqrMutation,
+  useRejectIqrMutation,
+} from "@/redux/api/auth/auth.api";
+import { toast } from "react-toastify";
 type Props = {};
 type TDATA = {
   seri: string;
@@ -112,19 +120,22 @@ const DATA: TDATA[] = [
 export default function IQrTable({}: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [data] = useState(() => [...DATA]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
   // Use the column helper for type safety
-  const columnHelper = createColumnHelper<TDATA>();
-
+  const columnHelper = createColumnHelper<TIqrRES>();
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery({});
+  const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
+  const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
+  const [iqrDetail, setIqrDetail] = useState<TIqrRES>();
   // Define columns with type safety
-  const columns: ColumnDef<TDATA, any>[] = [
+  const columns: ColumnDef<TIqrRES, any>[] = [
     columnHelper.accessor("seri", {
       header: "Số seri",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("iqr", {
+    columnHelper.accessor("code", {
       header: "Mã iQr",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
@@ -134,39 +145,44 @@ export default function IQrTable({}: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("chance_1", {
+    columnHelper.accessor("award1", {
       header: "Cơ hội 1",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("chance_2", {
+    columnHelper.accessor("award2", {
       header: "Cơ hội 2",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("phone", {
-      header: "Số điện thoại đăng ký",
+      header: "Số điện thoại",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("fullname", {
+      header: "Tên khách hang",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("status", {
       header: "Trạng thái",
       cell: (info) =>
-        info.getValue() === 1 ? (
+        info.getValue() == 2 ? (
           <Chip
             color="green"
-            value="Đã xác thực"
+            value="Đã xử lý xác nhận"
             className="tw-justify-center"
           ></Chip>
         ) : (
-          <Chip color="amber" value="Chờ xác thực"></Chip>
+          <Chip color="amber" value="Chờ xác nhận"></Chip>
         ),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("isConfirm", {
+    columnHelper.accessor("status", {
       header: "Duyệt",
       cell: (info) =>
-        info.getValue() === 1 ? (
+        info.getValue() == 2 ? (
           <IconButton
             variant="outlined"
             className="tw-border-blue-700"
@@ -176,7 +192,7 @@ export default function IQrTable({}: Props) {
           </IconButton>
         ) : (
           <IconButton
-            onClick={handleOpenDialog}
+            onClick={() => handleOpenDialog(data?.[info.row.index])}
             variant="outlined"
             className="tw-border-red-700"
           >
@@ -190,15 +206,20 @@ export default function IQrTable({}: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("source", {
-      header: "Nguồn tham gia",
+    columnHelper.accessor("time_active", {
+      header: "Thời gian mã kích hoạt",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("time_finish", {
+      header: "Thời gian hoàn thành",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
   ];
 
   const table = useReactTable({
-    data,
+    data: (data || []) as TIqrRES[],
     columns,
     state: {
       globalFilter: filtering,
@@ -212,7 +233,38 @@ export default function IQrTable({}: Props) {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
-  const handleOpenDialog = () => setOpenDialog(!openDialog);
+  const handleOpenDialog = (info?: TIqrRES) => {
+    setOpenDialog(!openDialog);
+    setIqrDetail(info);
+  };
+  const onReject = async (code: string) => {
+    await rejectIqr({ code })
+      .unwrap()
+      .then(() => {
+        toast.success("Từ chối thông tin thành công");
+        setOpenDialog(false);
+        setIqrDetail(undefined);
+      })
+      .catch(() => {
+        toast.error("Từ chối thông tin thất bại");
+        setOpenDialog(false);
+        setIqrDetail(undefined);
+      });
+  };
+  const onConfirm = async (code: string) => {
+    await confirmIqr({ code })
+      .unwrap()
+      .then(() => {
+        toast.success("Xác nhận thông tin thành công");
+        setOpenDialog(false);
+        setIqrDetail(undefined);
+      })
+      .catch(() => {
+        toast.error("Xác nhận thông tin thất bại");
+        setOpenDialog(false);
+        setIqrDetail(undefined);
+      });
+  };
   return (
     <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">
       <CardBody className="tw-flex tw-items-center tw-px-4 tw-justify-end">
@@ -265,7 +317,6 @@ export default function IQrTable({}: Props) {
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-
                       <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
                     </Typography>
                   </th>
@@ -273,24 +324,35 @@ export default function IQrTable({}: Props) {
               </tr>
             ))}
           </thead>
+
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="!tw-border-y !tw-border-x-0">
-                    <Typography
-                      variant="small"
-                      className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </Typography>
-                  </td>
-                ))}
+            {isFetchingIqr ? (
+              <tr>
+                <td colSpan={table.getVisibleLeafColumns().length}>
+                  <div className="tw-flex tw-justify-center tw-items-center tw-h-20">
+                    <Spinner />
+                  </div>
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="!tw-border-y !tw-border-x-0">
+                      <Typography
+                        variant="small"
+                        className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </Typography>
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </CardFooter>
@@ -329,7 +391,9 @@ export default function IQrTable({}: Props) {
       <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Thông tin trúng giải</Typography>
-          <Typography variant="h3">Chạy xuân 2024</Typography>
+          <Typography variant="h5">
+            Chắc Hạt Trúng To - Cào Ngay Trúng Lớn
+          </Typography>
           <IconButton
             variant="text"
             className="!tw-absolute tw-top-5 tw-right-5"
@@ -340,88 +404,140 @@ export default function IQrTable({}: Props) {
         </DialogHeader>
 
         <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
-          <div className="tw-flex tw-gap-5">
+          <div className="tw-flex tw-gap-6">
             <Image
-              src={"/img/nativo.jpg"}
+              src={iqrDetail?.image_confirm || ""}
+              width={192}
+              height={192}
               alt="Product"
-              width={200}
-              height={300}
+              className="tw-object-cover tw-w-48 tw-h-48"
             />
             <div>
               <Typography variant="paragraph" color="black">
-                {new Date().toLocaleString()}
+                {iqrDetail?.time_active}
               </Typography>
               <Typography variant="h5" color="gray">
-                Nativo WG75 10gr
+                {iqrDetail?.product_name}
               </Typography>
 
               <Typography variant="paragraph" color="black">
-                Lê Biên
+                {iqrDetail?.fullname}
               </Typography>
               <Typography variant="paragraph" color="black">
-                84907090068
+                {iqrDetail?.phone}
               </Typography>
               <Typography variant="paragraph" color="black">
-                XKXSSDD
+                {iqrDetail?.code}
               </Typography>
               <Typography variant="paragraph" color="black">
-                Hồ Chí Minh
+                {iqrDetail?.province_name}
               </Typography>
-            </div>
-          </div>
-          <div className="tw-flex tw-flex-col tw-gap-3">
-            <div className="tw-flex tw-items-center tw-justify-between tw-gap-4">
-              <Typography
-                variant="h5"
-                color="black"
-                className="tw-text-nowrap tw-w-2/3"
-              >
-                Họ và tên:
+              <Typography variant="h5" color="black">
+                Giải thưởng:{" "}
+                {iqrDetail?.award1 ||
+                  iqrDetail?.award2 ||
+                  "Chúc bạn may mắn lần sau"}
               </Typography>
-              <div className="tw-flex tw-w-full tw-bg-gray-200 tw-justify-center tw-items-center tw-py-2 tw-text-black tw-rounded-sm">
-                xxxxxxxx
-              </div>
-            </div>
-            <div className="tw-flex tw-items-center tw-justify-between tw-gap-4">
-              <Typography
-                variant="h5"
-                color="black"
-                className="tw-text-nowrap tw-w-2/3"
-              >
-                Địa chỉ:
-              </Typography>
-              <div className="tw-flex tw-w-full tw-bg-gray-200 tw-justify-center tw-items-center tw-py-2 tw-text-black tw-rounded-sm">
-                xxxxxxxx
-              </div>
-            </div>
-            <div className="tw-flex tw-items-center tw-justify-between tw-gap-4">
-              <Typography
-                variant="h5"
-                color="black"
-                className="tw-text-nowrap tw-w-2/3"
-              >
-                Ghi chú:
-              </Typography>
-              <div className="tw-flex tw-w-full tw-bg-gray-200 tw-justify-center tw-items-center tw-py-2 tw-text-black tw-rounded-sm">
-                xxxxxxxx
-              </div>
             </div>
           </div>
         </DialogBody>
         <DialogFooter className="tw-gap-3">
-          <Button variant="gradient" color="green" onClick={handleOpenDialog}>
+          <Button
+            variant="gradient"
+            color="green"
+            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+            loading={isLoadingConfirm}
+            onClick={() => onConfirm(iqrDetail?.code || "")}
+          >
             <span>Duyệt</span>
           </Button>
           <Button
             variant="text"
             color="red"
-            onClick={handleOpenDialog}
-            className="mr-1"
+            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+            loading={isLoadingReject}
+            onClick={() => onReject(iqrDetail?.code || "")}
           >
             <span>Từ chối</span>
           </Button>
         </DialogFooter>
       </Dialog>
+      {/* <Dialog
+        open={previewImage !== ""}
+        handler={() => setPreviewImage("")}
+        size="lg"
+      >
+        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+          <Typography variant="h3">Preview Hình Ảnh</Typography>
+
+          <IconButton
+            variant="text"
+            className="!tw-absolute tw-top-5 tw-right-5"
+            onClick={() => setPreviewImage("")}
+          >
+            <XMarkIcon color="red" width={24} height={24} />
+          </IconButton>
+        </DialogHeader>
+
+        <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
+          <div className="tw-flex tw-gap-6">
+            <Image
+              src={iqrDetail?.image_confirm || ""}
+              width={
+              height={"100%"}
+              alt="Product"
+              className="tw-object-cover tw-w-48 tw-h-48"
+            />
+            <div>
+              <Typography variant="paragraph" color="black">
+                {iqrDetail?.time_active}
+              </Typography>
+              <Typography variant="h5" color="gray">
+                {iqrDetail?.product_name}
+              </Typography>
+
+              <Typography variant="paragraph" color="black">
+                {iqrDetail?.fullname}
+              </Typography>
+              <Typography variant="paragraph" color="black">
+                {iqrDetail?.phone}
+              </Typography>
+              <Typography variant="paragraph" color="black">
+                {iqrDetail?.code}
+              </Typography>
+              <Typography variant="paragraph" color="black">
+                {iqrDetail?.province_name}
+              </Typography>
+              <Typography variant="h5" color="black">
+                Giải thưởng:{" "}
+                {iqrDetail?.award1 ||
+                  iqrDetail?.award2 ||
+                  "Chúc bạn may mắn lần sau"}
+              </Typography>
+            </div>
+          </div>
+        </DialogBody>
+        <DialogFooter className="tw-gap-3">
+          <Button
+            variant="gradient"
+            color="green"
+            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+            loading={isLoadingConfirm}
+            onClick={() => onConfirm(iqrDetail?.code || "")}
+          >
+            <span>Duyệt</span>
+          </Button>
+          <Button
+            variant="text"
+            color="red"
+            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+            loading={isLoadingReject}
+            onClick={() => onReject(iqrDetail?.code || "")}
+          >
+            <span>Từ chối</span>
+          </Button>
+        </DialogFooter>
+      </Dialog> */}
     </Card>
   );
 }

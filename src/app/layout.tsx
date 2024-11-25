@@ -8,10 +8,13 @@ import ThemeProvider from "@/components/ThemeProvider";
 import theme from "@/theme";
 import { MaterialTailwindControllerProvider } from "@/context";
 import InnerContent from "./content";
+import { Provider } from "react-redux";
 
 import "react-calendar/dist/Calendar.css";
 import "./globals.css";
-
+import { store } from "@/redux/store";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700", "900"],
@@ -35,11 +38,14 @@ export default function RootLayout({
         <title>Yis Martech</title>
       </head>
       <body className={roboto.className}>
-        <ThemeProvider value={theme}>
-          <MaterialTailwindControllerProvider>
-            <InnerContent>{children}</InnerContent>
-          </MaterialTailwindControllerProvider>
-        </ThemeProvider>
+        <Provider store={store}>
+          <ThemeProvider value={theme}>
+            <MaterialTailwindControllerProvider>
+              <InnerContent>{children}</InnerContent>
+              <ToastContainer />
+            </MaterialTailwindControllerProvider>
+          </ThemeProvider>
+        </Provider>
       </body>
     </html>
   );
