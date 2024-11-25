@@ -26,6 +26,7 @@ import {
   Badge,
   Chip,
   IconButton,
+  Spinner,
 } from "@material-tailwind/react";
 
 // @heroicons/react
@@ -35,6 +36,8 @@ import {
   ShieldCheckIcon,
   ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
+import { useBrandnameTodayQuery } from "@/redux/api/brandname/brandname.api";
+import { TBrandnameRES } from "@/redux/api/brandname/brandname.response";
 
 type Props = {};
 type TDATA = {
@@ -64,40 +67,21 @@ const DATA: TDATA[] = [
 export default function SMSTable({}: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [data] = useState(() => [...DATA]);
+  // const [data] = useState(() => [...DATA]);
+  const { data, isFetching } = useBrandnameTodayQuery({});
 
   // Use the column helper for type safety
-  const columnHelper = createColumnHelper<TDATA>();
+  const columnHelper = createColumnHelper<TBrandnameRES>();
 
   // Define columns with type safety
-  const columns: ColumnDef<TDATA, any>[] = [
+  const columns: ColumnDef<TBrandnameRES, any>[] = [
     columnHelper.accessor("code", {
       header: "Mã code",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("product_name", {
-      header: "Tên sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("amount", {
-      header: "Số tiền",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("program_name", {
-      header: "Tên chương trình",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("chance", {
-      header: "Cơ hội",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("customer_name", {
-      header: "Tên khách hàng",
+    columnHelper.accessor("transactionId", {
+      header: "Mã giao dịch",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -106,20 +90,20 @@ export default function SMSTable({}: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("transaction_code", {
-      header: "Mã giao dịch",
+    columnHelper.accessor("content", {
+      header: "Nội dung",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time", {
       header: "Thời gian topup",
-      cell: (info) => new Date(info.getValue()).toISOString(),
+      cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
   ];
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     state: {
       globalFilter: filtering,
@@ -195,23 +179,33 @@ export default function SMSTable({}: Props) {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="!tw-border-y !tw-border-x-0">
-                    <Typography
-                      variant="small"
-                      className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </Typography>
-                  </td>
-                ))}
+            {isFetching ? (
+              <tr>
+                <td colSpan={table.getVisibleLeafColumns().length}>
+                  <div className="tw-flex tw-justify-center tw-items-center tw-h-20">
+                    <Spinner />
+                  </div>
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="!tw-border-y !tw-border-x-0">
+                      <Typography
+                        variant="small"
+                        className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </Typography>
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </CardFooter>

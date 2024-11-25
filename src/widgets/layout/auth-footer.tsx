@@ -10,7 +10,7 @@ type PropTypes = {
 };
 
 export function AuthFooter({
-  brandName = "Creative Tim",
+  brandName = "Yis Martech",
   brandLink = "https://www.creative-tim.com",
   routes = [
     { name: "Company", path: "https://www.creative-tim.com" },

@@ -35,6 +35,8 @@ import {
   ShieldCheckIcon,
   ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
+import { useTopupTodayQuery } from "@/redux/api/topup/topup.api";
+import { TTopupRES } from "@/redux/api/topup/topup.response";
 
 type Props = {};
 type TDATA = {
@@ -64,39 +66,18 @@ const DATA: TDATA[] = [
 export default function TopupTable({}: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [data] = useState(() => [...DATA]);
-
+  const { data, isFetching } = useTopupTodayQuery({});
   // Use the column helper for type safety
-  const columnHelper = createColumnHelper<TDATA>();
+  const columnHelper = createColumnHelper<TTopupRES>();
 
   // Define columns with type safety
-  const columns: ColumnDef<TDATA, any>[] = [
-    columnHelper.accessor("code", {
-      header: "Mã code",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("product_name", {
-      header: "Tên sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("amount", {
-      header: "Số tiền",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("program_name", {
+  const columns: ColumnDef<TTopupRES, any>[] = [
+    columnHelper.accessor("programName", {
       header: "Tên chương trình",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("chance", {
-      header: "Cơ hội",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("customer_name", {
+    columnHelper.accessor("customerName", {
       header: "Tên khách hàng",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
@@ -106,20 +87,45 @@ export default function TopupTable({}: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("transaction_code", {
+    columnHelper.accessor("provinceName", {
+      header: "Tên tỉnh",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("area", {
+      header: "Khu vực",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("price", {
+      header: "Giá",
+      cell: (info) =>
+        info.getValue() !== null ? info.getValue().toLocaleString() : "N/A",
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("code", {
       header: "Mã giao dịch",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("productName", {
+      header: "Tên sản phẩm",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("time", {
-      header: "Thời gian topup",
-      cell: (info) => new Date(info.getValue()).toISOString(),
+      header: "Thời gian giao dịch",
+      cell: (info) => new Date(info.getValue()).toLocaleString(), // Format the date for display
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("status", {
+      header: "Trạng thái",
+      cell: (info) => (info.getValue() === 1 ? "Success" : "Failed"), // Map status codes to labels
       footer: (info) => info.column.id,
     }),
   ];
-
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     state: {
       globalFilter: filtering,

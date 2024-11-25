@@ -1,15 +1,15 @@
 import baseQuery from "@/redux/middlewares/baseQuery";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { TAGS } from "@/constants";
-import { TBrandnameRES } from "./brandname.response";
-import { TBrandnameTodayREQ } from "./brandname.request";
+import { TTopupRES } from "./topup.response";
+import { TTopupREQ } from "./topup.request";
 
-export const brandnameApi = createApi({
-  reducerPath: "brandnameApi",
+export const topupApi = createApi({
+  reducerPath: "topupApi",
   baseQuery: baseQuery,
-  tagTypes: [TAGS.BRAND_NAME],
+  tagTypes: [TAGS.TOPUP],
   endpoints: (builder) => ({
-    brandnameToday: builder.query<TBrandnameRES[], TBrandnameTodayREQ>({
+    topupToday: builder.query<TTopupRES[], TTopupREQ>({
       query: (params) => ({
         url: `/api/report/brandname/today`,
         method: "GET",
@@ -19,13 +19,13 @@ export const brandnameApi = createApi({
         results
           ? [
               ...results.map(({ id }) => ({
-                type: TAGS.BRAND_NAME,
+                type: TAGS.TOPUP,
                 id,
               })),
-              TAGS.BRAND_NAME,
+              TAGS.TOPUP,
             ]
-          : [TAGS.BRAND_NAME],
+          : [TAGS.TOPUP],
     }),
   }),
 });
-export const { useBrandnameTodayQuery } = brandnameApi;
+export const { useTopupTodayQuery } = topupApi;
