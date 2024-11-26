@@ -124,7 +124,14 @@ export default function IQrTable({}: Props) {
   const [previewImage, setPreviewImage] = useState("");
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery({});
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
+    {},
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }
+  );
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [iqrDetail, setIqrDetail] = useState<TIqrRES>();
@@ -174,15 +181,25 @@ export default function IQrTable({}: Props) {
             value="Đã xử lý xác nhận"
             className="tw-justify-center"
           ></Chip>
+        ) : info.getValue() == 3 ? (
+          <Chip
+            color="red"
+            className="tw-justify-center"
+            value="Từ chối"
+          ></Chip>
         ) : (
-          <Chip color="amber" value="Chờ xác nhận"></Chip>
+          <Chip
+            color="amber"
+            className="tw-justify-center"
+            value="Chờ xác nhận"
+          ></Chip>
         ),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("status", {
       header: "Duyệt",
       cell: (info) =>
-        info.getValue() == 2 ? (
+        info.getValue() == 2 || info.getValue() == 3 ? (
           <IconButton
             variant="outlined"
             className="tw-border-blue-700"

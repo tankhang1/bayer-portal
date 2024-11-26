@@ -9,11 +9,10 @@ export const topupApi = createApi({
   baseQuery: baseQuery,
   tagTypes: [TAGS.TOPUP],
   endpoints: (builder) => ({
-    topupToday: builder.query<TTopupRES[], TTopupREQ>({
-      query: (params) => ({
+    topupToday: builder.query<TTopupRES[], void>({
+      query: () => ({
         url: `/api/report/brandname/today`,
         method: "GET",
-        params,
       }),
       providesTags: (results) =>
         results

@@ -29,6 +29,7 @@ export default function BasicPage() {
       .then((value) => {
         dispatch(updateToken(value.token));
         dispatch(updateInfo(value.username));
+        localStorage.setItem("token", value.token);
         toast.success("Đăng nhập thành công");
         router.push("/dashboard/sales");
       })

@@ -9,11 +9,10 @@ export const iqrApi = createApi({
   baseQuery: baseQuery,
   tagTypes: [TAGS.IQR],
   endpoints: (builder) => ({
-    iqrToday: builder.query<TIqrRES[], TIqrTodayREQ>({
-      query: (params) => ({
+    iqrToday: builder.query<TIqrRES[], void>({
+      query: () => ({
         url: `/api/report/iqr/today`,
         method: "GET",
-        params,
       }),
       providesTags: (results) =>
         results

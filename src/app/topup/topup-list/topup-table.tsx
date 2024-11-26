@@ -66,7 +66,14 @@ const DATA: TDATA[] = [
 export default function TopupTable({}: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const { data, isFetching } = useTopupTodayQuery({});
+  const { data, isFetching } = useTopupTodayQuery(
+    {},
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }
+  );
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TTopupRES>();
 

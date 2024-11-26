@@ -9,11 +9,10 @@ export const brandnameApi = createApi({
   baseQuery: baseQuery,
   tagTypes: [TAGS.BRAND_NAME],
   endpoints: (builder) => ({
-    brandnameToday: builder.query<TBrandnameRES[], TBrandnameTodayREQ>({
-      query: (params) => ({
+    brandnameToday: builder.query<TBrandnameRES[], void>({
+      query: () => ({
         url: `/api/report/brandname/today`,
         method: "GET",
-        params,
       }),
       providesTags: (results) =>
         results

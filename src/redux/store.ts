@@ -4,6 +4,7 @@ import appReducer from "./slices/appSlices";
 import { iqrApi } from "./api/iqr/iqr.api";
 import { brandnameApi } from "./api/brandname/brandname.api";
 import { topupApi } from "./api/topup/topup.api";
+import { rtkQueryErrorLogger } from "./middlewares/errorMiddleware";
 
 export const store = configureStore({
   reducer: {

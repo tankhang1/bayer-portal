@@ -68,7 +68,10 @@ export default function SMSTable({}: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   // const [data] = useState(() => [...DATA]);
-  const { data, isFetching } = useBrandnameTodayQuery({});
+  const { data, isFetching } = useBrandnameTodayQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
 
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TBrandnameRES>();
