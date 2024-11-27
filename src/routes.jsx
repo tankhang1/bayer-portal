@@ -58,23 +58,12 @@ export const routes = [
     //   },
     // ],
   },
-  {
-    name: "dashboard",
-    icon: <RectangleGroupIcon {...icon} />,
-    path: "/dashboard/sales",
-    // pages: [
-    //   {
-    //     icon: <Typography {...text}>A</Typography>,
-    //     name: "analytics",
-    //     path: "/dashboard/analytics",
-    //   },
-    //   {
-    //     icon: <Typography {...text}>S</Typography>,
-    //     name: "sales",
-    //     path: "/dashboard/sales",
-    //   },
-    // ],
-  },
+  // {
+  //   name: "dashboard",
+  //   icon: <RectangleGroupIcon {...icon} />,
+  //   path: "/dashboard/sales",
+
+  // },
   {
     name: "iQr",
     icon: <QrCodeIcon {...icon} />,
@@ -102,11 +91,11 @@ export const routes = [
     icon: <ChatBubbleOvalLeftIcon {...icon} />,
     path: "/sms/sms-list",
   },
-  {
-    name: "Báo cáo",
-    icon: <ChartBarIcon {...icon} />,
-    path: "/report",
-  },
+  // {
+  //   name: "Báo cáo",
+  //   icon: <ChartBarIcon {...icon} />,
+  //   path: "/report",
+  // },
   // {
   //   name: "pages",
   //   title: "pages",

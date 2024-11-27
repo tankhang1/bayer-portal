@@ -67,7 +67,7 @@ export function DashboardNavbar() {
               fixedNavbar ? "tw-mt-1" : ""
             }`}
           >
-            <Link href="/dashboard/analytics">
+            <Link href="/iqr/iqr-list">
               <IconButton size="sm" variant="text">
                 <HomeIcon className="tw-h-4 tw-w-4 tw-text-gray-900" />
               </IconButton>
