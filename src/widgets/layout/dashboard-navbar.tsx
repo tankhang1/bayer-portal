@@ -14,6 +14,8 @@ import {
   MenuList,
   MenuItem,
   Badge,
+  Drawer,
+  Button,
 } from "@material-tailwind/react";
 
 // @heroicons/react
@@ -28,6 +30,7 @@ import {
   EnvelopeIcon,
   MicrophoneIcon,
   ShoppingCartIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/solid";
 
 // @context
@@ -49,6 +52,10 @@ export function DashboardNavbar() {
   const { fixedNavbar, openSidenav } = controller;
   const pathname = usePathname();
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
+  const [openedDrawer, setOpenedDrawer] = React.useState(false);
+
+  const openDrawer = () => setOpenedDrawer(true);
+  const closeDrawer = () => setOpenedDrawer(false);
   return (
     <Navbar
       color={fixedNavbar ? "white" : "transparent"}
@@ -62,31 +69,33 @@ export function DashboardNavbar() {
     >
       <div className="!tw-flex tw-flex-col !tw-justify-between tw-gap-2 md:!tw-flex-row md:tw-items-center">
         <div className="tw-capitalize">
-          <Breadcrumbs
-            className={`tw-bg-transparent !tw-p-0 tw-transition-all ${
-              fixedNavbar ? "tw-mt-1" : ""
-            }`}
-          >
-            <Link href="/iqr/iqr-list">
-              <IconButton size="sm" variant="text">
-                <HomeIcon className="tw-h-4 tw-w-4 tw-text-gray-900" />
-              </IconButton>
-            </Link>
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="!tw-font-normal tw-opacity-50 tw-transition-all hover:!tw-text-blue-gray-700 hover:tw-opacity-100"
+          <div className="tw-flex tw-items-center tw-justify-between ">
+            <Breadcrumbs
+              className={`tw-bg-transparent !tw-p-0 tw-transition-all ${
+                fixedNavbar ? "tw-mt-1" : ""
+              }`}
             >
-              {layout}
-            </Typography>
-            {/* <Typography
+              <Link href="/iqr/iqr-list">
+                <IconButton size="sm" variant="text">
+                  <HomeIcon className="tw-h-4 tw-w-4 tw-text-gray-900" />
+                </IconButton>
+              </Link>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="!tw-font-normal tw-opacity-50 tw-transition-all hover:!tw-text-blue-gray-700 hover:tw-opacity-100"
+              >
+                {layout}
+              </Typography>
+              {/* <Typography
               variant="small"
               color="blue-gray"
               className="!tw-font-normal"
             >
               {page?.split("-").join(" ")}
             </Typography> */}
-          </Breadcrumbs>
+            </Breadcrumbs>
+          </div>
           <Typography variant="h6" color="blue-gray">
             {MAP_HEADER.get(pathname)}
           </Typography>

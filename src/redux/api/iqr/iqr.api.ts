@@ -31,6 +31,7 @@ export const iqrApi = createApi({
         method: "GET",
         params,
       }),
+
       providesTags: (results) =>
         results
           ? [
@@ -41,6 +42,16 @@ export const iqrApi = createApi({
               TAGS.IQR,
             ]
           : [TAGS.IQR],
+    }),
+    iqrCounter: builder.query<number, TIqrRangeTimeREQ>({
+      query: (params) => ({
+        url: `/api/report/iqr/counter`,
+        method: "GET",
+        params: {
+          ...params,
+          gateway: 2,
+        },
+      }),
     }),
     exportIqrData: builder.mutation<TIqrExportRES, TIqrExportREQ>({
       query: (body) => ({
@@ -55,4 +66,5 @@ export const {
   useIqrTodayQuery,
   useIqrRangeDateQuery,
   useExportIqrDataMutation,
+  useIqrCounterQuery,
 } = iqrApi;

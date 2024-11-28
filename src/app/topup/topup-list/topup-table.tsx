@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 
 // @tanstack/react-table
@@ -35,45 +34,31 @@ import {
   ShieldCheckIcon,
   ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
-import { useTopupTodayQuery } from "@/redux/api/topup/topup.api";
+import {
+  useTopupCounterQuery,
+  useTopupRangeDateQuery,
+  useTopupTodayQuery,
+} from "@/redux/api/topup/topup.api";
 import { TTopupRES } from "@/redux/api/topup/topup.response";
+import { TTopupRangeTimeREQ } from "@/redux/api/topup/topup.request";
 
-type Props = {};
-type TDATA = {
-  code: string;
-  product_name: string;
-  amount: number;
-  program_name: string;
-  chance: string;
-  customer_name: string;
-  phone: string;
-  transaction_code: string;
-  time: Date;
+type Props = {
+  query: TTopupRangeTimeREQ;
+  setQuery: (query: TTopupRangeTimeREQ) => void;
 };
-const DATA: TDATA[] = [
-  {
-    code: "XxxxxxSSSS",
-    product_name: "Nativo",
-    amount: 100000,
-    program_name: "HANG chinh hang",
-    chance: "Cơ hội 1",
-    customer_name: "LX Biên",
-    phone: "xxx000333",
-    transaction_code: "123123123",
-    time: new Date(),
-  },
-];
-export default function TopupTable({}: Props) {
+export default function TopupTable({ query, setQuery }: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const { data, isFetching } = useTopupTodayQuery(
-    {},
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-      refetchOnReconnect: true,
-    }
-  );
+  const { data, isFetching } = useTopupRangeDateQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
+  const { data: topupCounter } = useTopupCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TTopupRES>();
 
@@ -138,6 +123,21 @@ export default function TopupTable({}: Props) {
       globalFilter: filtering,
       sorting: sorting,
     },
+    pageCount: Math.ceil((topupCounter ?? 0) / query.sz),
+    //@ts-ignore
+    onPaginationChange: ({
+      pageIndex,
+      pageSize,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+    }) => {
+      setQuery({
+        ...query,
+        nu: pageIndex,
+        sz: pageSize,
+      });
+    },
     // @ts-ignore
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
@@ -158,7 +158,7 @@ export default function TopupTable({}: Props) {
             }}
             className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
           >
-            {[5, 10, 15, 20, 25].map((pageSize) => (
+            {[20, 30, 40].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
@@ -232,7 +232,8 @@ export default function TopupTable({}: Props) {
         <span className="tw-flex tw-items-center tw-gap-1">
           <Typography className="!tw-font-bold">Trang</Typography>
           <strong>
-            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} /{" "}
+            {table.getPageCount() ?? 0}
           </strong>
         </span>
         <div className="tw-flex tw-items-center tw-gap-2">

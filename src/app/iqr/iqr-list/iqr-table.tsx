@@ -37,103 +37,79 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
   ChevronUpDownIcon,
+  PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { useIqrTodayQuery } from "@/redux/api/iqr/iqr.api";
+import {
+  useIqrCounterQuery,
+  useIqrRangeDateQuery,
+  useIqrTodayQuery,
+} from "@/redux/api/iqr/iqr.api";
 import { TIqrRES } from "@/redux/api/iqr/iqr.response";
 import {
   useConfirmIqrMutation,
   useRejectIqrMutation,
+  useUpdateIqrMutation,
 } from "@/redux/api/auth/auth.api";
 import { toast } from "react-toastify";
-type Props = {};
-type TDATA = {
-  seri: string;
-  iqr: string;
-  product_name: string;
-  chance_1: string;
-  chance_2: string;
-  phone: string;
-  status: number;
-  name: string;
-  province: string;
-  source: string;
-  isConfirm: number;
+import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
+import { useForm } from "react-hook-form";
+import { uploadBase64Image } from "@/hooks/uploadFile";
+type Props = {
+  query: TIqrRangeTimeREQ;
+  setQuery: (query: TIqrRangeTimeREQ) => void;
 };
-const DATA: TDATA[] = [
-  {
-    seri: "BI00000",
-    iqr: "XKS0001",
-    product_name: "Nativo",
-    chance_1: "Chuc ban may man lan sau",
-    chance_2: "Xe may AirBlead 125CC",
-    phone: "8412322xxxx",
-    status: 1,
-    name: "LX Bien",
-    province: "Hồ Chí Minh",
-    source: "Zalo Mini App",
-    isConfirm: 1,
-  },
-  {
-    seri: "BI00000",
-    iqr: "XKS0001",
-    product_name: "Nativo",
-    chance_1: "Chuc ban may man lan sau",
-    chance_2: "Xe may AirBlead 125CC",
-    phone: "845654222xxxx",
-    status: 1,
-    name: "LX Bien",
-    province: "Hồ Chí Minh",
-    isConfirm: 1,
-    source: "Zalo Mini App",
-  },
-  {
-    seri: "BI00000",
-    iqr: "XKS0001",
-    product_name: "Nativo",
-    chance_1: "Chuc ban may man lan sau",
-    chance_2: "Xe may AirBlead 125CC",
-    phone: "84224562xxxx",
-    status: 1,
-    name: "LX Bien",
-    province: "Hồ Chí Minh",
-    isConfirm: 1,
-    source: "Zalo Mini App",
-  },
-  {
-    seri: "BI00000",
-    iqr: "XKS0001",
-    product_name: "Nativo",
-    chance_1: "Chuc ban may man lan sau",
-    chance_2: "Xe may AirBlead 125CC",
-    phone: "84221112xxxx",
-    isConfirm: 0,
-    status: 0,
-    name: "LX Bien",
-    province: "Hồ Chí Minh",
-    source: "Zalo Mini App",
-  },
-];
-export default function IQrTable({}: Props) {
+const statusMap = new Map<number, string>([
+  [-99, "Hệ thống bị gián đoạn"],
+  [-1, "Thiết bị không hoạt động"],
+  [-2, "Người khác quét mã"],
+  [-3, "Mã không có trong lịch sử"],
+  [-4, "Không tồn tại"],
+  [-5, "Không có giải thưởng 1 và giải thưởng 2"],
+  [-6, "Trạng thái sai"],
+  [-7, "Đã thành công"],
+  [-8, "Cập nhật trước khi xác nhận"],
+  [0, "Quá trình mã thành công"],
+  [1, "Chờ tải lên hình ảnh"],
+  [2, "Xác nhận bởi đại lý"],
+  [3, "Tải lên lại"],
+  [4, "Đã xác nhận (hình ảnh đã tải lên)"],
+]);
+
+export default function IQrTable({ query, setQuery }: Props) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    getValues,
+    formState: { errors },
+  } = useForm<TIqrUpdateREQ>();
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
-    {},
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-      refetchOnReconnect: true,
-    }
-  );
+  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
+  const { data: iqrCounter } = useIqrCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
+  const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
+
   const [iqrDetail, setIqrDetail] = useState<TIqrRES>();
   // Define columns with type safety
   const columns: ColumnDef<TIqrRES, any>[] = [
@@ -218,6 +194,29 @@ export default function IQrTable({}: Props) {
         ),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("status", {
+      header: "Chỉnh sửa",
+      cell: (info) =>
+        info.getValue() === 2 && (
+          <IconButton
+            variant="outlined"
+            className="tw-border-green-700"
+            onClick={() => {
+              setOpenEditForm(true);
+              setValue("address", data?.[info.row.index]?.province_name || "");
+              setValue("name", data?.[info.row.index]?.fullname || "");
+              setValue(
+                "image_confirm",
+                data?.[info.row.index]?.image_confirm || ""
+              );
+              setValue("code", data?.[info.row.index]?.code || "");
+            }}
+          >
+            <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
+          </IconButton>
+        ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("province", {
       header: "Tỉnh đăng ký",
       cell: (info) => info.getValue(),
@@ -242,6 +241,21 @@ export default function IQrTable({}: Props) {
       globalFilter: filtering,
       sorting: sorting,
     },
+    pageCount: Math.ceil((iqrCounter ?? 0) / query.sz),
+    //@ts-ignore
+    onPaginationChange: ({
+      pageIndex,
+      pageSize,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+    }) => {
+      setQuery({
+        ...query,
+        nu: pageIndex,
+        sz: pageSize,
+      });
+    },
     // @ts-ignore
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
@@ -254,11 +268,25 @@ export default function IQrTable({}: Props) {
     setOpenDialog(!openDialog);
     setIqrDetail(info);
   };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          const base64String = reader.result.toString();
+          console.log(base64String); // Log the Base64 string
+          setValue("image_confirm", base64String); // Update the form value with the Base64 string
+        }
+      };
+      reader.readAsDataURL(file); // Convert file to Base64
+    }
+  };
   const onReject = async (code: string) => {
     await rejectIqr({ code })
       .unwrap()
-      .then(() => {
-        toast.success("Từ chối thông tin thành công");
+      .then((value) => {
+        toast.success(statusMap.get(value.status));
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
@@ -271,8 +299,8 @@ export default function IQrTable({}: Props) {
   const onConfirm = async (code: string) => {
     await confirmIqr({ code })
       .unwrap()
-      .then(() => {
-        toast.success("Xác nhận thông tin thành công");
+      .then((value) => {
+        toast.success(statusMap.get(value.status));
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
@@ -281,6 +309,38 @@ export default function IQrTable({}: Props) {
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
+  };
+  const onUpdate = async (values: TIqrUpdateREQ) => {
+    if (values.image_confirm.includes("https://")) {
+      await updateIqr(values)
+        .unwrap()
+        .then((value) => {
+          toast.success(statusMap.get(value.status));
+          setOpenEditForm(false);
+        })
+        .catch(() => {
+          toast.error("Cập nhật thông tin thất bại");
+          setOpenEditForm(false);
+        });
+    } else {
+      setIsLoadingUploadImage(true);
+      await uploadBase64Image(values.image_confirm, values.code);
+      await updateIqr({
+        ...values,
+        image_confirm: `https://reactive.yis.vn/upload-files/bayer/${values.code}.jpg`,
+      })
+        .unwrap()
+        .then((value) => {
+          toast.success(statusMap.get(value.status));
+          setOpenEditForm(false);
+          setIsLoadingUploadImage(false);
+        })
+        .catch(() => {
+          toast.error("Cập nhật thông tin thất bại");
+          setOpenEditForm(false);
+          setIsLoadingUploadImage(false);
+        });
+    }
   };
   return (
     <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">
@@ -293,7 +353,7 @@ export default function IQrTable({}: Props) {
             }}
             className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
           >
-            {[5, 10, 15, 20, 25].map((pageSize) => (
+            {[20, 30, 40].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
@@ -319,10 +379,10 @@ export default function IQrTable({}: Props) {
         <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={Math.random()}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    key={header.id}
+                    key={Math.random()}
                     onClick={header.column.getToggleSortingHandler()}
                     className="tw-px-5 tw-py-2 tw-uppercase"
                   >
@@ -408,9 +468,7 @@ export default function IQrTable({}: Props) {
       <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Thông tin trúng giải</Typography>
-          <Typography variant="h5">
-            Chắc Hạt Trúng To - Cào Ngay Trúng Lớn
-          </Typography>
+          <Typography variant="h5">Cào Nhanh Tay - Trúng Quà Ngay</Typography>
           <IconButton
             variant="text"
             className="!tw-absolute tw-top-5 tw-right-5"
@@ -428,6 +486,7 @@ export default function IQrTable({}: Props) {
               height={192}
               alt="Product"
               className="tw-object-cover tw-w-48 tw-h-48"
+              onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
             />
             <div>
               <Typography variant="paragraph" color="black">
@@ -479,13 +538,9 @@ export default function IQrTable({}: Props) {
           </Button>
         </DialogFooter>
       </Dialog>
-      {/* <Dialog
-        open={previewImage !== ""}
-        handler={() => setPreviewImage("")}
-        size="lg"
-      >
+      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Preview Hình Ảnh</Typography>
+          <Typography variant="h3">Hình ảnh xác thực</Typography>
 
           <IconButton
             variant="text"
@@ -496,65 +551,72 @@ export default function IQrTable({}: Props) {
           </IconButton>
         </DialogHeader>
 
-        <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
-          <div className="tw-flex tw-gap-6">
-            <Image
-              src={iqrDetail?.image_confirm || ""}
-              width={
-              height={"100%"}
-              alt="Product"
-              className="tw-object-cover tw-w-48 tw-h-48"
-            />
-            <div>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.time_active}
-              </Typography>
-              <Typography variant="h5" color="gray">
-                {iqrDetail?.product_name}
-              </Typography>
+        <DialogBody className="tw-flex tw-justify-center tw-items-center">
+          <Image
+            src={iqrDetail?.image_confirm || ""}
+            width={300}
+            height={300}
+            alt="Product"
+            className="tw-object-cover tw-w-[420px] tw-h-[420px]"
+          />
+        </DialogBody>
+      </Dialog>
+      <Dialog open={openEditForm} handler={setOpenEditForm}>
+        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+          <Typography variant="h3">Cập nhật thông tin</Typography>
+        </DialogHeader>
 
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.fullname}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.phone}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.code}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.province_name}
-              </Typography>
-              <Typography variant="h5" color="black">
-                Giải thưởng:{" "}
-                {iqrDetail?.award1 ||
-                  iqrDetail?.award2 ||
-                  "Chúc bạn may mắn lần sau"}
-              </Typography>
-            </div>
+        <DialogBody className="tw-flex tw-flex-col tw-gap-3">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
+            <Input
+              placeholder="Hình ảnh giấy chứng nhận"
+              label="Hình ảnh giấy chứng nhận"
+              type="file"
+              onChange={(e) => {
+                handleFileChange(e);
+              }}
+            />
+            <Image
+              src={watch().image_confirm}
+              width={300}
+              height={300}
+              alt="Image"
+              className="tw-w-64 tw-h-64"
+            />
           </div>
+
+          <Input
+            placeholder="Tên nông dân"
+            label="Tên nông dân"
+            {...register("name")}
+          />
+          <Input
+            placeholder="Địa chỉ"
+            label="Địa chỉ"
+            {...register("address")}
+          />
         </DialogBody>
         <DialogFooter className="tw-gap-3">
           <Button
             variant="gradient"
             color="green"
             className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingConfirm}
-            onClick={() => onConfirm(iqrDetail?.code || "")}
+            loading={isLoadingUpdate || isLoadingUploadImage}
+            onClick={handleSubmit(onUpdate)}
           >
-            <span>Duyệt</span>
+            <span>Cập nhật</span>
           </Button>
           <Button
             variant="text"
             color="red"
             className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
             loading={isLoadingReject}
-            onClick={() => onReject(iqrDetail?.code || "")}
+            onClick={() => setOpenEditForm(false)}
           >
-            <span>Từ chối</span>
+            <span>Huỷ</span>
           </Button>
         </DialogFooter>
-      </Dialog> */}
+      </Dialog>
     </Card>
   );
 }

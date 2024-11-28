@@ -2,7 +2,7 @@ import baseQuery from "@/redux/middlewares/baseQuery";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { TAGS } from "@/constants";
 import { TTopupRES } from "./topup.response";
-import { TTopupREQ } from "./topup.request";
+import { TTopupRangeTimeREQ, TTopupREQ } from "./topup.request";
 
 export const topupApi = createApi({
   reducerPath: "topupApi",
@@ -11,7 +11,7 @@ export const topupApi = createApi({
   endpoints: (builder) => ({
     topupToday: builder.query<TTopupRES[], void>({
       query: () => ({
-        url: `/api/report/brandname/today`,
+        url: `/api/report/topup/today`,
         method: "GET",
       }),
       providesTags: (results) =>
@@ -25,6 +25,34 @@ export const topupApi = createApi({
             ]
           : [TAGS.TOPUP],
     }),
+    topupRangeDate: builder.query<TTopupRES[], TTopupRangeTimeREQ>({
+      query: (params) => ({
+        url: `/api/report/topup`,
+        method: "GET",
+        params,
+      }),
+      providesTags: (results) =>
+        results
+          ? [
+              ...results.map(({ id }) => ({
+                type: TAGS.TOPUP,
+                id,
+              })),
+              TAGS.TOPUP,
+            ]
+          : [TAGS.TOPUP],
+    }),
+    topupCounter: builder.query<number, TTopupRangeTimeREQ>({
+      query: (params) => ({
+        url: `/api/report/topup/counter`,
+        method: "GET",
+        params,
+      }),
+    }),
   }),
 });
-export const { useTopupTodayQuery } = topupApi;
+export const {
+  useTopupTodayQuery,
+  useTopupCounterQuery,
+  useTopupRangeDateQuery,
+} = topupApi;

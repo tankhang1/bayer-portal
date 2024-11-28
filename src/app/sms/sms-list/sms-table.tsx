@@ -23,56 +23,39 @@ import {
   Button,
   CardBody,
   CardFooter,
-  Badge,
-  Chip,
-  IconButton,
   Spinner,
 } from "@material-tailwind/react";
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import {
-  ChevronUpDownIcon,
-  ShieldCheckIcon,
-  ShieldExclamationIcon,
-} from "@heroicons/react/24/solid";
-import { useBrandnameTodayQuery } from "@/redux/api/brandname/brandname.api";
+  useBrandnameCounterQuery,
+  useBrandnameRangeDateQuery,
+  useBrandnameTodayQuery,
+} from "@/redux/api/brandname/brandname.api";
 import { TBrandnameRES } from "@/redux/api/brandname/brandname.response";
+import { TBrandnameRangeTimeREQ } from "@/redux/api/brandname/brandname.request";
 
-type Props = {};
-type TDATA = {
-  code: string;
-  product_name: string;
-  amount: number;
-  program_name: string;
-  chance: string;
-  customer_name: string;
-  phone: string;
-  transaction_code: string;
-  time: Date;
+type Props = {
+  query: TBrandnameRangeTimeREQ;
+  setQuery: (query: TBrandnameRangeTimeREQ) => void;
 };
-const DATA: TDATA[] = [
-  {
-    code: "XxxxxxSSSS",
-    product_name: "Nativo",
-    amount: 100000,
-    program_name: "HANG chinh hang",
-    chance: "Cơ hội 1",
-    customer_name: "LX Biên",
-    phone: "xxx000333",
-    transaction_code: "123123123",
-    time: new Date(),
-  },
-];
-export default function SMSTable({}: Props) {
+
+export default function SMSTable({ query, setQuery }: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   // const [data] = useState(() => [...DATA]);
-  const { data, isFetching } = useBrandnameTodayQuery(undefined, {
+  const { data, isFetching } = useBrandnameRangeDateQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
   });
-
+  const { data: brandnameCounter } = useBrandnameCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TBrandnameRES>();
 
@@ -112,6 +95,21 @@ export default function SMSTable({}: Props) {
       globalFilter: filtering,
       sorting: sorting,
     },
+    pageCount: Math.ceil((brandnameCounter ?? 0) / query.sz),
+    //@ts-ignore
+    onPaginationChange: ({
+      pageIndex,
+      pageSize,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+    }) => {
+      setQuery({
+        ...query,
+        nu: pageIndex,
+        sz: pageSize,
+      });
+    },
     // @ts-ignore
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
@@ -132,7 +130,7 @@ export default function SMSTable({}: Props) {
             }}
             className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
           >
-            {[5, 10, 15, 20, 25].map((pageSize) => (
+            {[20, 30, 40].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>

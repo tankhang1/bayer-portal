@@ -4,6 +4,7 @@ import { TAuthRES, TIqrConfirmRES } from "./auth.response";
 import { TAuthREQ, TIqrConfirREQ } from "./auth.request";
 import baseQueryWithAuth from "@/redux/middlewares/baseQueryWithAuth";
 import { TAGS } from "@/constants";
+import { TIqrUpdateREQ } from "../iqr/iqr.request";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -18,7 +19,7 @@ export const authApi = createApi({
         body,
       }),
     }),
-    confirmIqr: builder.mutation<TIqrConfirmRES, TIqrConfirREQ>({
+    confirmIqr: builder.mutation<{ status: number }, TIqrConfirREQ>({
       query: (body) => ({
         url: "/portal/transaction/confirm",
         method: "POST",
@@ -26,7 +27,7 @@ export const authApi = createApi({
       }),
       invalidatesTags: [TAGS.IQR],
     }),
-    rejectIqr: builder.mutation<TIqrConfirmRES, TIqrConfirREQ>({
+    rejectIqr: builder.mutation<{ status: number }, TIqrConfirREQ>({
       query: (body) => ({
         url: "/portal/transaction/reject",
         method: "POST",
@@ -34,7 +35,19 @@ export const authApi = createApi({
       }),
       invalidatesTags: [TAGS.IQR],
     }),
+    updateIqr: builder.mutation<{ status: number }, TIqrUpdateREQ>({
+      query: (body) => ({
+        url: "/portal/transaction/update",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [TAGS.IQR],
+    }),
   }),
 });
-export const { useLoginMutation, useConfirmIqrMutation, useRejectIqrMutation } =
-  authApi;
+export const {
+  useLoginMutation,
+  useConfirmIqrMutation,
+  useRejectIqrMutation,
+  useUpdateIqrMutation,
+} = authApi;
