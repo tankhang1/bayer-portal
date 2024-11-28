@@ -30,6 +30,7 @@ type TQueryIqr = {
   st: Date;
   ed: Date;
 };
+
 export default function IqrPage() {
   const [openModal, setOpenModal] = useState(false);
   const {

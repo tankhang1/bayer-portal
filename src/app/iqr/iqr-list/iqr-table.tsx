@@ -79,6 +79,13 @@ const statusMap = new Map<number, string>([
   [4, "Đã xác nhận (hình ảnh đã tải lên)"],
 ]);
 
+const MapLabel = new Map([
+  ["xemay", "Xe máy Air Blade 125cc"],
+  ["topup", "Nạp tiền 10.000VND"],
+  ["tulanh", "Tủ lạnh Sharp 362L"],
+  ["loaJBL", "Loa JBL Partybox110"],
+  ["", "Không trúng thưởng"],
+]);
 export default function IQrTable({ query, setQuery }: Props) {
   const {
     register,
@@ -130,12 +137,12 @@ export default function IQrTable({ query, setQuery }: Props) {
     }),
     columnHelper.accessor("award1", {
       header: "Cơ hội 1",
-      cell: (info) => info.getValue(),
+      cell: (info) => MapLabel.get(info.getValue()),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("award2", {
       header: "Cơ hội 2",
-      cell: (info) => info.getValue(),
+      cell: (info) => MapLabel.get(info.getValue()),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("phone", {
@@ -144,7 +151,7 @@ export default function IQrTable({ query, setQuery }: Props) {
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("fullname", {
-      header: "Tên khách hang",
+      header: "Tên khách hàng",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
