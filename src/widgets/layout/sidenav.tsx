@@ -28,6 +28,7 @@ import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useOnClickOutside } from "usehooks-ts";
 
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 
 const COLORS = {
   dark: "tw-bg-gray-900 hover:tw-bg-gray-700 focus:tw-bg-gray-900 active:tw-bg-gray-700 hover:tw-bg-opacity-100 focus:tw-bg-opacity-100 active:tw-bg-opacity-100",
@@ -305,6 +306,18 @@ export default function Sidenav({
               </List>
             )
         )}
+        <Link href={`/`}>
+          <ListItem
+            className={`tw-capitalize tw-text-red-600 ${
+              pathname === `/` ? activeRouteClasses : collapseItemClasses
+            }`}
+          >
+            <ListItemPrefix>
+              <ExclamationCircleIcon className="tw-w-5 tw-h-5 tw-text-inherit" />
+            </ListItemPrefix>
+            Thoát
+          </ListItem>
+        </Link>
       </List>
     </Card>
   );

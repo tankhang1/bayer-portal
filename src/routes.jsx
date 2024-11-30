@@ -613,4 +613,5 @@ export const routes = [
   //   external: true,
   // },
 ];
+
 export default routes;

@@ -2,10 +2,6 @@
 // @material-tailwind/react
 import {
   Button,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   Dialog,
   DialogHeader,
   DialogBody,
@@ -21,7 +17,8 @@ import { format } from "date-fns";
 
 // component
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 const IQrTable = dynamic(() => import("./iqr-table"), {
   ssr: false,
@@ -61,6 +58,12 @@ export default function IqrPage() {
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),
     });
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      redirect("/auth/signin/basic");
+    }
+  }, []);
   return (
     <section className="tw-mb-4">
       <div className="tw-mt-8 tw-flex tw-items-center tw-justify-between">
