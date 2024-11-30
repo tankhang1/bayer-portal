@@ -560,7 +560,7 @@ export default function IQrTable({ query, setQuery }: Props) {
 
         <DialogBody className="tw-flex tw-justify-center tw-items-center">
           <Image
-            src={iqrDetail?.image_confirm || ""}
+            src={previewImage || ""}
             width={300}
             height={300}
             alt="Product"
