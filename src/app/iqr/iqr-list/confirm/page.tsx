@@ -5,13 +5,13 @@ import {
   Dialog,
   DialogHeader,
   DialogBody,
-  Input,
   DialogFooter,
+  Input,
 } from "@/components/MaterialTailwind";
-import { TTopupRangeTimeREQ } from "@/redux/api/topup/topup.request";
+import { TIqrRangeTimeREQ } from "@/redux/api/iqr/iqr.request";
 
 // @heroicons/react
-import { ChevronDownIcon, DocumentIcon } from "@heroicons/react/24/outline";
+import { DocumentIcon } from "@heroicons/react/24/outline";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 import { format } from "date-fns";
 
@@ -20,29 +20,33 @@ import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-const TopupTable = dynamic(() => import("./topup-table"), {
+const IQrTable = dynamic(() => import("./iqr-confirm-table"), {
   ssr: false,
 });
-type TQuery = {
+type TQueryIqr = {
   st: Date;
   ed: Date;
 };
-export default function TopupPage() {
+
+export default function IqrConfirmPage() {
   const [openModal, setOpenModal] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
     formState: { errors },
-  } = useForm<TQuery>();
-  const [query, setQuery] = useState<TTopupRangeTimeREQ>({
+  } = useForm<TQueryIqr>();
+  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
     sz: 20,
-    k: "",
+    gateway: 2,
+    s: 2,
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
   });
-  const onSubmit = (params: TQuery) => {
+
+  const onSubmit = (params: TQueryIqr) => {
     setQuery({
       ...query,
       st: +(format(params.st, "yyyyMMdd") + "0000"),
@@ -53,10 +57,13 @@ export default function TopupPage() {
     setQuery({
       nu: 0,
       sz: 20,
-      k: "",
+      gateway: 2,
+      s: 2,
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),
     });
+    setValue("st", new Date());
+    setValue("ed", new Date());
   };
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -91,7 +98,7 @@ export default function TopupPage() {
           </Button>
         </div>
       </div>
-      <TopupTable query={query} setQuery={setQuery} />
+      <IQrTable query={query} setQuery={setQuery} />
       <Dialog open={openModal} handler={setOpenModal}>
         <DialogHeader>Lọc thông tin</DialogHeader>
 

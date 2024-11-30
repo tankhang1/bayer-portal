@@ -4,4 +4,5 @@ export type TBrandnameRangeTimeREQ = {
   sz: number;
   st: number;
   ed: number;
+  k: string;
 };

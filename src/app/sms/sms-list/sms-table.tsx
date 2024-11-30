@@ -49,12 +49,10 @@ export default function SMSTable({ query, setQuery }: Props) {
   const { data, isFetching } = useBrandnameRangeDateQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true,
   });
   const { data: brandnameCounter } = useBrandnameCounterQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true,
   });
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TBrandnameRES>();
@@ -146,8 +144,7 @@ export default function SMSTable({ query, setQuery }: Props) {
         <div className="tw-w-52">
           <Input
             variant="outlined"
-            value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
+            onChange={(e) => setQuery({ ...query, k: e.target.value })}
             label="Tìm kiếm"
           />
         </div>

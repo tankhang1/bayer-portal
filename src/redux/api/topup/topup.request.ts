@@ -4,4 +4,5 @@ export type TTopupRangeTimeREQ = {
   sz: number;
   st: number;
   ed: number;
+  k: string;
 };

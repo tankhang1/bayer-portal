@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 
 // @tanstack/react-table
@@ -26,107 +25,59 @@ import {
   Badge,
   Chip,
   IconButton,
+  Spinner,
 } from "@material-tailwind/react";
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
   ChevronUpDownIcon,
+  DocumentIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
+import {
+  useTopupCounterQuery,
+  useTopupRangeDateQuery,
+  useTopupTodayQuery,
+} from "@/redux/api/topup/topup.api";
+import { TTopupRES } from "@/redux/api/topup/topup.response";
+import { TTopupRangeTimeREQ } from "@/redux/api/topup/topup.request";
 
-type Props = {};
-type TDATA = {
-  seri: string;
-  sms_code: string;
-  product_code: string;
-  batch_number: string;
-  content_prize: string;
-  upload_date: Date;
-  activated_date: Date;
-  name_prize: string;
-  zalo_nick_name: string;
-  phone: string;
-  customer_name: string;
-  address: string;
-  province_name: string;
-  chanel_zalo_sm_center: string;
-  image_link: string;
-  status: number;
+type Props = {
+  query: Partial<TTopupRangeTimeREQ>;
+  setQuery: (query: Partial<TTopupRangeTimeREQ>) => void;
 };
-const DATA: TDATA[] = [
-  {
-    seri: "ABC123456789",
-    sms_code: "SMS987654",
-    product_code: "PROD001",
-    batch_number: "BATCH2024",
-    content_prize: "Congratulations! You have won a gift voucher.",
-    upload_date: new Date("2024-11-20T10:30:00Z"),
-    activated_date: new Date("2024-11-21T15:45:00Z"),
-    name_prize: "Gift Voucher - $50",
-    zalo_nick_name: "HappyCustomer",
-    phone: "1234567890",
-    customer_name: "John Doe",
-    address: "123 Main Street, City Center, Example City",
-    province_name: "Example Province",
-    chanel_zalo_sm_center: "ZaloServiceCenter01",
-    image_link: "https://example.com/images/prize.jpg",
-    status: 1, // Active
-  },
-];
-export default function ReportTable({}: Props) {
+export default function TopupTable({ query, setQuery }: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [data] = useState(() => [...DATA]);
-
+  const [keyword, setKeyword] = useState("");
+  const { data, isFetching } = useTopupRangeDateQuery(
+    {
+      ...query,
+      k: keyword,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  const { data: topupCounter } = useTopupCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   // Use the column helper for type safety
-  const columnHelper = createColumnHelper<TDATA>();
+  const columnHelper = createColumnHelper<TTopupRES>();
 
   // Define columns with type safety
-  const columns: ColumnDef<TDATA, any>[] = [
-    columnHelper.accessor("seri", {
-      header: "Số seri",
+  const columns: ColumnDef<TTopupRES, any>[] = [
+    columnHelper.accessor("programName", {
+      header: "Tên chương trình",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("sms_code", {
-      header: "Mã SMS",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("product_code", {
-      header: "Mã sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("batch_number", {
-      header: "Số lô",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("content_prize", {
-      header: "Nội dung giải thưởng",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("upload_date", {
-      header: "Ngày tải lên",
-      cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("activated_date", {
-      header: "Ngày kích hoạt",
-      cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("name_prize", {
-      header: "Tên giải thưởng",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("zalo_nick_name", {
-      header: "Tên Zalo",
+    columnHelper.accessor("customerName", {
+      header: "Tên khách hàng",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -135,57 +86,64 @@ export default function ReportTable({}: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("customer_name", {
-      header: "Tên khách hàng",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("address", {
-      header: "Địa chỉ",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("province_name", {
+    columnHelper.accessor("provinceName", {
       header: "Tên tỉnh",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("chanel_zalo_sm_center", {
-      header: "Kênh Zalo",
+    columnHelper.accessor("area", {
+      header: "Khu vực",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("image_link", {
-      header: "Liên kết hình ảnh",
-      cell: (info) => (
-        <a href={info.getValue()} target="_blank" rel="noopener noreferrer">
-          Xem ảnh
-        </a>
-      ),
+    columnHelper.accessor("price", {
+      header: "Giá",
+      cell: (info) =>
+        info.getValue() !== null ? info.getValue().toLocaleString() : "N/A",
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("code", {
+      header: "Mã giao dịch",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("productName", {
+      header: "Tên sản phẩm",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("time", {
+      header: "Thời gian giao dịch",
+      cell: (info) => new Date(info.getValue()).toLocaleString(), // Format the date for display
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("status", {
       header: "Trạng thái",
-      cell: (info) =>
-        info.getValue() === 1 ? (
-          <Chip
-            color="green"
-            value="Đang hoạt động"
-            className="tw-justify-center"
-          ></Chip>
-        ) : (
-          <Chip color="amber" value="Dừng hoạt động"></Chip>
-        ),
+      cell: (info) => (info.getValue() === 1 ? "Success" : "Failed"), // Map status codes to labels
       footer: (info) => info.column.id,
     }),
   ];
-
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     state: {
       globalFilter: filtering,
       sorting: sorting,
+    },
+    pageCount: Math.ceil((topupCounter ?? 0) / (query.sz || 1)),
+    //@ts-ignore
+    onPaginationChange: ({
+      pageIndex,
+      pageSize,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+    }) => {
+      setQuery({
+        ...query,
+        nu: pageIndex,
+        sz: pageSize,
+      });
     },
     // @ts-ignore
     onSortingChange: setSorting,
@@ -207,7 +165,7 @@ export default function ReportTable({}: Props) {
             }}
             className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
           >
-            {[5, 10, 15, 20, 25].map((pageSize) => (
+            {[20, 30, 40].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
@@ -220,41 +178,59 @@ export default function ReportTable({}: Props) {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-w-52">
-          <Input
+        <div className="tw-flex tw-flex-row tw-gap-3">
+          <div className="tw-w-52">
+            <Input
+              variant="outlined"
+              onChange={(e) => setKeyword(e.target.value)}
+              label="Tìm kiếm"
+            />
+          </div>
+          <Button
+            className="tw-flex tw-items-center tw-gap-3 tw-text-nowrap"
             variant="outlined"
-            value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
-            label="Tìm kiếm"
-          />
+            color="gray"
+          >
+            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
+          </Button>
         </div>
       </CardBody>
       <CardFooter className="tw-p-0 tw-overflow-scroll">
         <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
           <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className="tw-px-5 tw-py-2 tw-uppercase"
-                  >
-                    <Typography
-                      color="blue-gray"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-
-                      <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
-                    </Typography>
-                  </th>
-                ))}
+            {isFetching ? (
+              <tr>
+                <td colSpan={table.getVisibleLeafColumns().length}>
+                  <div className="tw-flex tw-justify-center tw-items-center tw-h-20">
+                    <Spinner />
+                  </div>
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className="tw-px-5 tw-py-2 tw-uppercase"
+                    >
+                      <Typography
+                        color="blue-gray"
+                        className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+
+                        <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              ))
+            )}
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
@@ -281,7 +257,8 @@ export default function ReportTable({}: Props) {
         <span className="tw-flex tw-items-center tw-gap-1">
           <Typography className="!tw-font-bold">Trang</Typography>
           <strong>
-            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} /{" "}
+            {table.getPageCount() ?? 0}
           </strong>
         </span>
         <div className="tw-flex tw-items-center tw-gap-2">

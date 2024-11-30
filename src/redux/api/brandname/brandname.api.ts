@@ -25,10 +25,14 @@ export const brandnameApi = createApi({
             ]
           : [TAGS.BRAND_NAME],
     }),
-    brandnameRangeDate: builder.query<TBrandnameRES[], TBrandnameRangeTimeREQ>({
-      query: () => ({
+    brandnameRangeDate: builder.query<
+      TBrandnameRES[],
+      Partial<TBrandnameRangeTimeREQ>
+    >({
+      query: (params) => ({
         url: `/api/report/brandname`,
         method: "GET",
+        params,
       }),
       providesTags: (results) =>
         results
@@ -41,10 +45,11 @@ export const brandnameApi = createApi({
             ]
           : [TAGS.BRAND_NAME],
     }),
-    brandnameCounter: builder.query<number, TBrandnameRangeTimeREQ>({
-      query: () => ({
+    brandnameCounter: builder.query<number, Partial<TBrandnameRangeTimeREQ>>({
+      query: (params) => ({
         url: `/api/report/brandname/counter`,
         method: "GET",
+        params,
       }),
     }),
   }),

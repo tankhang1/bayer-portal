@@ -44,7 +44,8 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import {
-  useIqrCounterTodayQuery,
+  useIqrCounterQuery,
+  useIqrRangeDateQuery,
   useIqrTodayQuery,
 } from "@/redux/api/iqr/iqr.api";
 import { TIqrRES } from "@/redux/api/iqr/iqr.response";
@@ -57,7 +58,10 @@ import { toast } from "react-toastify";
 import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
-
+type Props = {
+  query: Partial<TIqrRangeTimeREQ>;
+  setQuery: (query: Partial<TIqrRangeTimeREQ>) => void;
+};
 const statusMap = new Map<number, string>([
   [-99, "Hệ thống bị gián đoạn"],
   [-1, "Thiết bị không hoạt động"],
@@ -82,7 +86,7 @@ const MapLabel = new Map([
   ["loaJBL", "Loa JBL Partybox110"],
   ["", "Không trúng thưởng"],
 ]);
-export default function IQrTable() {
+export default function IQrConfirmTable({ query, setQuery }: Props) {
   const {
     register,
     handleSubmit,
@@ -97,23 +101,17 @@ export default function IQrTable() {
   const [openEditForm, setOpenEditForm] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
-  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
-    nu: 0,
-    sz: 20,
-    gateway: 2,
-    k: "",
-  });
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
-  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
 
+  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: iqrCounter } = useIqrCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
@@ -249,7 +247,7 @@ export default function IQrTable() {
       globalFilter: filtering,
       sorting: sorting,
     },
-    pageCount: Math.ceil((iqrCounter ?? 0) / (query.sz || 1)),
+    pageCount: Math.ceil((iqrCounter ?? 0) / (query?.sz || 1)),
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,

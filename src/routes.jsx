@@ -13,6 +13,9 @@ import {
   QrCodeIcon,
   ChartBarIcon,
   ChatBubbleOvalLeftIcon,
+  CheckIcon,
+  XMarkIcon,
+  MagnifyingGlassCircleIcon,
 } from "@heroicons/react/24/solid";
 import { GiftIcon } from "@heroicons/react/24/outline";
 
@@ -65,21 +68,53 @@ export const routes = [
 
   // },
   {
-    name: "iQr",
+    name: "Trong ngày",
+    pages: [
+      {
+        icon: <QrCodeIcon {...icon} />,
+        name: "Iqr trong ngày",
+        path: "/iqr/iqr-list",
+      },
+      {
+        icon: <CheckIcon {...icon} />,
+        name: "Đã duyệt",
+        path: "/iqr/iqr-list/today/confirm",
+      },
+      {
+        icon: <XMarkIcon {...icon} />,
+        name: "Từ chối",
+        path: "/iqr/iqr-list/today/reject",
+      },
+      {
+        name: "Chưa duyệt",
+        path: "/iqr/iqr-list/today/unknown",
+      },
+    ],
+  },
+  {
     icon: <QrCodeIcon {...icon} />,
-    path: "/iqr/iqr-list",
-    // pages: [
-    //   {
-    //     icon: <Typography {...text}>A</Typography>,
-    //     name: "analytics",
-    //     path: "/dashboard/analytics",
-    //   },
-    //   {
-    //     icon: <Typography {...text}>S</Typography>,
-    //     name: "sales",
-    //     path: "/dashboard/sales",
-    //   },
-    // ],
+    name: "Danh sách iQr",
+    pages: [
+      {
+        icon: <MagnifyingGlassCircleIcon {...icon} />,
+        name: "Tra cứu",
+        path: "/iqr/search",
+      },
+      {
+        icon: <CheckIcon {...icon} />,
+        name: "Đã duyệt",
+        path: "/iqr/iqr-list/confirm",
+      },
+      {
+        icon: <XMarkIcon {...icon} />,
+        name: "Từ chối",
+        path: "/iqr/iqr-list/reject",
+      },
+      {
+        name: "Chưa duyệt",
+        path: "/iqr/iqr-list/unknown",
+      },
+    ],
   },
   {
     name: "Topup",
@@ -91,11 +126,11 @@ export const routes = [
     icon: <ChatBubbleOvalLeftIcon {...icon} />,
     path: "/sms/sms-list",
   },
-  // {
-  //   name: "Báo cáo",
-  //   icon: <ChartBarIcon {...icon} />,
-  //   path: "/report",
-  // },
+  {
+    name: "Báo cáo",
+    icon: <ChartBarIcon {...icon} />,
+    path: "/report",
+  },
   // {
   //   name: "pages",
   //   title: "pages",

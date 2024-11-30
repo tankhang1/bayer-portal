@@ -25,7 +25,7 @@ export const topupApi = createApi({
             ]
           : [TAGS.TOPUP],
     }),
-    topupRangeDate: builder.query<TTopupRES[], TTopupRangeTimeREQ>({
+    topupRangeDate: builder.query<TTopupRES[], Partial<TTopupRangeTimeREQ>>({
       query: (params) => ({
         url: `/api/report/topup`,
         method: "GET",
@@ -42,7 +42,7 @@ export const topupApi = createApi({
             ]
           : [TAGS.TOPUP],
     }),
-    topupCounter: builder.query<number, TTopupRangeTimeREQ>({
+    topupCounter: builder.query<number, Partial<TTopupRangeTimeREQ>>({
       query: (params) => ({
         url: `/api/report/topup/counter`,
         method: "GET",

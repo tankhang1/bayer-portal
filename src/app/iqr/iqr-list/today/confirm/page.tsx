@@ -4,11 +4,11 @@
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
-const IQrTable = dynamic(() => import("./iqr-table"), {
+const IQrTable = dynamic(() => import("./iqr-confirm-table"), {
   ssr: false,
 });
 
-export default function IqrPage() {
+export default function IqrConfirmPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {

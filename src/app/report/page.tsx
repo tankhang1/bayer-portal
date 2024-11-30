@@ -1,3 +1,4 @@
+"use client";
 // @material-tailwind/react
 import {
   Button,
@@ -11,17 +12,63 @@ import {
   Typography,
   Input,
 } from "@/components/MaterialTailwind";
+import { TIqrRangeTimeREQ } from "@/redux/api/iqr/iqr.request";
+import { TTopupRangeTimeREQ } from "@/redux/api/topup/topup.request";
 
 // @heroicons/react
 import { ChevronDownIcon, DocumentIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
 
 // component
 import dynamic from "next/dynamic";
-const ReportTable = dynamic(() => import("./report-table"), {
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+const SMSTable = dynamic(() => import("./components/sms-table"), {
   ssr: false,
 });
+const IQRTable = dynamic(() => import("./components/iqr-table"), {
+  ssr: false,
+});
+const TopupTable = dynamic(() => import("./components/topup-table"), {
+  ssr: false,
+});
+type TQuery = {
+  st: Date;
+  ed: Date;
+};
 
 export default function ReportPage() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<TQuery>();
+  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
+    nu: 0,
+    sz: 20,
+    k: "",
+    gateway: 2,
+    st: +(format(new Date(), "yyyyMMdd") + "0000"),
+    ed: +(format(new Date(), "yyyyMMdd") + "2359"),
+  });
+  const onSubmit = (params: TQuery) => {
+    setQuery({
+      ...query,
+      st: +(format(params.st, "yyyyMMdd") + "0000"),
+      ed: +(format(params.ed, "yyyyMMdd") + "2359"),
+    });
+  };
+  const onReset = () => {
+    setQuery({
+      nu: 0,
+      sz: 20,
+      k: "",
+      gateway: 2,
+      st: +(format(new Date(), "yyyyMMdd") + "0000"),
+      ed: +(format(new Date(), "yyyyMMdd") + "2359"),
+    });
+  };
   return (
     <section className="tw-mb-4">
       <div className="tw-mt-8 tw-flex tw-items-center tw-justify-between">
@@ -41,11 +88,11 @@ export default function ReportPage() {
                 size="lg"
                 type="date"
                 label="Ngày bắt đầu"
-                placeholder="name@mail.com"
                 className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                 labelProps={{
                   className: "before:content-none after:content-none",
                 }}
+                {...register("st")}
               />
               <Input
                 size="lg"
@@ -56,28 +103,32 @@ export default function ReportPage() {
                 labelProps={{
                   className: "before:content-none after:content-none",
                 }}
+                {...register("ed")}
               />
 
               <div className="tw-flex tw-flex-row tw-items-center tw-gap-3">
-                <Button variant="filled" className="flex-shrink-0 tw-w-full">
+                <Button
+                  variant="filled"
+                  className="flex-shrink-0 tw-w-full"
+                  onClick={handleSubmit(onSubmit)}
+                >
                   Lọc
                 </Button>
-                <Button variant="outlined" className="flex-shrink-0 tw-w-full">
+                <Button
+                  variant="outlined"
+                  className="flex-shrink-0 tw-w-full"
+                  onClick={onReset}
+                >
                   Thu hồi
                 </Button>
               </div>
             </PopoverContent>
           </Popover>
-          <Button
-            className="tw-flex tw-items-center tw-gap-3"
-            variant="outlined"
-            color="gray"
-          >
-            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
-          </Button>
         </div>
       </div>
-      <ReportTable />
+      <SMSTable query={query} setQuery={setQuery} />
+      <IQRTable query={query} setQuery={setQuery} />
+      <TopupTable query={query} setQuery={setQuery} />
     </section>
   );
 }

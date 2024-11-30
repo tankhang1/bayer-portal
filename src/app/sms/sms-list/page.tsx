@@ -38,6 +38,7 @@ export default function TopupPage() {
   const [query, setQuery] = useState<TBrandnameRangeTimeREQ>({
     nu: 0,
     sz: 20,
+    k: "",
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
   });
@@ -53,6 +54,7 @@ export default function TopupPage() {
     setQuery({
       nu: 0,
       sz: 20,
+      k: "",
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),
     });

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 // @material-tailwind/react
@@ -26,8 +27,11 @@ import ProfileInfoCard from "@/widgets/cards/profile-info-card";
 import Conversations from "./components/conversations";
 import PlatformSettings from "./components/platform-settings";
 import BlogCards from "./components/blog-cards";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function Profile() {
+  const { username } = useSelector((state: RootState) => state.app);
   return (
     <>
       {/* Profile Header */}
@@ -47,17 +51,17 @@ export default function Profile() {
               />
               <div>
                 <Typography variant="h5" color="blue-gray" className="tw-mb-1">
-                  Richard Davis
+                  {username}
                 </Typography>
                 <Typography
                   variant="small"
                   className="!tw-font-normal !tw-text-blue-gray-600"
                 >
-                  CEO / Co-Founder
+                  Trực Web
                 </Typography>
               </div>
             </div>
-            <div className="tw-w-full lg:tw-w-96">
+            {/* <div className="tw-w-full lg:tw-w-96">
               <Tabs id="profile-overview-tab" value="app">
                 <TabsHeader>
                   <Tab value="app">
@@ -74,33 +78,19 @@ export default function Profile() {
                   </Tab>
                 </TabsHeader>
               </Tabs>
-            </div>
+            </div> */}
           </div>
           <div className="tw-gird-cols-1 tw-mb-12 tw-grid tw-gap-12 tw-px-4 lg:tw-grid-cols-2 xl:tw-grid-cols-3">
             {/* Platform Setting */}
-            <PlatformSettings />
+            {/* <PlatformSettings /> */}
             {/* ProfileInfo Card */}
             <ProfileInfoCard
-              title="Profile Information"
+              title="Thông tin nhân viên"
               description="Hi, I'm Alec Thompson, Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
               details={{
-                "full Name": "Alec M. Thompson",
-                mobile: "(44) 123 1234 123",
-                email: "alecthompson@mail.com",
-                location: "USA",
-                social: (
-                  <div className="tw-flex tw-items-center tw-gap-2">
-                    <IconButton variant="text" size="sm">
-                      <i className="fa-brands tw-text-base fa-facebook tw-text-blue-700" />
-                    </IconButton>
-                    <IconButton variant="text" size="sm">
-                      <i className="fa-brands tw-text-base fa-twitter tw-text-blue-400" />
-                    </IconButton>
-                    <IconButton variant="text" size="sm">
-                      <i className="fa-brands tw-text-base fa-instagram tw-text-purple-500" />
-                    </IconButton>
-                  </div>
-                ),
+                "Tên đầy đủ": "Alec M. Thompson",
+                "Số điện thoại": "(44) 123 1234 123",
+                Email: "alecthompson@mail.com",
               }}
               action={
                 <Tooltip content="Edit Profile">
@@ -111,7 +101,7 @@ export default function Profile() {
               }
             />
 
-            <Conversations />
+            {/* <Conversations /> */}
           </div>
 
           <BlogCards />

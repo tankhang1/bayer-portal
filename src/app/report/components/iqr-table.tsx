@@ -37,6 +37,7 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
   ChevronUpDownIcon,
+  DocumentIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -82,7 +83,11 @@ const MapLabel = new Map([
   ["loaJBL", "Loa JBL Partybox110"],
   ["", "Không trúng thưởng"],
 ]);
-export default function IQrTable() {
+type Props = {
+  query: Partial<TIqrRangeTimeREQ>;
+  setQuery: (query: any) => void;
+};
+export default function IQrTable({ query, setQuery }: Props) {
   const {
     register,
     handleSubmit,
@@ -97,18 +102,19 @@ export default function IQrTable() {
   const [openEditForm, setOpenEditForm] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
-  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
-    nu: 0,
-    sz: 20,
-    gateway: 2,
-    k: "",
-  });
+  const [keyword, setKeyword] = useState("");
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
+    {
+      ...query,
+      k: keyword,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
   const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -374,13 +380,21 @@ export default function IQrTable() {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-w-52">
-          <Input
+        <div className="tw-flex tw-flex-row tw-gap-3">
+          <div className="tw-w-52">
+            <Input
+              variant="outlined"
+              onChange={(e) => setKeyword(e.target.value)}
+              label="Tìm kiếm"
+            />
+          </div>
+          <Button
+            className="tw-flex tw-items-center tw-gap-3 tw-text-nowrap"
             variant="outlined"
-            value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
-            label="Tìm kiếm"
-          />
+            color="gray"
+          >
+            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
+          </Button>
         </div>
       </CardBody>
       <CardFooter className="tw-p-0 tw-overflow-scroll">

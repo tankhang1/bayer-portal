@@ -44,7 +44,9 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import {
+  useIqrCounterQuery,
   useIqrCounterTodayQuery,
+  useIqrRangeDateQuery,
   useIqrTodayQuery,
 } from "@/redux/api/iqr/iqr.api";
 import { TIqrRES } from "@/redux/api/iqr/iqr.response";
@@ -82,7 +84,7 @@ const MapLabel = new Map([
   ["loaJBL", "Loa JBL Partybox110"],
   ["", "Không trúng thưởng"],
 ]);
-export default function IQrTable() {
+export default function IQrConfirmTable() {
   const {
     register,
     handleSubmit,
@@ -97,14 +99,15 @@ export default function IQrTable() {
   const [openEditForm, setOpenEditForm] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
+  // Use the column helper for type safety
+  const columnHelper = createColumnHelper<TIqrRES>();
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
     sz: 20,
     gateway: 2,
+    s: 2,
     k: "",
   });
-  // Use the column helper for type safety
-  const columnHelper = createColumnHelper<TIqrRES>();
   const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,

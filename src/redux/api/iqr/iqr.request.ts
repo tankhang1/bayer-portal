@@ -4,6 +4,9 @@ export type TIqrRangeTimeREQ = {
   sz: number;
   st: number;
   ed: number;
+  k: string;
+  s: number;
+  gateway: number;
 };
 
 export type TIqrExportREQ = {
@@ -15,5 +18,5 @@ export type TIqrUpdateREQ = {
   name: string;
   code: string;
   image_confirm: string;
-  address:string;
+  address: string;
 };
