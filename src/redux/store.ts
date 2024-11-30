@@ -5,6 +5,7 @@ import { iqrApi } from "./api/iqr/iqr.api";
 import { brandnameApi } from "./api/brandname/brandname.api";
 import { topupApi } from "./api/topup/topup.api";
 import { rtkQueryErrorLogger } from "./middlewares/errorMiddleware";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 export const store = configureStore({
   reducer: {
@@ -19,10 +20,11 @@ export const store = configureStore({
       .concat(authApi.middleware)
       .concat(iqrApi.middleware)
       .concat(brandnameApi.middleware)
-      .concat(topupApi.middleware),
+      .concat(topupApi.middleware)
+      .concat(rtkQueryErrorLogger),
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+setupListeners(store.dispatch);
+
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
