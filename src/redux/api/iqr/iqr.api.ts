@@ -61,6 +61,34 @@ export const iqrApi = createApi({
         },
       }),
     }),
+    iqrSearch: builder.query<TIqrRES[], Partial<TIqrRangeTimeREQ>>({
+      query: (params) => ({
+        url: `/api/report/iqr/search`,
+        method: "GET",
+        params,
+      }),
+
+      providesTags: (results) =>
+        results
+          ? [
+              ...results.map(({ id }) => ({
+                type: TAGS.IQR,
+                id,
+              })),
+              TAGS.IQR,
+            ]
+          : [TAGS.IQR],
+    }),
+    iqrSearchCounter: builder.query<number, Partial<TIqrRangeTimeREQ>>({
+      query: (params) => ({
+        url: `/api/report/iqr/search/counter`,
+        method: "GET",
+        params: {
+          ...params,
+          gateway: 2,
+        },
+      }),
+    }),
     exportIqrData: builder.mutation<TIqrExportRES, TIqrExportREQ>({
       query: (body) => ({
         url: `/api/report/iqr/excel`,
@@ -71,6 +99,8 @@ export const iqrApi = createApi({
   }),
 });
 export const {
+  useIqrSearchCounterQuery,
+  useIqrSearchQuery,
   useIqrCounterTodayQuery,
   useIqrTodayQuery,
   useIqrRangeDateQuery,

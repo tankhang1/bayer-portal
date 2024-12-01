@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -46,6 +46,8 @@ import Image from "next/image";
 import {
   useIqrCounterQuery,
   useIqrRangeDateQuery,
+  useIqrSearchCounterQuery,
+  useIqrSearchQuery,
   useIqrTodayQuery,
 } from "@/redux/api/iqr/iqr.api";
 import { TIqrRES } from "@/redux/api/iqr/iqr.response";
@@ -105,26 +107,17 @@ export default function SearchTable({ keyword }: Props) {
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
     sz: 20,
+    gateway: 2,
     k: "",
   });
-  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(
-    {
-      k: keyword,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
-  const { data: iqrCounter } = useIqrCounterQuery(
-    {
-      k: keyword,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const { data, isFetching: isFetchingIqr } = useIqrSearchQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: iqrCounter } = useIqrSearchCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
@@ -361,6 +354,9 @@ export default function SearchTable({ keyword }: Props) {
         });
     }
   };
+  useEffect(() => {
+    setQuery({ ...query, k: keyword });
+  }, [keyword]);
   return (
     <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">
       <CardBody className="tw-flex tw-items-center tw-px-4 tw-justify-end">
