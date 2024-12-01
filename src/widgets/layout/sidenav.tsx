@@ -50,7 +50,7 @@ type PropTypes = {
 };
 
 export default function Sidenav({
-  brandImg = "/img/logo-yis.png",
+  brandImg = "/img/yis.png",
   brandName = "Yis Martech",
 }: PropTypes) {
   const pathname = usePathname();

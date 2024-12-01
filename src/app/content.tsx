@@ -31,9 +31,7 @@ export default function InnerContent({
       {!isSimpleLayout && (
         <Sidenav
           routes={routes}
-          brandImg={
-            sidenavType === "dark" ? "/img/logo-yis.png" : "/img/logo-yis.png"
-          }
+          brandImg={sidenavType === "dark" ? "/img/yis.png" : "/img/yis.png"}
         />
       )}
       <div className={`${isSimpleLayout ? "m-0" : "tw-p-4 xl:tw-ml-80"}`}>

@@ -34,7 +34,7 @@ export default function RootLayout({
           data-site="YOUR_DOMAIN_HERE"
           src="https://api.nepcha.com/js/nepcha-analytics.js"
         />
-        <link rel="icon" type="image/svg+xml" href="/img/logo-yis.png" />
+        <link rel="icon" type="image/svg+xml" href="/img/yis.png" />
         <title>Yis Martech</title>
       </head>
       <body className={roboto.className}>
