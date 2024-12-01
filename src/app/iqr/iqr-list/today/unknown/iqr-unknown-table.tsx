@@ -133,6 +133,50 @@ export default function IQrUnknownTable() {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("status", {
+      header: "Duyệt",
+      cell: (info) =>
+        info.getValue() == 2 || info.getValue() == 3 ? (
+          <IconButton
+            variant="outlined"
+            className="tw-border-blue-700"
+            disabled
+          >
+            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
+          </IconButton>
+        ) : (
+          <IconButton
+            onClick={() => handleOpenDialog(data?.[info.row.index])}
+            variant="outlined"
+            className="tw-border-red-700"
+          >
+            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
+          </IconButton>
+        ),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("status", {
+      header: "Chỉnh sửa",
+      cell: (info) => (
+        <IconButton
+          variant="outlined"
+          className="tw-border-green-700"
+          onClick={() => {
+            setOpenEditForm(true);
+            setValue("address", data?.[info.row.index]?.province_name || "");
+            setValue("name", data?.[info.row.index]?.fullname || "");
+            setValue(
+              "image_confirm",
+              data?.[info.row.index]?.image_confirm || ""
+            );
+            setValue("code", data?.[info.row.index]?.code || "");
+          }}
+        >
+          <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
+        </IconButton>
+      ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("product_name", {
       header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
@@ -182,51 +226,7 @@ export default function IQrUnknownTable() {
         ),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("status", {
-      header: "Duyệt",
-      cell: (info) =>
-        info.getValue() == 2 || info.getValue() == 3 ? (
-          <IconButton
-            variant="outlined"
-            className="tw-border-blue-700"
-            disabled
-          >
-            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
-          </IconButton>
-        ) : (
-          <IconButton
-            onClick={() => handleOpenDialog(data?.[info.row.index])}
-            variant="outlined"
-            className="tw-border-red-700"
-          >
-            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
-          </IconButton>
-        ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("status", {
-      header: "Chỉnh sửa",
-      cell: (info) =>
-        info.getValue() === 2 && (
-          <IconButton
-            variant="outlined"
-            className="tw-border-green-700"
-            onClick={() => {
-              setOpenEditForm(true);
-              setValue("address", data?.[info.row.index]?.province_name || "");
-              setValue("name", data?.[info.row.index]?.fullname || "");
-              setValue(
-                "image_confirm",
-                data?.[info.row.index]?.image_confirm || ""
-              );
-              setValue("code", data?.[info.row.index]?.code || "");
-            }}
-          >
-            <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
-          </IconButton>
-        ),
-      footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor("province", {
       header: "Tỉnh đăng ký",
       cell: (info) => info.getValue(),

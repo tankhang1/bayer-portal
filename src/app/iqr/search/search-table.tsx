@@ -208,25 +208,24 @@ export default function SearchTable({ keyword }: Props) {
     }),
     columnHelper.accessor("status", {
       header: "Chỉnh sửa",
-      cell: (info) =>
-        info.getValue() === 2 && (
-          <IconButton
-            variant="outlined"
-            className="tw-border-green-700"
-            onClick={() => {
-              setOpenEditForm(true);
-              setValue("address", data?.[info.row.index]?.province_name || "");
-              setValue("name", data?.[info.row.index]?.fullname || "");
-              setValue(
-                "image_confirm",
-                data?.[info.row.index]?.image_confirm || ""
-              );
-              setValue("code", data?.[info.row.index]?.code || "");
-            }}
-          >
-            <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
-          </IconButton>
-        ),
+      cell: (info) => (
+        <IconButton
+          variant="outlined"
+          className="tw-border-green-700"
+          onClick={() => {
+            setOpenEditForm(true);
+            setValue("address", data?.[info.row.index]?.province_name || "");
+            setValue("name", data?.[info.row.index]?.fullname || "");
+            setValue(
+              "image_confirm",
+              data?.[info.row.index]?.image_confirm || ""
+            );
+            setValue("code", data?.[info.row.index]?.code || "");
+          }}
+        >
+          <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
+        </IconButton>
+      ),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("province", {
