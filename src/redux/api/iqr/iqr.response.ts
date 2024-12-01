@@ -22,10 +22,20 @@ export type TIqrRES = {
   time_finish: string | null; // Corresponds to `String time_finish`
   status: number; // Corresponds to `int status`
   image_confirm: string | null; // Corresponds to `String image_confirm`
+  note: string;
+  province_name_agent: string;
+  address: string;
 };
 
 export type TIqrExportRES = {
   data: string;
   status: number;
   message: string;
+};
+
+export type TProvince = {
+  id: number;
+  code: string;
+  name: string;
+  area: string;
 };

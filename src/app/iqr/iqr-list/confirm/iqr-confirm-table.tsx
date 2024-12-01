@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -31,6 +31,8 @@ import {
   DialogFooter,
   DialogBody,
   Spinner,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 
 // @heroicons/react
@@ -44,6 +46,7 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import {
+  useGetProvincesQuery,
   useIqrCounterQuery,
   useIqrRangeDateQuery,
   useIqrTodayQuery,
@@ -69,10 +72,11 @@ const statusMap = new Map<number, string>([
   [-3, "Mã không có trong lịch sử"],
   [-4, "Không tồn tại"],
   [-5, "Không có giải thưởng 1 và giải thưởng 2"],
-  [-6, "Trạng thái sai"],
+  [-6, "Từ chối duyệt thành công"],
   [-7, "Đã thành công"],
   [-8, "Cập nhật trước khi xác nhận"],
-  [0, "Quá trình mã thành công"],
+  [-9, "Bạn không phải là đối tượng thuộc chương trình"],
+  [0, "Duyệt thành công"],
   [1, "Chờ tải lên hình ảnh"],
   [2, "Xác nhận bởi đại lý"],
   [3, "Tải lên lại"],
@@ -103,7 +107,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-
+  const { data: provinces } = useGetProvincesQuery();
   const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -166,6 +170,11 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
               data?.[info.row.index]?.image_confirm || ""
             );
             setValue("code", data?.[info.row.index]?.code || "");
+            setValue("note", data?.[info.row.index]?.note || "");
+            setValue(
+              "province_name_agent",
+              data?.[info.row.index]?.province_name_agent || ""
+            );
           }}
         >
           <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
@@ -225,6 +234,21 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
 
     columnHelper.accessor("province", {
       header: "Tỉnh đăng ký",
+      cell: (info) => mapProvince(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("province_name_agent", {
+      header: "Tỉnh xác thực",
+      cell: (info) => mapProvince(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("address", {
+      header: "Địa chỉ",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("note", {
+      header: "Ghi chú",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -239,7 +263,13 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
       footer: (info) => info.column.id,
     }),
   ];
-
+  const mapProvince = useCallback(
+    (code: string) => {
+      if (!code) return "";
+      return provinces?.find((province) => province.code === code)?.name;
+    },
+    [provinces]
+  );
   const table = useReactTable({
     data: (data || []) as TIqrRES[],
     columns,
@@ -602,11 +632,41 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
             label="Tên nông dân"
             {...register("name")}
           />
+          <Select
+            variant="outlined"
+            id="province_name_agent"
+            label="Chọn tỉnh thành"
+            className="tw-text-black"
+            value={watch("province_name_agent")}
+            selected={(element) =>
+              element &&
+              React.cloneElement(element, {
+                disabled: true,
+                className:
+                  "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+              })
+            }
+            onChange={(value) => {
+              setValue("province_name_agent", value || "");
+            }}
+          >
+            {/* <Option value="">Chọn tỉnh thành</Option> */}
+            {provinces?.map((province) => (
+              <Option
+                key={province.code}
+                value={province.code}
+                className="tw-text-black"
+              >
+                {province.name}
+              </Option>
+            ))}
+          </Select>
           <Input
             placeholder="Địa chỉ"
             label="Địa chỉ"
             {...register("address")}
           />
+          <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
         </DialogBody>
         <DialogFooter className="tw-gap-3">
           <Button

@@ -33,7 +33,6 @@ export const routes = [
     // layout: "dashboard",
     name: "Admin",
     disabled: true,
-    path: "/pages/profile/profile-overview",
     icon: (
       <Avatar
         size="sm"

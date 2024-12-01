@@ -19,4 +19,6 @@ export type TIqrUpdateREQ = {
   code: string;
   image_confirm: string;
   address: string;
+  note: string;
+  province_name_agent: string;
 };

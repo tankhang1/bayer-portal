@@ -1,6 +1,6 @@
 import baseQuery from "@/redux/middlewares/baseQuery";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { TIqrExportRES, TIqrRES } from "./iqr.response";
+import { TIqrExportRES, TIqrRES, TProvince } from "./iqr.response";
 import { TIqrExportREQ, TIqrRangeTimeREQ, TIqrTodayREQ } from "./iqr.request";
 import { TAGS } from "@/constants";
 
@@ -96,9 +96,26 @@ export const iqrApi = createApi({
         body,
       }),
     }),
+    getProvinces: builder.query<TProvince[], void>({
+      query: () => ({
+        url: `/api/report/province`,
+        method: "GET",
+      }),
+      providesTags: (results) =>
+        results
+          ? [
+              ...results.map(({ id }) => ({
+                type: TAGS.IQR,
+                id,
+              })),
+              TAGS.IQR,
+            ]
+          : [TAGS.IQR],
+    }),
   }),
 });
 export const {
+  useGetProvincesQuery,
   useIqrSearchCounterQuery,
   useIqrSearchQuery,
   useIqrCounterTodayQuery,
