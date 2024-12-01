@@ -136,7 +136,7 @@ export default function IQrUnknownTable() {
     columnHelper.accessor("status", {
       header: "Duyệt",
       cell: (info) =>
-        info.getValue() == 2 || info.getValue() == 3 ? (
+        info.getValue() == 2 ? (
           <IconButton
             variant="outlined"
             className="tw-border-blue-700"
@@ -490,14 +490,16 @@ export default function IQrUnknownTable() {
 
         <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
           <div className="tw-flex tw-gap-6">
-            <Image
-              src={iqrDetail?.image_confirm || ""}
-              width={192}
-              height={192}
-              alt="Product"
-              className="tw-object-cover tw-w-48 tw-h-48"
-              onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
-            />
+            {iqrDetail?.image_confirm && (
+              <Image
+                src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
+                width={192}
+                height={192}
+                alt="Product"
+                className="tw-object-cover tw-w-48 tw-h-48"
+                onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
+              />
+            )}
             <div>
               <Typography variant="paragraph" color="black">
                 {iqrDetail?.time_active}
@@ -562,13 +564,15 @@ export default function IQrUnknownTable() {
         </DialogHeader>
 
         <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          <Image
-            src={previewImage || ""}
-            width={300}
-            height={300}
-            alt="Product"
-            className="tw-object-cover tw-w-[420px] tw-h-[420px]"
-          />
+          {previewImage && (
+            <Image
+              src={`${previewImage || ""}?nocache=${Date.now()}`}
+              width={300}
+              height={300}
+              alt="Product"
+              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
+            />
+          )}
         </DialogBody>
       </Dialog>
       <Dialog open={openEditForm} handler={setOpenEditForm}>
@@ -586,13 +590,15 @@ export default function IQrUnknownTable() {
                 handleFileChange(e);
               }}
             />
-            <Image
-              src={watch().image_confirm}
-              width={300}
-              height={300}
-              alt="Image"
-              className="tw-w-64 tw-h-64"
-            />
+            {watch().image_confirm && (
+              <Image
+                src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
+                width={300}
+                height={300}
+                alt="Image"
+                className="tw-w-64 tw-h-64"
+              />
+            )}
           </div>
 
           <Input
