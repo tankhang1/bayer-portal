@@ -76,11 +76,13 @@ const statusMap = new Map<number, string>([
   [-7, "Đã thành công"],
   [-8, "Cập nhật trước khi xác nhận"],
   [-9, "Bạn không phải là đối tượng thuộc chương trình"],
+  [-10, "Mã code không tồn tại"],
   [0, "Duyệt thành công"],
   [1, "Chờ tải lên hình ảnh"],
   [2, "Xác nhận bởi đại lý"],
   [3, "Tải lên lại"],
   [4, "Đã xác nhận (hình ảnh đã tải lên)"],
+  [5, "Không có giải thưởng"],
 ]);
 
 const MapLabel = new Map([
@@ -363,7 +365,7 @@ export default function IQrRejectTable({ query, setQuery }: Props) {
       await uploadBase64Image(values.image_confirm, values.code);
       await updateIqr({
         ...values,
-        image_confirm: `https://reactive.yis.vn/upload-files/bayer/${values.code}.jpg`,
+        image_confirm: `https://reactive.yis.vn/${values.code}.jpg`,
       })
         .unwrap()
         .then((value) => {
