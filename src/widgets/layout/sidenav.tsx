@@ -127,7 +127,10 @@ export default function Sidenav({
       </IconButton>
       <List className="tw-text-inherit">
         {routes.map(
-          ({ name, icon, pages, title, divider, external, path }, key) =>
+          (
+            { name, icon, pages, disabled, title, divider, external, path },
+            key
+          ) =>
             pages ? (
               <React.Fragment key={key}>
                 {title && (
@@ -297,6 +300,7 @@ export default function Sidenav({
                           ? activeRouteClasses
                           : collapseItemClasses
                       }`}
+                      disabled={disabled}
                     >
                       <ListItemPrefix>{icon}</ListItemPrefix>
                       {name}

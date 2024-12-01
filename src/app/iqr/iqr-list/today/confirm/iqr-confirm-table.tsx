@@ -331,12 +331,13 @@ export default function IQrConfirmTable() {
     await rejectIqr({ code })
       .unwrap()
       .then((value) => {
-        toast.success(statusMap.get(value.status));
+        if (value.status === 0) toast.success("Từ chối thành công");
+        else toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
       .catch(() => {
-        toast.error("Từ chối thông tin thất bại");
+        toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
@@ -345,12 +346,14 @@ export default function IQrConfirmTable() {
     await confirmIqr({ code })
       .unwrap()
       .then((value) => {
-        toast.success(statusMap.get(value.status));
+        if (value.status === 0) {
+          toast.success("Xác nhận thành công");
+        } else toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
       .catch(() => {
-        toast.error("Xác nhận thông tin thất bại");
+        toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
@@ -360,11 +363,13 @@ export default function IQrConfirmTable() {
       await updateIqr(values)
         .unwrap()
         .then((value) => {
-          toast.success(statusMap.get(value.status));
+          if (value.status === 0) {
+            toast.success("Cập nhật thành công");
+          } else toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
         })
         .catch(() => {
-          toast.error("Cập nhật thông tin thất bại");
+          toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
         });
     } else {
@@ -376,12 +381,14 @@ export default function IQrConfirmTable() {
       })
         .unwrap()
         .then((value) => {
-          toast.success(statusMap.get(value.status));
+          if (value.status === 0) {
+            toast.success("Cập nhật thành công");
+          } else toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
           setIsLoadingUploadImage(false);
         })
         .catch(() => {
-          toast.error("Cập nhật thông tin thất bại");
+          toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
           setIsLoadingUploadImage(false);
         });
@@ -557,8 +564,7 @@ export default function IQrConfirmTable() {
               </Typography>
               <Typography variant="h5" color="black">
                 Giải thưởng:{" "}
-                {iqrDetail?.award1 ||
-                  iqrDetail?.award2 ||
+                {MapLabel.get(iqrDetail?.award1 || iqrDetail?.award2 || "") ||
                   "Chúc bạn may mắn lần sau"}
               </Typography>
             </div>

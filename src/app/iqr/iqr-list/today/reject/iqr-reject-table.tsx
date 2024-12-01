@@ -330,12 +330,13 @@ export default function IQrRejectTable() {
     await rejectIqr({ code })
       .unwrap()
       .then((value) => {
-        toast.success(statusMap.get(value.status));
+        if (value.status === 0) toast.success("Từ chối thành công");
+        else toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
       .catch(() => {
-        toast.error("Từ chối thông tin thất bại");
+        toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
@@ -344,12 +345,14 @@ export default function IQrRejectTable() {
     await confirmIqr({ code })
       .unwrap()
       .then((value) => {
-        toast.success(statusMap.get(value.status));
+        if (value.status === 0) {
+          toast.success("Xác nhận thành công");
+        } else toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
       .catch(() => {
-        toast.error("Xác nhận thông tin thất bại");
+        toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
@@ -359,11 +362,13 @@ export default function IQrRejectTable() {
       await updateIqr(values)
         .unwrap()
         .then((value) => {
-          toast.success(statusMap.get(value.status));
+          if (value.status === 0) {
+            toast.success("Cập nhật thành công");
+          } else toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
         })
         .catch(() => {
-          toast.error("Cập nhật thông tin thất bại");
+          toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
         });
     } else {
@@ -375,328 +380,323 @@ export default function IQrRejectTable() {
       })
         .unwrap()
         .then((value) => {
-          toast.success(statusMap.get(value.status));
+          if (value.status === 0) {
+            toast.success("Cập nhật thành công");
+          } else toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
           setIsLoadingUploadImage(false);
         })
         .catch(() => {
-          toast.error("Cập nhật thông tin thất bại");
+          toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
           setIsLoadingUploadImage(false);
         });
     }
   };
-  return (
-    <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">
-      <CardBody className="tw-flex tw-items-center tw-px-4 tw-justify-end">
-        <div className="tw-flex tw-gap-4 tw-w-full tw-items-center">
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-            className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
-          >
-            {[20, 30, 40].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </select>
-          <Typography
-            variant="small"
-            className="!tw-text-blue-gray-500 !tw-font-normal"
-          >
-            Số mục mỗi trang
-          </Typography>
-        </div>
-        <div className="tw-w-52">
-          <Input
-            variant="outlined"
-            value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
-            label="Tìm kiếm"
-          />
-        </div>
-      </CardBody>
-      <CardFooter className="tw-p-0 tw-overflow-scroll">
-        <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={Math.random()}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={Math.random()}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className="tw-px-5 tw-py-2 tw-uppercase"
+  <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">
+    <CardBody className="tw-flex tw-items-center tw-px-4 tw-justify-end">
+      <div className="tw-flex tw-gap-4 tw-w-full tw-items-center">
+        <select
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
+          className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
+        >
+          {[20, 30, 40].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              {pageSize}
+            </option>
+          ))}
+        </select>
+        <Typography
+          variant="small"
+          className="!tw-text-blue-gray-500 !tw-font-normal"
+        >
+          Số mục mỗi trang
+        </Typography>
+      </div>
+      <div className="tw-w-52">
+        <Input
+          variant="outlined"
+          value={filtering}
+          onChange={(e) => setFiltering(e.target.value)}
+          label="Tìm kiếm"
+        />
+      </div>
+    </CardBody>
+    <CardFooter className="tw-p-0 tw-overflow-scroll">
+      <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={Math.random()}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={Math.random()}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className="tw-px-5 tw-py-2 tw-uppercase"
+                >
+                  <Typography
+                    color="blue-gray"
+                    className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
                   >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+
+        <tbody>
+          {isFetchingIqr ? (
+            <tr>
+              <td colSpan={table.getVisibleLeafColumns().length}>
+                <div className="tw-flex tw-justify-center tw-items-center tw-h-20">
+                  <Spinner />
+                </div>
+              </td>
+            </tr>
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="!tw-border-y !tw-border-x-0">
                     <Typography
-                      color="blue-gray"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
+                      variant="small"
+                      className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
                     >
                       {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+                        cell.column.columnDef.cell,
+                        cell.getContext()
                       )}
-                      <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
                     </Typography>
-                  </th>
+                  </td>
                 ))}
               </tr>
-            ))}
-          </thead>
-
-          <tbody>
-            {isFetchingIqr ? (
-              <tr>
-                <td colSpan={table.getVisibleLeafColumns().length}>
-                  <div className="tw-flex tw-justify-center tw-items-center tw-h-20">
-                    <Spinner />
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="!tw-border-y !tw-border-x-0">
-                      <Typography
-                        variant="small"
-                        className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </Typography>
-                    </td>
-                  ))}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </CardFooter>
-      <div className="tw-flex tw-items-center tw-justify-end tw-gap-6 tw-px-10 tw-py-6">
-        <span className="tw-flex tw-items-center tw-gap-1">
-          <Typography className="!tw-font-bold">Trang</Typography>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
-          </strong>
-        </span>
-        <div className="tw-flex tw-items-center tw-gap-2">
-          <Button
-            variant="outlined"
-            size="sm"
-            onClick={() => {
-              table.previousPage();
-            }}
-            disabled={!table.getCanPreviousPage()}
-            className="disabled:tw-opacity-30"
-          >
-            <ChevronLeftIcon className="tw-w-4 tw-h-4 tw-stroke-blue-gray-900 tw-stroke-2" />
-          </Button>
-          <Button
-            variant="outlined"
-            size="sm"
-            onClick={() => {
-              table.nextPage();
-            }}
-            disabled={!table.getCanNextPage()}
-            className="disabled:tw-opacity-30"
-          >
-            <ChevronRightIcon className="tw-w-4 tw-h-4 tw-stroke-blue-gray-900 tw-stroke-2" />
-          </Button>
-        </div>
+            ))
+          )}
+        </tbody>
+      </table>
+    </CardFooter>
+    <div className="tw-flex tw-items-center tw-justify-end tw-gap-6 tw-px-10 tw-py-6">
+      <span className="tw-flex tw-items-center tw-gap-1">
+        <Typography className="!tw-font-bold">Trang</Typography>
+        <strong>
+          {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+        </strong>
+      </span>
+      <div className="tw-flex tw-items-center tw-gap-2">
+        <Button
+          variant="outlined"
+          size="sm"
+          onClick={() => {
+            table.previousPage();
+          }}
+          disabled={!table.getCanPreviousPage()}
+          className="disabled:tw-opacity-30"
+        >
+          <ChevronLeftIcon className="tw-w-4 tw-h-4 tw-stroke-blue-gray-900 tw-stroke-2" />
+        </Button>
+        <Button
+          variant="outlined"
+          size="sm"
+          onClick={() => {
+            table.nextPage();
+          }}
+          disabled={!table.getCanNextPage()}
+          className="disabled:tw-opacity-30"
+        >
+          <ChevronRightIcon className="tw-w-4 tw-h-4 tw-stroke-blue-gray-900 tw-stroke-2" />
+        </Button>
       </div>
-      <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Thông tin trúng giải</Typography>
-          <Typography variant="h5">Cào Nhanh Tay - Trúng Quà Ngay</Typography>
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setOpenDialog(false)}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
+    </div>
+    <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
+      <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+        <Typography variant="h3">Thông tin trúng giải</Typography>
+        <Typography variant="h5">Cào Nhanh Tay - Trúng Quà Ngay</Typography>
+        <IconButton
+          variant="text"
+          className="!tw-absolute tw-top-5 tw-right-5"
+          onClick={() => setOpenDialog(false)}
+        >
+          <XMarkIcon color="red" width={24} height={24} />
+        </IconButton>
+      </DialogHeader>
 
-        <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
-          <div className="tw-flex tw-gap-6">
-            {iqrDetail?.image_confirm && (
-              <Image
-                src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
-                width={192}
-                height={192}
-                alt="Product"
-                className="tw-object-cover tw-w-48 tw-h-48"
-                onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
-              />
-            )}
-            <div>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.time_active}
-              </Typography>
-              <Typography variant="h5" color="gray">
-                {iqrDetail?.product_name}
-              </Typography>
-
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.fullname}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.phone}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.code}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.province_name}
-              </Typography>
-              <Typography variant="h5" color="black">
-                Giải thưởng:{" "}
-                {iqrDetail?.award1 ||
-                  iqrDetail?.award2 ||
-                  "Chúc bạn may mắn lần sau"}
-              </Typography>
-            </div>
-          </div>
-        </DialogBody>
-        <DialogFooter className="tw-gap-3">
-          <Button
-            variant="gradient"
-            color="green"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingConfirm}
-            onClick={() => onConfirm(iqrDetail?.code || "")}
-          >
-            <span>Duyệt</span>
-          </Button>
-          <Button
-            variant="text"
-            color="red"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingReject}
-            onClick={() => onReject(iqrDetail?.code || "")}
-          >
-            <span>Từ chối</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Hình ảnh xác thực</Typography>
-
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setPreviewImage("")}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
-
-        <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          {previewImage && (
+      <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
+        <div className="tw-flex tw-gap-6">
+          {iqrDetail?.image_confirm && (
             <Image
-              src={`${previewImage || ""}?nocache=${Date.now()}`}
-              width={300}
-              height={300}
+              src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
+              width={192}
+              height={192}
               alt="Product"
-              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
+              className="tw-object-cover tw-w-48 tw-h-48"
+              onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
             />
           )}
-        </DialogBody>
-      </Dialog>
-      <Dialog open={openEditForm} handler={setOpenEditForm}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Cập nhật thông tin</Typography>
-        </DialogHeader>
+          <div>
+            <Typography variant="paragraph" color="black">
+              {iqrDetail?.time_active}
+            </Typography>
+            <Typography variant="h5" color="gray">
+              {iqrDetail?.product_name}
+            </Typography>
 
-        <DialogBody className="tw-flex tw-flex-col tw-gap-3">
-          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
-            <Input
-              placeholder="Hình ảnh giấy chứng nhận"
-              label="Hình ảnh giấy chứng nhận"
-              type="file"
-              onChange={(e) => {
-                handleFileChange(e);
-              }}
-            />
-            {watch().image_confirm && (
-              <Image
-                src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
-                width={300}
-                height={300}
-                alt="Image"
-                className="tw-w-64 tw-h-64"
-              />
-            )}
+            <Typography variant="paragraph" color="black">
+              {iqrDetail?.fullname}
+            </Typography>
+            <Typography variant="paragraph" color="black">
+              {iqrDetail?.phone}
+            </Typography>
+            <Typography variant="paragraph" color="black">
+              {iqrDetail?.code}
+            </Typography>
+            <Typography variant="paragraph" color="black">
+              {iqrDetail?.province_name}
+            </Typography>
+            <Typography variant="h5" color="black">
+              Giải thưởng:{" "}
+              {MapLabel.get(iqrDetail?.award1 || iqrDetail?.award2 || "") ||
+                "Chúc bạn may mắn lần sau"}
+            </Typography>
           </div>
+        </div>
+      </DialogBody>
+      <DialogFooter className="tw-gap-3">
+        <Button
+          variant="gradient"
+          color="green"
+          className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+          loading={isLoadingConfirm}
+          onClick={() => onConfirm(iqrDetail?.code || "")}
+        >
+          <span>Duyệt</span>
+        </Button>
+        <Button
+          variant="text"
+          color="red"
+          className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+          loading={isLoadingReject}
+          onClick={() => onReject(iqrDetail?.code || "")}
+        >
+          <span>Từ chối</span>
+        </Button>
+      </DialogFooter>
+    </Dialog>
+    <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
+      <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+        <Typography variant="h3">Hình ảnh xác thực</Typography>
 
-          <Input
-            placeholder="Tên nông dân"
-            label="Tên nông dân"
-            {...register("name")}
+        <IconButton
+          variant="text"
+          className="!tw-absolute tw-top-5 tw-right-5"
+          onClick={() => setPreviewImage("")}
+        >
+          <XMarkIcon color="red" width={24} height={24} />
+        </IconButton>
+      </DialogHeader>
+
+      <DialogBody className="tw-flex tw-justify-center tw-items-center">
+        {previewImage && (
+          <Image
+            src={`${previewImage || ""}?nocache=${Date.now()}`}
+            width={300}
+            height={300}
+            alt="Product"
+            className="tw-object-cover tw-w-[420px] tw-h-[420px]"
           />
-          <Select
-            variant="outlined"
-            id="province_name_agent"
-            label="Chọn tỉnh thành"
-            className="tw-text-black"
-            value={watch("province_name_agent")}
-            selected={(element) =>
-              element &&
-              React.cloneElement(element, {
-                disabled: true,
-                className:
-                  "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
-              })
-            }
-            onChange={(value) => {
-              setValue("province_name_agent", value || "");
+        )}
+      </DialogBody>
+    </Dialog>
+    <Dialog open={openEditForm} handler={setOpenEditForm}>
+      <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+        <Typography variant="h3">Cập nhật thông tin</Typography>
+      </DialogHeader>
+
+      <DialogBody className="tw-flex tw-flex-col tw-gap-3">
+        <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
+          <Input
+            placeholder="Hình ảnh giấy chứng nhận"
+            label="Hình ảnh giấy chứng nhận"
+            type="file"
+            onChange={(e) => {
+              handleFileChange(e);
             }}
-          >
-            {/* <Option value="">Chọn tỉnh thành</Option> */}
-            {provinces?.map((province) => (
-              <Option
-                key={province.code}
-                value={province.code}
-                className="tw-text-black"
-              >
-                {province.name}
-              </Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="Địa chỉ"
-            label="Địa chỉ"
-            {...register("address")}
           />
-          <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
-        </DialogBody>
-        <DialogFooter className="tw-gap-3">
-          <Button
-            variant="gradient"
-            color="green"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingUpdate || isLoadingUploadImage}
-            onClick={handleSubmit(onUpdate)}
-          >
-            <span>Cập nhật</span>
-          </Button>
-          <Button
-            variant="text"
-            color="red"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingReject}
-            onClick={() => setOpenEditForm(false)}
-          >
-            <span>Huỷ</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-    </Card>
-  );
+          {watch().image_confirm && (
+            <Image
+              src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
+              width={300}
+              height={300}
+              alt="Image"
+              className="tw-w-64 tw-h-64"
+            />
+          )}
+        </div>
+
+        <Input
+          placeholder="Tên nông dân"
+          label="Tên nông dân"
+          {...register("name")}
+        />
+        <Select
+          variant="outlined"
+          id="province_name_agent"
+          label="Chọn tỉnh thành"
+          className="tw-text-black"
+          value={watch("province_name_agent")}
+          selected={(element) =>
+            element &&
+            React.cloneElement(element, {
+              disabled: true,
+              className:
+                "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+            })
+          }
+          onChange={(value) => {
+            setValue("province_name_agent", value || "");
+          }}
+        >
+          {/* <Option value="">Chọn tỉnh thành</Option> */}
+          {provinces?.map((province) => (
+            <Option
+              key={province.code}
+              value={province.code}
+              className="tw-text-black"
+            >
+              {province.name}
+            </Option>
+          ))}
+        </Select>
+        <Input placeholder="Địa chỉ" label="Địa chỉ" {...register("address")} />
+        <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
+      </DialogBody>
+      <DialogFooter className="tw-gap-3">
+        <Button
+          variant="gradient"
+          color="green"
+          className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+          loading={isLoadingUpdate || isLoadingUploadImage}
+          onClick={handleSubmit(onUpdate)}
+        >
+          <span>Cập nhật</span>
+        </Button>
+        <Button
+          variant="text"
+          color="red"
+          className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+          loading={isLoadingReject}
+          onClick={() => setOpenEditForm(false)}
+        >
+          <span>Huỷ</span>
+        </Button>
+      </DialogFooter>
+    </Dialog>
+  </Card>;
 }

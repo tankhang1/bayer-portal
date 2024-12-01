@@ -29,37 +29,7 @@ const text = {
 };
 
 export const routes = [
-  {
-    // layout: "dashboard",
-    name: "Admin",
-    disabled: true,
-    icon: (
-      <Avatar
-        size="sm"
-        src="https://cdn-icons-png.flaticon.com/512/219/219986.png"
-      />
-    ),
-    // pages: [
-    //   {
-    //     layout: "dashboard",
-    //     icon: <Typography {...text}>M</Typography>,
-    //     name: "My profile",
-    //     path: "/pages/profile/profile-overview",
-    //   },
-    //   {
-    //     layout: "dashboard",
-    //     icon: <Typography {...text}>S</Typography>,
-    //     name: "settings",
-    //     path: "/pages/account/settings",
-    //   },
-    //   {
-    //     layout: "auth",
-    //     icon: <Typography {...text}>L</Typography>,
-    //     name: "logout",
-    //     path: "/auth/signin/basic",
-    //   },
-    // ],
-  },
+  
   // {
   //   name: "dashboard",
   //   icon: <RectangleGroupIcon {...icon} />,
