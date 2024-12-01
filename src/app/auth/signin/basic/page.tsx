@@ -41,9 +41,9 @@ export default function BasicPage() {
   };
 
   return (
-    <section className="tw-grid tw-grid-cols-1 xl:tw-grid-cols-2 tw-items-center tw-h-full">
-      <div className="tw-w-full tw-min-h-screen tw-grid tw-place-items-center">
-        <div className="tw-w-full">
+    <section className=" tw-h-full">
+      <div className="tw-w-full tw-min-h-screen tw-justify-center tw-items-center tw-flex">
+        <div className="tw-w-1/2">
           <div className="tw-text-center">
             <Typography variant="h2" className="!tw-font-bold tw-mb-4">
               Đăng nhập
@@ -104,6 +104,7 @@ export default function BasicPage() {
               fullWidth
               loading={isLoadingLogin}
               onClick={() => handleSubmit(onSubmit)()}
+              color="orange"
             >
               Đăng nhập
             </Button>
@@ -196,13 +197,13 @@ export default function BasicPage() {
           </div>
         </div>
       </div>
-      <div className="tw-p-8 tw-hidden xl:tw-block">
+      {/* <div className="tw-p-8 tw-hidden xl:tw-block">
         <img
           src="/img/bayer.jpg"
           alt="image"
           className="tw-object-cover tw-object-center tw-max-h-[calc(100vh-4rem)] tw-w-full tw-rounded-2xl"
         />
-      </div>
+      </div> */}
     </section>
   );
 }
