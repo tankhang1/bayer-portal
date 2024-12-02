@@ -50,7 +50,7 @@ type PropTypes = {
 };
 
 export default function Sidenav({
-  brandImg = "/img/yis.png",
+  brandImg = "/img/icam.png",
   brandName = "Yis Martech",
 }: PropTypes) {
   const pathname = usePathname();
@@ -105,16 +105,9 @@ export default function Sidenav({
     >
       <Link
         href="/"
-        className="tw-mb-2 tw-flex tw-items-center tw-gap-3 !tw-p-4"
+        className="tw-mb-2 tw-flex tw-items-center tw-mx-auto tw-gap-3 !tw-p-4"
       >
-        <img
-          src={brandImg}
-          className="tw-h-7 tw-w-7 tw-object-contain"
-          alt="logo"
-        />
-        <Typography variant="h6" color="blue-gray">
-          {brandName}
-        </Typography>
+        <img src={brandImg} className="tw-h-10 tw-object-contain" alt="logo" />
       </Link>
       <IconButton
         ripple={false}
