@@ -110,7 +110,7 @@ export default function TopupTable({ query, setQuery }: Props) {
     }),
     columnHelper.accessor("status", {
       header: "Trạng thái",
-      cell: (info) => (info.getValue() === 0 ? "Success" : "Failed"), // Map status codes to labels
+      cell: (info) => (info.getValue() === 0 ? "Thành công" : "Thất bại"), // Map status codes to labels
       footer: (info) => info.column.id,
     }),
   ];
