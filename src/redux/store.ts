@@ -6,6 +6,7 @@ import { brandnameApi } from "./api/brandname/brandname.api";
 import { topupApi } from "./api/topup/topup.api";
 import { rtkQueryErrorLogger } from "./middlewares/errorMiddleware";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { excelApi } from "./api/excel/excel.api";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     [iqrApi.reducerPath]: iqrApi.reducer,
     [topupApi.reducerPath]: topupApi.reducer,
     [brandnameApi.reducerPath]: brandnameApi.reducer,
+    [excelApi.reducerPath]: excelApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -21,6 +23,7 @@ export const store = configureStore({
       .concat(iqrApi.middleware)
       .concat(brandnameApi.middleware)
       .concat(topupApi.middleware)
+      .concat(excelApi.middleware)
       .concat(rtkQueryErrorLogger),
 });
 

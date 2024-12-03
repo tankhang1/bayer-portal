@@ -5,13 +5,14 @@ import {
   Dialog,
   DialogHeader,
   DialogBody,
-  DialogFooter,
   Input,
+  DialogFooter,
 } from "@/components/MaterialTailwind";
-import { TIqrRangeTimeREQ } from "@/redux/api/iqr/iqr.request";
+import { TBrandnameRangeTimeREQ } from "@/redux/api/brandname/brandname.request";
+import { useExportBrandnameExcelMutation } from "@/redux/api/excel/excel.api";
 
 // @heroicons/react
-import { DocumentIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, DocumentIcon } from "@heroicons/react/24/outline";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 import { format } from "date-fns";
 
@@ -20,33 +21,32 @@ import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-const IQrTable = dynamic(() => import("./iqr-reject-table"), {
+import { toast } from "react-toastify";
+const SMSTable = dynamic(() => import("./sms-table"), {
   ssr: false,
 });
-type TQueryIqr = {
+type TQuerySMS = {
   st: Date;
   ed: Date;
 };
-
-export default function IqrRejectPage() {
+export default function SMSPage() {
   const [openModal, setOpenModal] = useState(false);
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors },
-  } = useForm<TQueryIqr>();
-  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
+  } = useForm<TQuerySMS>();
+  const [query, setQuery] = useState<TBrandnameRangeTimeREQ>({
     nu: 0,
     sz: 20,
-    gateway: 2,
-    s: 3,
+    k: "",
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
   });
-
-  const onSubmit = (params: TQueryIqr) => {
+  const [exportSMSBrandname, { isLoading: isLoadingSMSBrandname }] =
+    useExportBrandnameExcelMutation();
+  const onSubmit = (params: TQuerySMS) => {
     setQuery({
       ...query,
       st: +(format(params.st, "yyyyMMdd") + "0000"),
@@ -57,13 +57,28 @@ export default function IqrRejectPage() {
     setQuery({
       nu: 0,
       sz: 20,
-      gateway: 2,
-      s: 3,
+      k: "",
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),
     });
-    setValue("st", new Date());
-    setValue("ed", new Date());
+  };
+  const onExportExcel = async () => {
+    await exportSMSBrandname({
+      ed: query.ed,
+      st: query.st,
+      k: query.k,
+    })
+      .unwrap()
+      .then((value: { status: number }) => {
+        if (value.status === 1) {
+          toast.success("Xuất dữ liệu thành công, vui lòng đợi trong giây lát");
+        } else {
+          toast.error("Xuất dữ liệu thất bại, vui lòng kiểm tra");
+        }
+      })
+      .catch(() => {
+        toast.error("Xuất dữ liệu thất bại, vui lòng kiểm tra");
+      });
   };
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -89,9 +104,18 @@ export default function IqrRejectPage() {
             />{" "}
             Lọc dữ liệu
           </Button>
+          <Button
+            className="tw-flex tw-items-center tw-gap-3"
+            variant="outlined"
+            color="gray"
+            loading={isLoadingSMSBrandname}
+            onClick={onExportExcel}
+          >
+            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
+          </Button>
         </div>
       </div>
-      <IQrTable query={query} setQuery={setQuery} />
+      <SMSTable setQuery={setQuery} query={query} />
       <Dialog open={openModal} handler={setOpenModal}>
         <DialogHeader>Lọc thông tin</DialogHeader>
 

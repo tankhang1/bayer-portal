@@ -312,7 +312,7 @@ export default function Sidenav({
             <ListItemPrefix>
               <ExclamationCircleIcon className="tw-w-5 tw-h-5 tw-text-inherit" />
             </ListItemPrefix>
-            Thoát
+            Đăng xuất
           </ListItem>
         </Link>
       </List>

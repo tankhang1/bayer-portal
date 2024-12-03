@@ -25,14 +25,12 @@ import {
   Badge,
   Chip,
   IconButton,
-  Spinner,
 } from "@material-tailwind/react";
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
   ChevronUpDownIcon,
-  DocumentIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
@@ -45,23 +43,16 @@ import { TTopupRES } from "@/redux/api/topup/topup.response";
 import { TTopupRangeTimeREQ } from "@/redux/api/topup/topup.request";
 
 type Props = {
-  query: Partial<TTopupRangeTimeREQ>;
-  setQuery: (query: Partial<TTopupRangeTimeREQ>) => void;
+  query: TTopupRangeTimeREQ;
+  setQuery: (query: TTopupRangeTimeREQ) => void;
 };
 export default function TopupTable({ query, setQuery }: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const { data, isFetching } = useTopupRangeDateQuery(
-    {
-      ...query,
-      k: keyword,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const { data, isFetching } = useTopupRangeDateQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const { data: topupCounter } = useTopupCounterQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -71,8 +62,18 @@ export default function TopupTable({ query, setQuery }: Props) {
 
   // Define columns with type safety
   const columns: ColumnDef<TTopupRES, any>[] = [
-    columnHelper.accessor("programName", {
-      header: "Tên chương trình",
+    // columnHelper.accessor("programName", {
+    //   header: "Tên chương trình",
+    //   cell: (info) => info.getValue(),
+    //   footer: (info) => info.column.id,
+    // }),
+    columnHelper.accessor("productCode", {
+      header: "Mã sản phẩm",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("productName", {
+      header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -86,16 +87,16 @@ export default function TopupTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("provinceName", {
-      header: "Tên tỉnh",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("area", {
-      header: "Khu vực",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
+    // columnHelper.accessor("provinceName", {
+    //   header: "Tên tỉnh",
+    //   cell: (info) => info.getValue(),
+    //   footer: (info) => info.column.id,
+    // }),
+    // columnHelper.accessor("area", {
+    //   header: "Khu vực",
+    //   cell: (info) => info.getValue(),
+    //   footer: (info) => info.column.id,
+    // }),
     columnHelper.accessor("price", {
       header: "Giá",
       cell: (info) =>
@@ -107,21 +108,17 @@ export default function TopupTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("productName", {
-      header: "Tên sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor("time", {
       header: "Thời gian giao dịch",
       cell: (info) => new Date(info.getValue()).toLocaleString(), // Format the date for display
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("status", {
-      header: "Trạng thái",
-      cell: (info) => (info.getValue() === 0 ? "Thành công" : "Thất bại"), // Map status codes to labels
-      footer: (info) => info.column.id,
-    }),
+    // columnHelper.accessor("status", {
+    //   header: "Trạng thái",
+    //   cell: (info) => (info.getValue() === 0 ? "Thành công" : "Thất bại"), // Map status codes to labels
+    //   footer: (info) => info.column.id,
+    // }),
   ];
   const table = useReactTable({
     data: data || [],
@@ -130,7 +127,7 @@ export default function TopupTable({ query, setQuery }: Props) {
       globalFilter: filtering,
       sorting: sorting,
     },
-    pageCount: Math.ceil((topupCounter ?? 0) / (query.sz || 1)),
+    pageCount: Math.ceil((topupCounter ?? 0) / query.sz),
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,
@@ -178,59 +175,40 @@ export default function TopupTable({ query, setQuery }: Props) {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-flex tw-flex-row tw-gap-3">
-          <div className="tw-w-52">
-            <Input
-              variant="outlined"
-              onChange={(e) => setKeyword(e.target.value)}
-              label="Tìm kiếm"
-            />
-          </div>
-          <Button
-            className="tw-flex tw-items-center tw-gap-3 tw-text-nowrap"
+        <div className="tw-w-52">
+          <Input
             variant="outlined"
-            color="gray"
-          >
-            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
-          </Button>
+            onChange={(e) => setQuery({ ...query, k: e.target.value })}
+            label="Tìm kiếm"
+          />
         </div>
       </CardBody>
       <CardFooter className="tw-p-0 tw-overflow-scroll">
         <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
           <thead>
-            {isFetching ? (
-              <tr>
-                <td colSpan={table.getVisibleLeafColumns().length}>
-                  <div className="tw-flex tw-justify-center tw-items-center tw-h-20">
-                    <Spinner />
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      className="tw-px-5 tw-py-2 tw-uppercase"
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className="tw-px-5 tw-py-2 tw-uppercase"
+                  >
+                    <Typography
+                      color="blue-gray"
+                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
                     >
-                      <Typography
-                        color="blue-gray"
-                        className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
 
-                        <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              ))
-            )}
+                      <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            ))}
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (

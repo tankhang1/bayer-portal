@@ -261,12 +261,12 @@ export default function IQrConfirmTable() {
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_active", {
-      header: "Thời gian mã kích hoạt",
+      header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_finish", {
-      header: "Thời gian hoàn thành",
+      header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -418,12 +418,12 @@ export default function IQrConfirmTable() {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-w-52">
+        <div className="tw-w-2/4">
           <Input
             variant="outlined"
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
-            label="Tìm kiếm"
+            label="Nhập mã số may mắn hoặc số điện thoại"
           />
         </div>
       </CardBody>

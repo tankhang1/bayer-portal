@@ -89,7 +89,7 @@ export const iqrApi = createApi({
         },
       }),
     }),
-    exportIqrData: builder.mutation<TIqrExportRES, TIqrExportREQ>({
+    exportIqrData: builder.mutation<TIqrExportRES, Partial<TIqrRangeTimeREQ>>({
       query: (body) => ({
         url: `/api/report/iqr/excel`,
         method: "POST",

@@ -12,3 +12,9 @@ export type TExcelRES = {
   newEntry: boolean; // Flag for new entries
   new: boolean; // Another flag for newness (redundant with `newEntry`)
 };
+
+export type TExcelDetailRES = {
+  data: string;
+  status: number;
+  message: string;
+};

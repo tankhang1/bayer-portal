@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -18,96 +18,112 @@ import {
 // @material-tailwind/react
 import {
   Card,
-  Input,
   Typography,
   Button,
   CardBody,
   CardFooter,
+  Chip,
   Spinner,
+  IconButton,
+  Input,
 } from "@material-tailwind/react";
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import {
-  useBrandnameCounterQuery,
-  useBrandnameRangeDateQuery,
-  useBrandnameTodayQuery,
-} from "@/redux/api/brandname/brandname.api";
-import { TBrandnameRES } from "@/redux/api/brandname/brandname.response";
-import { TBrandnameRangeTimeREQ } from "@/redux/api/brandname/brandname.request";
+  ChevronUpDownIcon,
+  FolderArrowDownIcon,
+} from "@heroicons/react/24/solid";
 
-type Props = {
-  query: TBrandnameRangeTimeREQ;
-  setQuery: (query: TBrandnameRangeTimeREQ) => void;
-};
+import { useGetListHistoryFileQuery } from "@/redux/api/excel/excel.api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { TExcelRES } from "@/redux/api/excel/excel.response";
 
-export default function SMSTable({ query, setQuery }: Props) {
+export default function ExcelHistoryTable() {
+  const { username } = useSelector((state: RootState) => state.app);
+
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  // const [data] = useState(() => [...DATA]);
-  const { data, isFetching } = useBrandnameRangeDateQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
-  const { data: brandnameCounter } = useBrandnameCounterQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
   // Use the column helper for type safety
-  const columnHelper = createColumnHelper<TBrandnameRES>();
+  const columnHelper = createColumnHelper<TExcelRES>();
 
+  const { data, isLoading: isFetchingHistory } = useGetListHistoryFileQuery(
+    {
+      u: username,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
   // Define columns with type safety
-  const columns: ColumnDef<TBrandnameRES, any>[] = [
-    columnHelper.accessor("code", {
-      header: "Mã iQr",
+  const columns: ColumnDef<TExcelRES, any>[] = [
+    columnHelper.accessor("feature_code", {
+      header: "Chức năng",
+      cell: (info) => info.getValue() || "",
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("status", {
+      header: "Trạng thái",
+      cell: (info) =>
+        info.getValue() === 1 ? (
+          <Chip
+            color="green"
+            className="tw-justify-center"
+            value="Hoàn thành"
+          />
+        ) : (
+          <Chip
+            color="yellow"
+            className="tw-justify-center"
+            value="Đang xử lý"
+          />
+        ),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("status", {
+      header: "Chức năng",
+      cell: (info) =>
+        info.getValue() === 1 && (
+          <IconButton
+            color="white"
+            className="tw-mx-auto"
+            onClick={() => {
+              window.open(info.row.original.file_url, "_blank");
+            }}
+          >
+            <FolderArrowDownIcon className="tw-w-6 tw-h-6 tw-text-green-600" />
+          </IconButton>
+        ),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("description", {
+      header: "Mô tả",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("transactionId", {
-      header: "Mã giao dịch",
+
+    columnHelper.accessor("time_request", {
+      header: "Thời gian yêu cầu",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("phone", {
-      header: "Số điện thoại",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("content", {
-      header: "Nội dung",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("time", {
-      header: "Thời gian topup",
+    columnHelper.accessor("time_done", {
+      header: "Thời gian hoàn thành",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
   ];
 
   const table = useReactTable({
-    data: data || [],
+    data: (data || []) as TExcelRES[],
     columns,
     state: {
       globalFilter: filtering,
       sorting: sorting,
     },
-    pageCount: Math.ceil((brandnameCounter ?? 0) / query.sz),
-    //@ts-ignore
-    onPaginationChange: ({
-      pageIndex,
-      pageSize,
-    }: {
-      pageIndex: number;
-      pageSize: number;
-    }) => {
-      setQuery({
-        ...query,
-        nu: pageIndex,
-        sz: pageSize,
-      });
-    },
+
     // @ts-ignore
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
@@ -141,11 +157,12 @@ export default function SMSTable({ query, setQuery }: Props) {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-w-52">
+        <div className="tw-w-2/4">
           <Input
             variant="outlined"
-            onChange={(e) => setQuery({ ...query, k: e.target.value })}
-            label="Tìm kiếm"
+            value={filtering}
+            onChange={(e) => setFiltering(e.target.value)}
+            label="Nhập thông tin"
           />
         </div>
       </CardBody>
@@ -153,10 +170,10 @@ export default function SMSTable({ query, setQuery }: Props) {
         <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={Math.random()}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    key={header.id}
+                    key={Math.random()}
                     onClick={header.column.getToggleSortingHandler()}
                     className="tw-px-5 tw-py-2 tw-uppercase"
                   >
@@ -168,7 +185,6 @@ export default function SMSTable({ query, setQuery }: Props) {
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-
                       <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
                     </Typography>
                   </th>
@@ -176,8 +192,9 @@ export default function SMSTable({ query, setQuery }: Props) {
               </tr>
             ))}
           </thead>
+
           <tbody>
-            {isFetching ? (
+            {isFetchingHistory ? (
               <tr>
                 <td colSpan={table.getVisibleLeafColumns().length}>
                   <div className="tw-flex tw-justify-center tw-items-center tw-h-20">

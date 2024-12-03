@@ -28,7 +28,7 @@ import {
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { ChevronUpDownIcon, DocumentIcon } from "@heroicons/react/24/solid";
+import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import {
   useBrandnameCounterQuery,
   useBrandnameRangeDateQuery,
@@ -38,25 +38,18 @@ import { TBrandnameRES } from "@/redux/api/brandname/brandname.response";
 import { TBrandnameRangeTimeREQ } from "@/redux/api/brandname/brandname.request";
 
 type Props = {
-  query: Partial<TBrandnameRangeTimeREQ>;
-  setQuery: (query: Partial<TBrandnameRangeTimeREQ>) => void;
+  query: TBrandnameRangeTimeREQ;
+  setQuery: (query: TBrandnameRangeTimeREQ) => void;
 };
 
 export default function SMSTable({ query, setQuery }: Props) {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [keyword, setKeyword] = useState("");
   // const [data] = useState(() => [...DATA]);
-  const { data, isFetching } = useBrandnameRangeDateQuery(
-    {
-      ...query,
-      k: keyword,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const { data, isFetching } = useBrandnameRangeDateQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const { data: brandnameCounter } = useBrandnameCounterQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -100,7 +93,7 @@ export default function SMSTable({ query, setQuery }: Props) {
       globalFilter: filtering,
       sorting: sorting,
     },
-    pageCount: Math.ceil((brandnameCounter ?? 0) / (query.sz || 1)),
+    pageCount: Math.ceil((brandnameCounter ?? 0) / query.sz),
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,
@@ -148,21 +141,12 @@ export default function SMSTable({ query, setQuery }: Props) {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-flex tw-flex-row tw-gap-3">
-          <div className="tw-w-52">
-            <Input
-              variant="outlined"
-              onChange={(e) => setKeyword(e.target.value)}
-              label="Tìm kiếm"
-            />
-          </div>
-          <Button
-            className="tw-flex tw-items-center tw-gap-3 tw-text-nowrap"
+        <div className="tw-w-52">
+          <Input
             variant="outlined"
-            color="gray"
-          >
-            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
-          </Button>
+            onChange={(e) => setQuery({ ...query, k: e.target.value })}
+            label="Tìm kiếm"
+          />
         </div>
       </CardBody>
       <CardFooter className="tw-p-0 tw-overflow-scroll">

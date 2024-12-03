@@ -89,13 +89,6 @@ export default function IqrRejectPage() {
             />{" "}
             Lọc dữ liệu
           </Button>
-          <Button
-            className="tw-flex tw-items-center tw-gap-3"
-            variant="outlined"
-            color="gray"
-          >
-            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
-          </Button>
         </div>
       </div>
       <IQrTable query={query} setQuery={setQuery} />

@@ -38,7 +38,9 @@ import {
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
+  CheckCircleIcon,
   ChevronUpDownIcon,
+  ExclamationTriangleIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -144,7 +146,7 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
             className="tw-border-blue-700"
             disabled
           >
-            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
+            <CheckCircleIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
           </IconButton>
         ) : (
           <IconButton
@@ -152,61 +154,9 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
             variant="outlined"
             className="tw-border-red-700"
           >
-            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
+            <ExclamationTriangleIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
           </IconButton>
         ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("status", {
-      header: "Chỉnh sửa",
-      cell: (info) => (
-        <IconButton
-          variant="outlined"
-          className="tw-border-green-700"
-          onClick={() => {
-            setOpenEditForm(true);
-            setValue("address", data?.[info.row.index]?.province_name || "");
-            setValue("name", data?.[info.row.index]?.fullname || "");
-            setValue(
-              "image_confirm",
-              data?.[info.row.index]?.image_confirm || ""
-            );
-            setValue("code", data?.[info.row.index]?.code || "");
-            setValue("note", data?.[info.row.index]?.note || "");
-            setValue(
-              "province_name_agent",
-              data?.[info.row.index]?.province_name_agent || ""
-            );
-          }}
-        >
-          <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
-        </IconButton>
-      ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("product_name", {
-      header: "Tên sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("award1", {
-      header: "Cơ hội 1",
-      cell: (info) => MapLabel.get(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("award2", {
-      header: "Cơ hội 2",
-      cell: (info) => MapLabel.get(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("phone", {
-      header: "Số điện thoại",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("fullname", {
-      header: "Tên khách hàng",
-      cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("status", {
@@ -233,34 +183,72 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
         ),
       footer: (info) => info.column.id,
     }),
+    // columnHelper.accessor("status", {
+    //   header: "Chỉnh sửa",
+    //   cell: (info) => (
+    //     <IconButton
+    //       variant="outlined"
+    //       className="tw-border-green-700"
+    //       onClick={() => {
+    //         setOpenEditForm(true);
+    //         setValue("address", data?.[info.row.index]?.province_name || "");
+    //         setValue("name", data?.[info.row.index]?.fullname || "");
+    //         setValue(
+    //           "image_confirm",
+    //           data?.[info.row.index]?.image_confirm || ""
+    //         );
+    //         setValue("code", data?.[info.row.index]?.code || "");
+    //         setValue("note", data?.[info.row.index]?.note || "");
+    //         setValue(
+    //           "province_name_agent",
+    //           data?.[info.row.index]?.province_name_agent || ""
+    //         );
+    //       }}
+    //     >
+    //       <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
+    //     </IconButton>
+    //   ),
+    //   footer: (info) => info.column.id,
+    // }),
+    columnHelper.accessor("product_name", {
+      header: "Tên sản phẩm",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("award1", {
+      header: "Cơ hội 1",
+      cell: (info) => MapLabel.get(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("award2", {
+      header: "Cơ hội 2",
+      cell: (info) => MapLabel.get(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("fullname", {
+      header: "Tên khách hàng",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("phone", {
+      header: "Số điện thoại",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
 
     columnHelper.accessor("province", {
-      header: "Tỉnh đăng ký",
+      header: "Tỉnh",
       cell: (info) => mapProvince(info.getValue()),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("province_name_agent", {
-      header: "Tỉnh xác thực",
-      cell: (info) => mapProvince(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("address", {
-      header: "Địa chỉ",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("note", {
-      header: "Ghi chú",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor("time_active", {
-      header: "Thời gian mã kích hoạt",
+      header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_finish", {
-      header: "Thời gian hoàn thành",
+      header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -411,12 +399,12 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-w-52">
+        <div className="tw-w-2/4">
           <Input
             variant="outlined"
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
-            label="Tìm kiếm"
+            label="Nhập mã số may mắn hoặc số điện thoại"
           />
         </div>
       </CardBody>

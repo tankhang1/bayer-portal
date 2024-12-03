@@ -8,6 +8,7 @@ import {
   DialogFooter,
   Input,
 } from "@/components/MaterialTailwind";
+import { useExportIqrDataMutation } from "@/redux/api/iqr/iqr.api";
 import { TIqrRangeTimeREQ } from "@/redux/api/iqr/iqr.request";
 
 // @heroicons/react
@@ -20,7 +21,8 @@ import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-const IQrTable = dynamic(() => import("./iqr-reject-table"), {
+import { toast } from "react-toastify";
+const IQrTable = dynamic(() => import("./iqr-table"), {
   ssr: false,
 });
 type TQueryIqr = {
@@ -28,7 +30,7 @@ type TQueryIqr = {
   ed: Date;
 };
 
-export default function IqrRejectPage() {
+export default function IqrConfirmPage() {
   const [openModal, setOpenModal] = useState(false);
   const {
     register,
@@ -41,10 +43,12 @@ export default function IqrRejectPage() {
     nu: 0,
     sz: 20,
     gateway: 2,
-    s: 3,
+    s: 2,
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
   });
+  const [exportExcel, { isLoading: isLoadingExcel }] =
+    useExportIqrDataMutation();
 
   const onSubmit = (params: TQueryIqr) => {
     setQuery({
@@ -58,12 +62,26 @@ export default function IqrRejectPage() {
       nu: 0,
       sz: 20,
       gateway: 2,
-      s: 3,
+      s: 2,
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),
     });
     setValue("st", new Date());
     setValue("ed", new Date());
+  };
+  const onExportExcel = async () => {
+    await exportExcel(query)
+      .unwrap()
+      .then((value: { status: number }) => {
+        if (value.status === 1) {
+          toast.success("Xuất dữ liệu thành công, vui lòng đợi trong giây lát");
+        } else {
+          toast.error("Xuất dữ liệu thất bại, vui lòng kiểm tra");
+        }
+      })
+      .catch(() => {
+        toast.error("Xuất dữ liệu thất bại, vui lòng kiểm tra");
+      });
   };
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -88,6 +106,15 @@ export default function IqrRejectPage() {
               className="tw-h-4 tw-w-4"
             />{" "}
             Lọc dữ liệu
+          </Button>
+          <Button
+            className="tw-flex tw-items-center tw-gap-3"
+            variant="outlined"
+            color="gray"
+            loading={isLoadingExcel}
+            onClick={onExportExcel}
+          >
+            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
           </Button>
         </div>
       </div>

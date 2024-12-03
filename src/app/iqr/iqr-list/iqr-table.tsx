@@ -38,7 +38,9 @@ import {
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
+  CheckCircleIcon,
   ChevronUpDownIcon,
+  ExclamationTriangleIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -147,7 +149,7 @@ export default function IQrTable() {
             className="tw-border-blue-700"
             disabled
           >
-            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
+            <CheckCircleIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
           </IconButton>
         ) : (
           <IconButton
@@ -155,7 +157,7 @@ export default function IQrTable() {
             variant="outlined"
             className="tw-border-red-700"
           >
-            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
+            <ExclamationTriangleIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
           </IconButton>
         ),
       footer: (info) => info.column.id,
@@ -187,6 +189,30 @@ export default function IQrTable() {
     //   ),
     //   footer: (info) => info.column.id,
     // }),
+    columnHelper.accessor("status", {
+      header: "Trạng thái",
+      cell: (info) =>
+        info.getValue() == 2 ? (
+          <Chip
+            color="green"
+            value="Đã duyệt"
+            className="tw-justify-center"
+          ></Chip>
+        ) : info.getValue() == 3 ? (
+          <Chip
+            color="red"
+            className="tw-justify-center"
+            value="Từ chối"
+          ></Chip>
+        ) : (
+          <Chip
+            color="amber"
+            className="tw-justify-center"
+            value="Chưa xử lý"
+          ></Chip>
+        ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("product_name", {
       header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
@@ -202,68 +228,30 @@ export default function IQrTable() {
       cell: (info) => MapLabel.get(info.getValue()),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("phone", {
-      header: "Số điện thoại",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
     columnHelper.accessor("fullname", {
       header: "Tên khách hàng",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("status", {
-      header: "Trạng thái",
-      cell: (info) =>
-        info.getValue() == 2 ? (
-          <Chip
-            color="green"
-            value="Đã xử lý xác nhận"
-            className="tw-justify-center"
-          ></Chip>
-        ) : info.getValue() == 3 ? (
-          <Chip
-            color="red"
-            className="tw-justify-center"
-            value="Từ chối"
-          ></Chip>
-        ) : (
-          <Chip
-            color="amber"
-            className="tw-justify-center"
-            value="Chờ xác nhận"
-          ></Chip>
-        ),
+    columnHelper.accessor("phone", {
+      header: "Số điện thoại",
+      cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
 
     columnHelper.accessor("province", {
-      header: "Tỉnh đăng ký",
+      header: "Tỉnh",
       cell: (info) => mapProvince(info.getValue()),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("province_name_agent", {
-      header: "Tỉnh xác thực",
-      cell: (info) => mapProvince(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("address", {
-      header: "Địa chỉ",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("note", {
-      header: "Ghi chú",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor("time_active", {
-      header: "Thời gian mã kích hoạt",
+      header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_finish", {
-      header: "Thời gian hoàn thành",
+      header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -414,12 +402,12 @@ export default function IQrTable() {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-w-52">
+        <div className="tw-w-2/4">
           <Input
             variant="outlined"
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
-            label="Tìm kiếm"
+            label="Nhập mã số may mắn hoặc số điện thoại"
           />
         </div>
       </CardBody>
@@ -531,8 +519,8 @@ export default function IQrTable() {
             {iqrDetail?.image_confirm && (
               <Image
                 src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
-                width={192}
-                height={192}
+                width={250}
+                height={250}
                 alt="Product"
                 className="tw-object-cover tw-w-48 tw-h-48"
                 onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}

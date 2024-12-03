@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -31,13 +31,14 @@ import {
   DialogFooter,
   DialogBody,
   Spinner,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
   ChevronUpDownIcon,
-  DocumentIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -45,7 +46,9 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import {
-  useIqrCounterTodayQuery,
+  useGetProvincesQuery,
+  useIqrCounterQuery,
+  useIqrRangeDateQuery,
   useIqrTodayQuery,
 } from "@/redux/api/iqr/iqr.api";
 import { TIqrRES } from "@/redux/api/iqr/iqr.response";
@@ -58,7 +61,10 @@ import { toast } from "react-toastify";
 import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
-
+type Props = {
+  query: Partial<TIqrRangeTimeREQ>;
+  setQuery: (query: Partial<TIqrRangeTimeREQ>) => void;
+};
 const statusMap = new Map<number, string>([
   [-99, "Hệ thống bị gián đoạn"],
   [-1, "Thiết bị không hoạt động"],
@@ -69,11 +75,14 @@ const statusMap = new Map<number, string>([
   [-6, "Từ chối duyệt thành công"],
   [-7, "Đã thành công"],
   [-8, "Cập nhật trước khi xác nhận"],
+  [-9, "Bạn không phải là đối tượng thuộc chương trình"],
+  [-10, "Mã code không tồn tại"],
   [0, "Duyệt thành công"],
   [1, "Chờ tải lên hình ảnh"],
   [2, "Xác nhận bởi đại lý"],
   [3, "Tải lên lại"],
   [4, "Đã xác nhận (hình ảnh đã tải lên)"],
+  [5, "Không có giải thưởng"],
 ]);
 
 const MapLabel = new Map([
@@ -83,11 +92,7 @@ const MapLabel = new Map([
   ["loaJBL", "Loa JBL Partybox110"],
   ["", "Không trúng thưởng"],
 ]);
-type Props = {
-  query: Partial<TIqrRangeTimeREQ>;
-  setQuery: (query: any) => void;
-};
-export default function IQrTable({ query, setQuery }: Props) {
+export default function IQrConfirmTable({ query, setQuery }: Props) {
   const {
     register,
     handleSubmit,
@@ -102,24 +107,17 @@ export default function IQrTable({ query, setQuery }: Props) {
   const [openEditForm, setOpenEditForm] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
-  const [keyword, setKeyword] = useState("");
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
-    {
-      ...query,
-      k: keyword,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
-  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
+  const { data: provinces } = useGetProvincesQuery();
+  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
-
+  const { data: iqrCounter } = useIqrCounterQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
@@ -127,6 +125,13 @@ export default function IQrTable({ query, setQuery }: Props) {
   const [iqrDetail, setIqrDetail] = useState<TIqrRES>();
   // Define columns with type safety
   const columns: ColumnDef<TIqrRES, any>[] = [
+    columnHelper.accessor("image_confirm", {
+      header: "Hình ảnh tem",
+      cell: (info) => (
+        <Image src={info.getValue()} alt="" width={100} height={100} />
+      ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("seri", {
       header: "Số seri",
       cell: (info) => info.getValue(),
@@ -134,31 +139,6 @@ export default function IQrTable({ query, setQuery }: Props) {
     }),
     columnHelper.accessor("code", {
       header: "Mã iQr",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("product_name", {
-      header: "Tên sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("award1", {
-      header: "Cơ hội 1",
-      cell: (info) => MapLabel.get(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("award2", {
-      header: "Cơ hội 2",
-      cell: (info) => MapLabel.get(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("phone", {
-      header: "Số điện thoại",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("fullname", {
-      header: "Tên khách hàng",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -186,68 +166,71 @@ export default function IQrTable({ query, setQuery }: Props) {
         ),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("status", {
-      header: "Duyệt",
-      cell: (info) =>
-        info.getValue() == 2 || info.getValue() == 3 ? (
-          <IconButton
-            variant="outlined"
-            className="tw-border-blue-700"
-            disabled
-          >
-            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
-          </IconButton>
-        ) : (
-          <IconButton
-            onClick={() => handleOpenDialog(data?.[info.row.index])}
-            variant="outlined"
-            className="tw-border-red-700"
-          >
-            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
-          </IconButton>
-        ),
+
+    columnHelper.accessor("product_name", {
+      header: "Tên sản phẩm",
+      cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("status", {
-      header: "Chỉnh sửa",
-      cell: (info) =>
-        info.getValue() === 2 && (
-          <IconButton
-            variant="outlined"
-            className="tw-border-green-700"
-            onClick={() => {
-              setOpenEditForm(true);
-              setValue("address", data?.[info.row.index]?.province_name || "");
-              setValue("name", data?.[info.row.index]?.fullname || "");
-              setValue(
-                "image_confirm",
-                data?.[info.row.index]?.image_confirm || ""
-              );
-              setValue("code", data?.[info.row.index]?.code || "");
-            }}
-          >
-            <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
-          </IconButton>
-        ),
+    columnHelper.accessor("award1", {
+      header: "Cơ hội 1",
+      cell: (info) => MapLabel.get(info.getValue()),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("award2", {
+      header: "Cơ hội 2",
+      cell: (info) => MapLabel.get(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("fullname", {
+      header: "Tên khách hàng",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("phone", {
+      header: "Số điện thoại",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+
     columnHelper.accessor("province", {
       header: "Tỉnh đăng ký",
+      cell: (info) => mapProvince(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("province_name_agent", {
+      header: "Tỉnh xác thực",
+      cell: (info) => mapProvince(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("address", {
+      header: "Địa chỉ",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("note", {
+      header: "Ghi chú",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_active", {
-      header: "Thời gian mã kích hoạt",
+      header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_finish", {
-      header: "Thời gian hoàn thành",
+      header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
   ];
-
+  const mapProvince = useCallback(
+    (code: string) => {
+      if (!code) return "";
+      return provinces?.find((province) => province.code === code)?.name;
+    },
+    [provinces]
+  );
   const table = useReactTable({
     data: (data || []) as TIqrRES[],
     columns,
@@ -255,7 +238,7 @@ export default function IQrTable({ query, setQuery }: Props) {
       globalFilter: filtering,
       sorting: sorting,
     },
-    pageCount: Math.ceil((iqrCounter ?? 0) / (query.sz || 1)),
+    pageCount: Math.ceil((iqrCounter ?? 0) / (query?.sz || 1)),
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,
@@ -300,12 +283,13 @@ export default function IQrTable({ query, setQuery }: Props) {
     await rejectIqr({ code })
       .unwrap()
       .then((value) => {
-        toast.success(statusMap.get(value.status));
+        if (value.status === 0) toast.success("Từ chối thành công");
+        else toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
       .catch(() => {
-        toast.error("Từ chối thông tin thất bại");
+        toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
@@ -314,12 +298,14 @@ export default function IQrTable({ query, setQuery }: Props) {
     await confirmIqr({ code })
       .unwrap()
       .then((value) => {
-        toast.success(statusMap.get(value.status));
+        if (value.status === 0) {
+          toast.success("Xác nhận thành công");
+        } else toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       })
       .catch(() => {
-        toast.error("Xác nhận thông tin thất bại");
+        toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
       });
@@ -329,11 +315,13 @@ export default function IQrTable({ query, setQuery }: Props) {
       await updateIqr(values)
         .unwrap()
         .then((value) => {
-          toast.success(statusMap.get(value.status));
+          if (value.status === 0) {
+            toast.success("Cập nhật thành công");
+          } else toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
         })
         .catch(() => {
-          toast.error("Cập nhật thông tin thất bại");
+          toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
         });
     } else {
@@ -341,16 +329,18 @@ export default function IQrTable({ query, setQuery }: Props) {
       await uploadBase64Image(values.image_confirm, values.code);
       await updateIqr({
         ...values,
-        image_confirm: `https://reactive.yis.vn/upload-files/bayer/${values.code}.jpg`,
+        image_confirm: `https://reactive.yis.vn/${values.code}.jpg`,
       })
         .unwrap()
         .then((value) => {
-          toast.success(statusMap.get(value.status));
+          if (value.status === 0) {
+            toast.success("Cập nhật thành công");
+          } else toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
           setIsLoadingUploadImage(false);
         })
         .catch(() => {
-          toast.error("Cập nhật thông tin thất bại");
+          toast.error("Cập nhật thất bại");
           setOpenEditForm(false);
           setIsLoadingUploadImage(false);
         });
@@ -380,21 +370,13 @@ export default function IQrTable({ query, setQuery }: Props) {
             Số mục mỗi trang
           </Typography>
         </div>
-        <div className="tw-flex tw-flex-row tw-gap-3">
-          <div className="tw-w-52">
-            <Input
-              variant="outlined"
-              onChange={(e) => setKeyword(e.target.value)}
-              label="Tìm kiếm"
-            />
-          </div>
-          <Button
-            className="tw-flex tw-items-center tw-gap-3 tw-text-nowrap"
+        <div className="tw-w-2/4">
+          <Input
             variant="outlined"
-            color="gray"
-          >
-            <DocumentIcon strokeWidth={2} className="tw-h-4 tw-w-4" /> Xuất file
-          </Button>
+            value={filtering}
+            onChange={(e) => setFiltering(e.target.value)}
+            label="Nhập mã số may mắn hoặc số điện thoại"
+          />
         </div>
       </CardBody>
       <CardFooter className="tw-p-0 tw-overflow-scroll">
@@ -502,14 +484,16 @@ export default function IQrTable({ query, setQuery }: Props) {
 
         <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
           <div className="tw-flex tw-gap-6">
-            <Image
-              src={iqrDetail?.image_confirm || ""}
-              width={192}
-              height={192}
-              alt="Product"
-              className="tw-object-cover tw-w-48 tw-h-48"
-              onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
-            />
+            {iqrDetail?.image_confirm && (
+              <Image
+                src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
+                width={192}
+                height={192}
+                alt="Product"
+                className="tw-object-cover tw-w-48 tw-h-48"
+                onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
+              />
+            )}
             <div>
               <Typography variant="paragraph" color="black">
                 {iqrDetail?.time_active}
@@ -532,8 +516,7 @@ export default function IQrTable({ query, setQuery }: Props) {
               </Typography>
               <Typography variant="h5" color="black">
                 Giải thưởng:{" "}
-                {iqrDetail?.award1 ||
-                  iqrDetail?.award2 ||
+                {MapLabel.get(iqrDetail?.award1 || iqrDetail?.award2 || "") ||
                   "Chúc bạn may mắn lần sau"}
               </Typography>
             </div>
@@ -574,13 +557,15 @@ export default function IQrTable({ query, setQuery }: Props) {
         </DialogHeader>
 
         <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          <Image
-            src={previewImage || ""}
-            width={300}
-            height={300}
-            alt="Product"
-            className="tw-object-cover tw-w-[420px] tw-h-[420px]"
-          />
+          {previewImage && (
+            <Image
+              src={`${previewImage || ""}?nocache=${Date.now()}`}
+              width={300}
+              height={300}
+              alt="Product"
+              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
+            />
+          )}
         </DialogBody>
       </Dialog>
       <Dialog open={openEditForm} handler={setOpenEditForm}>
@@ -598,13 +583,15 @@ export default function IQrTable({ query, setQuery }: Props) {
                 handleFileChange(e);
               }}
             />
-            <Image
-              src={watch().image_confirm}
-              width={300}
-              height={300}
-              alt="Image"
-              className="tw-w-64 tw-h-64"
-            />
+            {watch().image_confirm && (
+              <Image
+                src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
+                width={300}
+                height={300}
+                alt="Image"
+                className="tw-w-64 tw-h-64"
+              />
+            )}
           </div>
 
           <Input
@@ -612,11 +599,41 @@ export default function IQrTable({ query, setQuery }: Props) {
             label="Tên nông dân"
             {...register("name")}
           />
+          <Select
+            variant="outlined"
+            id="province_name_agent"
+            label="Chọn tỉnh thành"
+            className="tw-text-black"
+            value={watch("province_name_agent")}
+            selected={(element) =>
+              element &&
+              React.cloneElement(element, {
+                disabled: true,
+                className:
+                  "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+              })
+            }
+            onChange={(value) => {
+              setValue("province_name_agent", value || "");
+            }}
+          >
+            {/* <Option value="">Chọn tỉnh thành</Option> */}
+            {provinces?.map((province) => (
+              <Option
+                key={province.code}
+                value={province.code}
+                className="tw-text-black"
+              >
+                {province.name}
+              </Option>
+            ))}
+          </Select>
           <Input
             placeholder="Địa chỉ"
             label="Địa chỉ"
             {...register("address")}
           />
+          <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
         </DialogBody>
         <DialogFooter className="tw-gap-3">
           <Button

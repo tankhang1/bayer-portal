@@ -261,12 +261,12 @@ export default function SearchTable({ keyword }: Props) {
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_active", {
-      header: "Thời gian mã kích hoạt",
+      header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("time_finish", {
-      header: "Thời gian hoàn thành",
+      header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
