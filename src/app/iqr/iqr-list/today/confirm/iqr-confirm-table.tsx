@@ -625,7 +625,7 @@ export default function IQrConfirmTable() {
           )}
         </DialogBody>
       </Dialog>
-      <Dialog open={openEditForm} handler={setOpenEditForm} size="900px">
+      <Dialog open={openEditForm} handler={setOpenEditForm} size="lg">
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Cập nhật thông tin</Typography>
         </DialogHeader>
