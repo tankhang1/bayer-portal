@@ -65,11 +65,11 @@ export const routes = [
   {
     name: "Danh sách iQr",
     pages: [
-      // {
-      //   icon: <MagnifyingGlassCircleIcon {...icon} />,
-      //   name: "Tra cứu",
-      //   path: "/iqr/search",
-      // },
+      {
+        icon: <MagnifyingGlassCircleIcon {...icon} />,
+        name: "Tra cứu",
+        path: "/iqr/search",
+      },
       {
         icon: <CheckIcon {...icon} />,
         name: "Danh sách đã duyệt",

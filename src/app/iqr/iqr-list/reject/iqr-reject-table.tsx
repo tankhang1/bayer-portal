@@ -158,6 +158,30 @@ export default function IQrRejectTable({ query, setQuery }: Props) {
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("status", {
+      header: "Trạng thái",
+      cell: (info) =>
+        info.getValue() == 2 ? (
+          <Chip
+            color="green"
+            value="Đã xử lý xác nhận"
+            className="tw-justify-center"
+          ></Chip>
+        ) : info.getValue() == 3 ? (
+          <Chip
+            color="red"
+            className="tw-justify-center"
+            value="Từ chối"
+          ></Chip>
+        ) : (
+          <Chip
+            color="amber"
+            className="tw-justify-center"
+            value="Chờ xác nhận"
+          ></Chip>
+        ),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("status", {
       header: "Chỉnh sửa",
       cell: (info) => (
         <IconButton
@@ -207,30 +231,6 @@ export default function IQrRejectTable({ query, setQuery }: Props) {
     columnHelper.accessor("fullname", {
       header: "Tên khách hàng",
       cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("status", {
-      header: "Trạng thái",
-      cell: (info) =>
-        info.getValue() == 2 ? (
-          <Chip
-            color="green"
-            value="Đã xử lý xác nhận"
-            className="tw-justify-center"
-          ></Chip>
-        ) : info.getValue() == 3 ? (
-          <Chip
-            color="red"
-            className="tw-justify-center"
-            value="Từ chối"
-          ></Chip>
-        ) : (
-          <Chip
-            color="amber"
-            className="tw-justify-center"
-            value="Chờ xác nhận"
-          ></Chip>
-        ),
       footer: (info) => info.column.id,
     }),
 
@@ -531,7 +531,7 @@ export default function IQrRejectTable({ query, setQuery }: Props) {
                 width={192}
                 height={192}
                 alt="Product"
-                className="tw-object-cover tw-w-48 tw-h-48"
+                className="tw-object-cover tw-w-56 tw-h-56"
                 onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
               />
             )}

@@ -128,7 +128,13 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
     columnHelper.accessor("image_confirm", {
       header: "Hình ảnh tem",
       cell: (info) => (
-        <Image src={info.getValue()} alt="" width={100} height={100} />
+        <Image
+          src={info.getValue()}
+          alt=""
+          width={100}
+          height={100}
+          className="tw-w-44 tw-h-44 tw-object-cover"
+        />
       ),
       footer: (info) => info.column.id,
     }),
@@ -194,12 +200,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
     }),
 
     columnHelper.accessor("province", {
-      header: "Tỉnh đăng ký",
-      cell: (info) => mapProvince(info.getValue()),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("province_name_agent", {
-      header: "Tỉnh xác thực",
+      header: "Tỉnh",
       cell: (info) => mapProvince(info.getValue()),
       footer: (info) => info.column.id,
     }),
@@ -208,11 +209,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("note", {
-      header: "Ghi chú",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor("time_active", {
       header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),

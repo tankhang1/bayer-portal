@@ -60,7 +60,7 @@ export default function SMSTable({ query, setQuery }: Props) {
   // Define columns with type safety
   const columns: ColumnDef<TBrandnameRES, any>[] = [
     columnHelper.accessor("code", {
-      header: "Mã code",
+      header: "Mã iQr",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -69,11 +69,7 @@ export default function SMSTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("phone", {
-      header: "Số điện thoại",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor("content", {
       header: "Nội dung",
       cell: (info) => info.getValue(),

@@ -526,7 +526,7 @@ export default function IQrRejectTable() {
                 width={192}
                 height={192}
                 alt="Product"
-                className="tw-object-cover tw-w-48 tw-h-48"
+                className="tw-object-cover tw-w-56 tw-h-56"
                 onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
               />
             )}

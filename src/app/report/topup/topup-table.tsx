@@ -67,13 +67,8 @@ export default function TopupTable({ query, setQuery }: Props) {
     //   cell: (info) => info.getValue(),
     //   footer: (info) => info.column.id,
     // }),
-    columnHelper.accessor("productCode", {
-      header: "Mã sản phẩm",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("productName", {
-      header: "Tên sản phẩm",
+    columnHelper.accessor("code", {
+      header: "Mã iQr",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
@@ -87,6 +82,7 @@ export default function TopupTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+
     // columnHelper.accessor("provinceName", {
     //   header: "Tên tỉnh",
     //   cell: (info) => info.getValue(),
@@ -103,9 +99,10 @@ export default function TopupTable({ query, setQuery }: Props) {
         info.getValue() !== null ? info.getValue().toLocaleString() : "N/A",
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("code", {
+    columnHelper.accessor("id", {
       header: "Mã giao dịch",
-      cell: (info) => info.getValue(),
+      cell: (info) =>
+        info.getValue() !== null ? info.getValue().toLocaleString() : "N/A",
       footer: (info) => info.column.id,
     }),
 
