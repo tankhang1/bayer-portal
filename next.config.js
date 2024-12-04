@@ -4,7 +4,7 @@ const MangleCssClassPlugin = require("mangle-css-class-webpack-plugin");
 
 module.exports = {
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false, // Remove this if possible and fix errors
   },
   images: {
     domains: ["reactive.yis.vn"], // Add your image domain here
@@ -17,7 +17,7 @@ module.exports = {
       .find((rule) => typeof rule.oneOf === "object")
       .oneOf.filter((rule) => Array.isArray(rule.use));
 
-    if (!dev)
+    if (!dev) {
       rules.forEach((rule) => {
         rule.use.forEach((moduleLoader) => {
           if (
@@ -25,7 +25,7 @@ module.exports = {
             !moduleLoader.loader?.includes("postcss-loader")
           ) {
             if (moduleLoader.options.modules?.getLocalIdent) {
-              return (moduleLoader.options.modules.getLocalIdent = (
+              moduleLoader.options.modules.getLocalIdent = (
                 context,
                 _,
                 exportName
@@ -41,19 +41,18 @@ module.exports = {
                     "base64",
                     6
                   )
-                  .replace(/^(-?\d|--)/, "_$1"));
+                  .replace(/^(-?\d|--)/, "_$1");
             }
           }
         });
       });
 
-    if (!dev) {
       config.plugins.push(
         new MangleCssClassPlugin({
           classNameRegExp:
             "((hover|focus|active|disabled|visited|first|last|odd|even|group-hover|focus-within|xs|sm|md|lg|xl)[\\\\]*:)*(tw)-[a-zA-Z0-9_-]*([\\\\]*/[0-9]*)?",
           ignorePrefixRegExp:
-            "((hover|focus|active|disabled|visited|first|last|odd|even|group-hover|focus-within|xs|sm|md||lg|xl)[\\\\]*:)*",
+            "((hover|focus|active|disabled|visited|first|last|odd|even|group-hover|focus-within|xs|sm|md|lg|xl)[\\\\]*:)*",
           log: false,
           classGenerator: (original) => {
             const newClass = original
@@ -80,6 +79,7 @@ module.exports = {
       );
     }
 
+    // Disable canvas if necessary
     config.resolve.alias.canvas = false;
 
     return config;
