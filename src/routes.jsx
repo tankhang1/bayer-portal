@@ -1,15 +1,8 @@
 // @material-tailwind/react
-import { Avatar, Typography } from "@material-tailwind/react";
 
 // @heroicons/react
 import {
-  Squares2X2Icon,
-  ShoppingBagIcon,
-  ClipboardDocumentIcon,
-  PhotoIcon,
-  ClipboardIcon,
   RectangleGroupIcon,
-  CubeTransparentIcon,
   QrCodeIcon,
   ChartBarIcon,
   ChatBubbleOvalLeftIcon,
@@ -19,7 +12,7 @@ import {
   InformationCircleIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
-import { FolderIcon, GiftIcon } from "@heroicons/react/24/outline";
+import { FolderIcon } from "@heroicons/react/24/outline";
 
 const icon = {
   className: "tw-w-5 tw-h-5 tw-text-inherit",
@@ -31,12 +24,11 @@ const text = {
 };
 
 export const routes = [
-  // {
-  //   name: "dashboard",
-  //   icon: <RectangleGroupIcon {...icon} />,
-  //   path: "/dashboard/sales",
-
-  // },
+  {
+    name: "dashboard",
+    icon: <RectangleGroupIcon {...icon} />,
+    path: "/dashboard/sales",
+  },
   {
     name: "Danh sách trong ngày",
     pages: [
@@ -130,5 +122,43 @@ export const routes = [
     path: "/excel/history",
   },
 ];
+export const routesBayer = [
+  {
+    name: "dashboard",
+    icon: <RectangleGroupIcon {...icon} />,
+    path: "/dashboard/sales",
+  },
+  {
+    name: "Báo cáo",
+    icon: <ChartBarIcon {...icon} />,
 
+    pages: [
+      // {
+      //   icon: <MagnifyingGlassCircleIcon {...icon} />,
+      //   name: "Tra cứu",
+      //   path: "/iqr/search",
+      // },
+      {
+        icon: <QrCodeIcon {...icon} />,
+        name: "iQr",
+        path: "/report/iqr",
+      },
+      {
+        icon: <CurrencyDollarIcon {...icon} />,
+        name: "Topup",
+        path: "/report/topup",
+      },
+      {
+        name: "SMS Brandname",
+        icon: <ChatBubbleOvalLeftIcon {...icon} />,
+        path: "/report/sms",
+      },
+    ],
+  },
+  {
+    name: "Lịch sử xuất excel",
+    icon: <FolderIcon {...icon} />,
+    path: "/excel/history",
+  },
+];
 export default routes;

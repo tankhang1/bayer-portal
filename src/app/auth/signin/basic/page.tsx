@@ -30,6 +30,7 @@ export default function BasicPage() {
         dispatch(updateToken(value.token));
         dispatch(updateInfo(value.username));
         localStorage.setItem("token", value.token);
+        localStorage.setItem("roles", value.roles);
         toast.success("Đăng nhập thành công");
         router.push("/iqr/iqr-list");
       })

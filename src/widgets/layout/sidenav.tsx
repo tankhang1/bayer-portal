@@ -19,7 +19,7 @@ import {
 } from "@material-tailwind/react";
 
 // routes
-import routes from "@/routes";
+import routes, { routesBayer } from "@/routes";
 
 // @heroicons/react
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -75,6 +75,11 @@ export default function Sidenav({
     setOpenSidenav(dispatch, false);
   };
 
+  const onFilterRoute = () => {
+    const roles = localStorage.getItem("roles");
+    if (roles === "ROLE_REPORT") return routesBayer;
+    return routes;
+  };
   useOnClickOutside(sidenavRef, handleClickOutside);
 
   const collapseItemClasses =
@@ -119,7 +124,7 @@ export default function Sidenav({
         <XMarkIcon className="tw-w-5 tw-h-5" />
       </IconButton>
       <List className="tw-text-inherit">
-        {routes.map(
+        {onFilterRoute().map(
           (
             { name, icon, pages, disabled, title, divider, external, path },
             key

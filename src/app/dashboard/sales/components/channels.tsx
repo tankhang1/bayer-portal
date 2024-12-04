@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 
 // @material-tailwind/react
 import {
@@ -7,19 +7,40 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Tooltip,
   Typography,
 } from "@material-tailwind/react";
 
-// @heroicons/react
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-
 // widgets
 import { PieChart } from "@/widgets/charts";
+import { TDashboardRES } from "@/redux/api/dashboard/dashboard.response";
+type MappedData = {
+  [key: string]: TDashboardRES[];
+};
+type Props = {
+  data: MappedData;
+};
 
-type Props = {};
-
-export default function Channels({}: Props) {
+export default function Channels({ data }: Props) {
+  const mapValue = useMemo(() => {
+    const total = data["iqr_total"]?.reduce(
+      (preValue, curValue) => preValue + curValue.total,
+      0
+    );
+    const active = data["iqr_active"]?.reduce(
+      (preValue, curValue) => preValue + curValue.total,
+      0
+    );
+    const used = data["iqr_used"]?.reduce(
+      (preValue, curValue) => preValue + curValue.total,
+      0
+    );
+    return {
+      total: total,
+      active,
+      used,
+      block: total - active,
+    };
+  }, [data]);
   return (
     <div className="tw-col-span-1">
       <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm">
@@ -29,33 +50,25 @@ export default function Channels({}: Props) {
           className="tw-mb-6 tw-flex tw-justify-between tw-gap-8 tw-overflow-visible"
         >
           <Typography variant="h6" color="blue-gray">
-            Vùng tiêu thụ nổi bật
+            iQr
           </Typography>
-          <Tooltip content="Số lượng tiêu thụ" placement="left">
-            <ExclamationCircleIcon
-              strokeWidth={1}
-              className="tw-w-8 tw-h-8 !tw-text-blue-gray-600"
-            />
-          </Tooltip>
         </CardHeader>
         <CardBody>
           <PieChart
             height={238}
-            series={[1500, 1200, 1100, 950, 800]}
+            series={[
+              mapValue?.block,
+              mapValue?.total,
+              mapValue?.active,
+              mapValue?.used,
+            ]}
             labels={[
-              "Hồ Chí Minh",
-              "Hà Nội",
-              "Đà Nẵng",
-              "Cần Thơ",
-              "Hải Phòng",
+              "Chưa kích hoạt",
+              "Tổng iQr",
+              "Đã kích hoạt",
+              "Đã sử dụng",
             ]}
-            colors={[
-              "#1E88E5", // Hồ Chí Minh
-              "#D81B60", // Hà Nội
-              "#FFC107", // Đà Nẵng
-              "#43A047", // Cần Thơ
-              "#6A1B9A", // Hải Phòng
-            ]}
+            colors={["#D81B60", "#FFC107", "#43A047"]}
             options={{
               legend: {
                 show: true,
@@ -71,6 +84,10 @@ export default function Channels({}: Props) {
                 itemMargin: {
                   vertical: 4,
                 },
+                fontSize: "16px",
+              },
+              dataLabels: {
+                enabled: true,
               },
               responsive: [
                 {
@@ -82,17 +99,16 @@ export default function Channels({}: Props) {
                   },
                 },
               ],
+              tooltip: {
+                enabled: true,
+                y: {
+                  formatter: function (value: number) {
+                    return `${value.toLocaleString("vi")} mã`;
+                  },
+                },
+              },
             }}
           />
-          <div className="tw-mt-10 tw-mb-4 tw-flex tw-items-end tw-justify-between tw-px-4">
-            <Typography
-              variant="small"
-              className="!tw-text-blue-gray-500 !tw-font-normal tw-w-full"
-            >
-              Hơn <strong>800.000</strong> giao dịch đã được thực hiện nhờ chiến
-              lược bán hàng khu vực hiệu quả.
-            </Typography>
-          </div>
         </CardBody>
       </Card>
     </div>

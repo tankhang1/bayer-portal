@@ -31,16 +31,14 @@ import {
   DialogFooter,
   DialogBody,
   Spinner,
-  Option,
   Select,
+  Option,
 } from "@material-tailwind/react";
 
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
-  CheckCircleIcon,
   ChevronUpDownIcon,
-  ExclamationTriangleIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -50,6 +48,7 @@ import Image from "next/image";
 import {
   useGetProvincesQuery,
   useIqrCounterQuery,
+  useIqrCounterTodayQuery,
   useIqrRangeDateQuery,
   useIqrTodayQuery,
 } from "@/redux/api/iqr/iqr.api";
@@ -63,10 +62,7 @@ import { toast } from "react-toastify";
 import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
-type Props = {
-  query: Partial<TIqrRangeTimeREQ>;
-  setQuery: (query: Partial<TIqrRangeTimeREQ>) => void;
-};
+
 const statusMap = new Map<number, string>([
   [-99, "Hệ thống bị gián đoạn"],
   [-1, "Thiết bị không hoạt động"],
@@ -94,7 +90,7 @@ const MapLabel = new Map([
   ["loaJBL", "Loa JBL Partybox110"],
   ["", "Không trúng thưởng"],
 ]);
-export default function IQrUnknownTable({ query, setQuery }: Props) {
+export default function IQrConfirmTable() {
   const {
     register,
     handleSubmit,
@@ -111,14 +107,22 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
+  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
+    nu: 0,
+    sz: 20,
+    gateway: 2,
+    s: 2,
+    k: "",
+  });
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
-  const { data: iqrCounter } = useIqrCounterQuery(query, {
+  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
+
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
@@ -137,84 +141,13 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("status", {
-      header: "Duyệt",
-      cell: (info) =>
-        info.getValue() == 2 ? (
-          <IconButton
-            variant="outlined"
-            className="tw-border-blue-700"
-            disabled
-          >
-            <CheckCircleIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
-          </IconButton>
-        ) : (
-          <IconButton
-            onClick={() => handleOpenDialog(data?.[info.row.index])}
-            variant="outlined"
-            className="tw-border-red-700"
-          >
-            <ExclamationTriangleIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
-          </IconButton>
-        ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("status", {
-      header: "Trạng thái",
-      cell: (info) =>
-        info.getValue() == 2 ? (
-          <Chip
-            color="green"
-            value="Đã xử lý xác nhận"
-            className="tw-justify-center"
-          ></Chip>
-        ) : info.getValue() == 3 ? (
-          <Chip
-            color="red"
-            className="tw-justify-center"
-            value="Từ chối"
-          ></Chip>
-        ) : (
-          <Chip
-            color="amber"
-            className="tw-justify-center"
-            value="Chờ xác nhận"
-          ></Chip>
-        ),
-      footer: (info) => info.column.id,
-    }),
-    // columnHelper.accessor("status", {
-    //   header: "Chỉnh sửa",
-    //   cell: (info) => (
-    //     <IconButton
-    //       variant="outlined"
-    //       className="tw-border-green-700"
-    //       onClick={() => {
-    //         setOpenEditForm(true);
-    //         setValue("address", data?.[info.row.index]?.province_name || "");
-    //         setValue("name", data?.[info.row.index]?.fullname || "");
-    //         setValue(
-    //           "image_confirm",
-    //           data?.[info.row.index]?.image_confirm || ""
-    //         );
-    //         setValue("code", data?.[info.row.index]?.code || "");
-    //         setValue("note", data?.[info.row.index]?.note || "");
-    //         setValue(
-    //           "province_name_agent",
-    //           data?.[info.row.index]?.province_name_agent || ""
-    //         );
-    //       }}
-    //     >
-    //       <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
-    //     </IconButton>
-    //   ),
-    //   footer: (info) => info.column.id,
-    // }),
+
     columnHelper.accessor("product_name", {
       header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+
     columnHelper.accessor("award1", {
       header: "Cơ hội 1",
       cell: (info) => MapLabel.get(info.getValue()),
@@ -225,23 +158,37 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
       cell: (info) => MapLabel.get(info.getValue()),
       footer: (info) => info.column.id,
     }),
-    columnHelper.accessor("fullname", {
-      header: "Tên khách hàng",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
     columnHelper.accessor("phone", {
       header: "Số điện thoại",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-
-    columnHelper.accessor("province", {
-      header: "Tỉnh",
-      cell: (info) => mapProvince(info.getValue()),
+    columnHelper.accessor("fullname", {
+      header: "Tên khách hàng",
+      cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
 
+    columnHelper.accessor("province", {
+      header: "Tỉnh đăng ký",
+      cell: (info) => mapProvince(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("province_name_agent", {
+      header: "Tỉnh xác thực",
+      cell: (info) => mapProvince(info.getValue()),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("address", {
+      header: "Địa chỉ",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("note", {
+      header: "Ghi chú",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("time_active", {
       header: "Thời gian kích hoạt",
       cell: (info) => info.getValue(),
@@ -260,6 +207,7 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
     },
     [provinces]
   );
+
   const table = useReactTable({
     data: (data || []) as TIqrRES[],
     columns,
@@ -515,7 +463,7 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
           <div className="tw-flex tw-gap-6">
             {iqrDetail?.image_confirm && (
               <Image
-                src={iqrDetail?.image_confirm || ""}
+                src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
                 width={192}
                 height={192}
                 alt="Product"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -38,7 +38,9 @@ import {
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
+  CheckCircleIcon,
   ChevronUpDownIcon,
+  ExclamationTriangleIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -99,6 +101,12 @@ export default function IQrConfirmTable() {
     getValues,
     formState: { errors },
   } = useForm<TIqrUpdateREQ>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -150,7 +158,7 @@ export default function IQrConfirmTable() {
             className="tw-border-blue-700"
             disabled
           >
-            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
+            <CheckCircleIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
           </IconButton>
         ) : (
           <IconButton
@@ -158,7 +166,7 @@ export default function IQrConfirmTable() {
             variant="outlined"
             className="tw-border-red-700"
           >
-            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
+            <ExclamationTriangleIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
           </IconButton>
         ),
       footer: (info) => info.column.id,
@@ -200,7 +208,7 @@ export default function IQrConfirmTable() {
           className="tw-border-green-700"
           onClick={() => {
             setOpenEditForm(true);
-            setValue("address", data?.[info.row.index]?.province_name || "");
+            setValue("address", data?.[info.row.index]?.address || "");
             setValue("name", data?.[info.row.index]?.fullname || "");
             setValue(
               "image_confirm",
@@ -617,72 +625,85 @@ export default function IQrConfirmTable() {
           )}
         </DialogBody>
       </Dialog>
-      <Dialog open={openEditForm} handler={setOpenEditForm}>
+      <Dialog open={openEditForm} handler={setOpenEditForm} size="900px">
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Cập nhật thông tin</Typography>
         </DialogHeader>
 
-        <DialogBody className="tw-flex tw-flex-col tw-gap-3">
+        <DialogBody className="tw-flex tw-flex-row tw-gap-3 ">
           <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
-            <Input
+            <input
+              ref={fileInputRef}
               placeholder="Hình ảnh giấy chứng nhận"
-              label="Hình ảnh giấy chứng nhận"
               type="file"
-              onChange={(e) => {
-                handleFileChange(e);
-              }}
+              onChange={handleFileChange}
+              disabled={
+                localStorage.getItem("roles") === "ROLE_AGENT" ? true : false
+              }
+              className="tw-hidden"
             />
             {watch().image_confirm && (
               <Image
                 src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
-                width={300}
-                height={300}
+                width={500}
+                height={400}
                 alt="Image"
-                className="tw-w-64 tw-h-64"
+                className="tw-w-[500px] tw-h-80 tw-cursor-pointer"
+                onClick={
+                  localStorage.getItem("roles") !== "ROLE_AGENT"
+                    ? handleImageClick
+                    : () => {}
+                } // Trigger the file input click
               />
             )}
           </div>
-
-          <Input
-            placeholder="Tên nông dân"
-            label="Tên nông dân"
-            {...register("name")}
-          />
-          <Select
-            variant="outlined"
-            id="province_name_agent"
-            label="Chọn tỉnh thành"
-            className="tw-text-black"
-            value={watch("province_name_agent")}
-            selected={(element) =>
-              element &&
-              React.cloneElement(element, {
-                disabled: true,
-                className:
-                  "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
-              })
-            }
-            onChange={(value) => {
-              setValue("province_name_agent", value || "");
-            }}
-          >
-            {/* <Option value="">Chọn tỉnh thành</Option> */}
-            {provinces?.map((province) => (
-              <Option
-                key={province.code}
-                value={province.code}
-                className="tw-text-black"
-              >
-                {province.name}
-              </Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="Địa chỉ"
-            label="Địa chỉ"
-            {...register("address")}
-          />
-          <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
+          <div className="tw-flex tw-flex-col tw-w-full tw-gap-2">
+            <Input
+              placeholder="Tên đăng ký"
+              label="Tên đăng ký"
+              disabled
+              {...register("name")}
+            />
+            <Select
+              variant="outlined"
+              id="province_name_agent"
+              label="Chọn tỉnh thành"
+              className="tw-text-black"
+              value={watch("province_name_agent")}
+              selected={(element) =>
+                element &&
+                React.cloneElement(element, {
+                  disabled: true,
+                  className:
+                    "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+                })
+              }
+              onChange={(value) => {
+                setValue("province_name_agent", value || "");
+              }}
+            >
+              {/* <Option value="">Chọn tỉnh thành</Option> */}
+              {provinces?.map((province) => (
+                <Option
+                  key={province.code}
+                  value={province.code}
+                  className="tw-text-black"
+                >
+                  {province.name}
+                </Option>
+              ))}
+            </Select>
+            <Input
+              placeholder="Địa chỉ"
+              label="Địa chỉ"
+              {...register("address")}
+            />
+            <Input
+              placeholder="Ghi chú"
+              label="Ghi chú"
+              {...register("note")}
+            />
+          </div>
         </DialogBody>
         <DialogFooter className="tw-gap-3">
           <Button

@@ -576,8 +576,8 @@ export default function SearchTable({ keyword }: Props) {
           </div>
 
           <Input
-            placeholder="Tên nông dân"
-            label="Tên nông dân"
+            placeholder="Tên đăng ký"
+            label="Tên đăng ký"
             {...register("name")}
           />
           <Select

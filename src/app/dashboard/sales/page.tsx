@@ -1,59 +1,96 @@
+"use client";
 import dynamic from "next/dynamic";
-
-// @material-tailwind/react
-import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-} from "@/components/MaterialTailwind";
-
-// @components
-import ProductTable from "./components/product-table";
-import CountryTable from "./components/country-table";
+import Topup from "@/assets/image/topup.png";
+import Driver from "@/assets/image/driver.png";
+import Speaker from "@/assets/image/speaker.png";
+import Fridge from "@/assets/image/fridge.png";
 
 const SalesByAge = dynamic(() => import("./components/sales-by-age"), {
   ssr: false,
 });
-const RevenueChart = dynamic(() => import("./components/revenue-chart"), {
-  ssr: false,
-});
+
 const Channels = dynamic(() => import("./components/channels"), {
   ssr: false,
 });
 
-import SalesCard from "./components/sales-card";
+const IQrTable = dynamic(() => import("./components/iqr-table"), {
+  ssr: false,
+});
+import AwardItem from "./components/AwardItem";
+import { useGetDashboardStatisticQuery } from "@/redux/api/dashboard/dashboard.api";
+import { TDashboardRES } from "@/redux/api/dashboard/dashboard.response";
+import { useCallback, useMemo } from "react";
+type MappedData = {
+  [key: string]: TDashboardRES[];
+};
 
 export default function SalesPage() {
+  const { data } = useGetDashboardStatisticQuery({});
+  const extractCategory = (award: string): string => {
+    const parts = award.split("_");
+    return parts.length > 1 ? parts.slice(0, -1).join("_") : award;
+  };
+  const mapByCategory = useCallback((data: TDashboardRES[]): MappedData => {
+    return data.reduce<MappedData>((acc, item) => {
+      const category = extractCategory(item.award);
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    }, {});
+  }, []);
+
+  const mapValue = useMemo(
+    () => mapByCategory(data || []),
+    [data, mapByCategory]
+  );
   return (
     <div className="tw-mt-8 tw-mb-4">
-      <SalesCard />
-      <div className="tw-mt-6 tw-grid tw-grid-cols-1 tw-gap-y-6 md:tw-grid-cols-2 lg:tw-grid-cols-3 lg:tw-gap-x-6">
+      {/* <SalesCard /> */}
+      <h2 className="tw-text-[#40aea3] tw-text-3xl tw-font-bold tw-mb-2">
+        Thống kê
+      </h2>
+      <div className=" tw-grid tw-grid-cols-1 tw-gap-y-6 md:tw-grid-cols-2 lg:tw-grid-cols-3 lg:tw-gap-x-6">
         {/** Pie Chart */}
-        <Channels />
+
+        <Channels data={mapValue} />
         {/** Revenue Chart */}
-        <RevenueChart />
+        <div className="tw-col-span-2">
+          <SalesByAge data={mapValue} />
+        </div>
       </div>
+      <h2 className="tw-text-[#40aea3] tw-text-3xl tw-font-bold tw-mt-7 tw-mb-2">
+        SỐ GIẢI ĐÃ TRÚNG THƯỞNG
+      </h2>
 
       {/** Horizontal Bar Chart */}
-      <div className="tw-mt-6 tw-grid tw-grid-cols-1 tw-gap-y-6 md:tw-grid-cols-2 lg:tw-grid-cols-3 lg:tw-gap-6">
-        <div className="tw-col-span-2">
-          <SalesByAge />
-        </div>
-        <div className="tw-col-span-1">
-          <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm">
-            <CardHeader floated={false} shadow={false}>
-              <Typography variant="h6" color="blue-gray">
-                Mật độ theo từng khu vực
-              </Typography>
-            </CardHeader>
-            <CardBody className="tw-grid tw-grid-cols-1 tw-items-center tw-justify-between !tw-p-0">
-              <CountryTable />
-            </CardBody>
-          </Card>
-        </div>
+      <div className="tw-flex tw-items-center tw-justify-between tw-gap-5 tw-mb-7">
+        <AwardItem
+          image={Topup}
+          title="Giải khuyển khích"
+          value={mapValue["Topup"]?.[0]?.total}
+        />
+        <AwardItem
+          image={Fridge}
+          title="Giải nhì"
+          value={mapValue["tulanh"]?.[0]?.total}
+        />
+        <AwardItem
+          image={Driver}
+          title="Giải nhất"
+          value={mapValue["xemay"]?.[0]?.total}
+        />
+        <AwardItem
+          image={Speaker}
+          title="Giải ba"
+          value={mapValue["loaJBL"]?.[0]?.total}
+        />
       </div>
-      {/* <ProductTable /> */}
+      <h2 className="tw-text-[#40aea3] tw-text-3xl tw-font-bold tw-mt-7 tw-mb-2">
+        IQR TRONG NGÀY
+      </h2>
+      <IQrTable />
     </div>
   );
 }

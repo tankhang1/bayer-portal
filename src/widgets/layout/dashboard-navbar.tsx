@@ -41,7 +41,7 @@ import {
 } from "@/context";
 
 const MAP_HEADER = new Map([
-  ["/dashboard/sales", "Thống kê"],
+  ["/dashboard/sales", ""],
   ["/iqr/iqr-list", "Quản lý iQr"],
   ["/topup/topup-list", "Quản lý topup"],
   ["/report", "Báo cáo"],
