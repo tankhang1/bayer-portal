@@ -51,10 +51,10 @@ export default function SalesPage() {
       <h2 className="tw-text-[#40aea3] tw-text-3xl tw-font-bold tw-mb-2">
         Thống kê
       </h2>
-      <div className=" tw-grid tw-grid-cols-1 tw-gap-y-6 md:tw-grid-cols-2 lg:tw-grid-cols-3 lg:tw-gap-x-6">
+      <div className="tw-grid tw-grid-cols-1 tw-gap-y-6 md:tw-grid-cols-2 lg:tw-grid-cols-3 lg:tw-gap-x-6">
         {/** Pie Chart */}
-
         <Channels data={mapValue} />
+
         {/** Revenue Chart */}
         <div className="tw-col-span-2">
           <SalesByAge data={mapValue} />

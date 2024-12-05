@@ -26,16 +26,11 @@ import {
 
 // Chart
 const ProductivityChart = dynamic(
-  () => import("./components/productivity-chart"),
-  {
-    ssr: false,
-  }
+  () => import("./components/productivity-chart")
 );
 
 // Calenndar
-const Calendar = dynamic(() => import("./components/calendar"), {
-  ssr: false,
-});
+const Calendar = dynamic(() => import("./components/calendar"));
 
 // EventsCard Data
 const EVENTS_CARD_DATA = [

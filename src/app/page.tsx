@@ -1,7 +1,17 @@
+"use client";
+
+import { useEffect } from "react";
+import { redirect, useRouter } from "next/navigation";
 import { store } from "@/redux/store";
-import { redirect } from "next/navigation";
+
 export default function Home() {
   const isAuth = store.getState().app.token ? true : false;
-  if (isAuth) redirect("/iqr/iqr-list");
-  else redirect("/auth/signin/basic");
+
+  useEffect(() => {
+    if (isAuth) {
+      redirect("/iqr/iqr-list"); // Redirect to iqr-list if authenticated
+    } else {
+      redirect("/auth/signin/basic"); // Redirect to signin page if not authenticated
+    }
+  }, [isAuth]);
 }

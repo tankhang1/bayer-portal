@@ -19,9 +19,7 @@ import Table from "./components/table";
 import StatisticsCards from "./components/statistics-cards";
 
 // map
-const WorldMap = dynamic(() => import("./components/world-map"), {
-  ssr: false,
-});
+const WorldMap = dynamic(() => import("./components/world-map"));
 
 export default function AnalyticsPage() {
   return (

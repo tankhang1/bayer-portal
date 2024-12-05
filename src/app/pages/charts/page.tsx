@@ -18,48 +18,22 @@ import {
 
 // components
 import { color } from "@material-tailwind/react/types/components/card";
-const LineChartComponent = dynamic(() => import("./components/line-chart"), {
-  ssr: false,
-});
-const AreaChartComponent = dynamic(() => import("./components/area-chart"), {
-  ssr: false,
-});
+const LineChartComponent = dynamic(() => import("./components/line-chart"));
+const AreaChartComponent = dynamic(() => import("./components/area-chart"));
 const VerticalBarChartComponent = dynamic(
-  () => import("./components/vertical-bar-chart"),
-  {
-    ssr: false,
-  }
+  () => import("./components/vertical-bar-chart")
 );
 const HorizontalBarChartComponent = dynamic(
-  () => import("./components/horizontal-bar-chart"),
-  {
-    ssr: false,
-  }
+  () => import("./components/horizontal-bar-chart")
 );
-const MixedChartComponent = dynamic(() => import("./components/mixed-chart"), {
-  ssr: false,
-});
-const BubbleChartComponent = dynamic(
-  () => import("./components/bubble-chart"),
-  {
-    ssr: false,
-  }
-);
+const MixedChartComponent = dynamic(() => import("./components/mixed-chart"));
+const BubbleChartComponent = dynamic(() => import("./components/bubble-chart"));
 const DoughnutChartComponent = dynamic(
-  () => import("./components/doughnut-chart"),
-  {
-    ssr: false,
-  }
+  () => import("./components/doughnut-chart")
 );
-const PieChartComponent = dynamic(() => import("./components/pie-chart"), {
-  ssr: false,
-});
-const RadarChartComponent = dynamic(() => import("./components/radar-chart"), {
-  ssr: false,
-});
-const PolarChartComponent = dynamic(() => import("./components/polar-chart"), {
-  ssr: false,
-});
+const PieChartComponent = dynamic(() => import("./components/pie-chart"));
+const RadarChartComponent = dynamic(() => import("./components/radar-chart"));
+const PolarChartComponent = dynamic(() => import("./components/polar-chart"));
 
 function ChartCard({
   color,

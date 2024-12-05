@@ -42,7 +42,7 @@ export default function Channels({ data }: Props) {
     };
   }, [data]);
   return (
-    <div className="tw-col-span-1">
+    <div className="tw-col-span-1 tw-overflow-y-auto">
       <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm">
         <CardHeader
           floated={false}
@@ -53,9 +53,9 @@ export default function Channels({ data }: Props) {
             iQr
           </Typography>
         </CardHeader>
-        <CardBody>
+        <CardBody className="tw-flex">
           <PieChart
-            height={238}
+            height={270}
             series={[
               mapValue?.block,
               mapValue?.total,
@@ -72,10 +72,10 @@ export default function Channels({ data }: Props) {
             options={{
               legend: {
                 show: true,
-                position: "right",
+                position: "bottom", // Moved legend to the bottom
                 horizontalAlign: "center",
                 offsetX: 0,
-                offsetY: 40,
+                offsetY: 0, // Adjust this if you need more space
                 markers: {
                   width: 8,
                   height: 8,
@@ -89,16 +89,16 @@ export default function Channels({ data }: Props) {
               dataLabels: {
                 enabled: true,
               },
-              responsive: [
-                {
-                  breakpoint: 1580,
-                  options: {
-                    legend: {
-                      show: false,
-                    },
-                  },
-                },
-              ],
+              // responsive: [
+              //   {
+              //     breakpoint: 1580,
+              //     options: {
+              //       legend: {
+              //         show: false,
+              //       },
+              //     },
+              //   },
+              // ],
               tooltip: {
                 enabled: true,
                 y: {

@@ -308,10 +308,12 @@ export default function Sidenav({
               </List>
             )
         )}
-        <Link href={`/`}>
+        <Link href={`/auth/signin/basic`}>
           <ListItem
             className={`tw-capitalize tw-text-red-600 ${
-              pathname === `/` ? activeRouteClasses : collapseItemClasses
+              pathname === `/auth/signin/basic`
+                ? activeRouteClasses
+                : collapseItemClasses
             }`}
           >
             <ListItemPrefix>

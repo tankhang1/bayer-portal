@@ -27,7 +27,10 @@ export default function InnerContent({
   const isSimpleLayout = isAuthPages || isPricingPage;
 
   return (
-    <div className="!tw-min-h-screen tw-bg-blue-gray-50/50">
+    <div
+      className="!tw-min-h-screen tw-bg-blue-gray-50/50 tw-overflow-y-scroll"
+      style={{ maxHeight: "calc(100vh - 50px)" }}
+    >
       {!isSimpleLayout && (
         <Sidenav
           routes={routes}

@@ -14,15 +14,9 @@ import {
 import { ArrowUturnRightIcon } from "@heroicons/react/24/solid";
 
 // components
-const TaskChart = dynamic(() => import("./components/task-chart"), {
-  ssr: false,
-});
-const CaloriesChart = dynamic(() => import("./components/calories-chart"), {
-  ssr: false,
-});
-const Calendar = dynamic(() => import("./components/calendar"), {
-  ssr: false,
-});
+const TaskChart = dynamic(() => import("./components/task-chart"));
+const CaloriesChart = dynamic(() => import("./components/calories-chart"));
+const Calendar = dynamic(() => import("./components/calendar"));
 import LightCard from "./components/light-card";
 import MusicPlayer from "./components/music-player";
 import Categories from "./components/categories";
