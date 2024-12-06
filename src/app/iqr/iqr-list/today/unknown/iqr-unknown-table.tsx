@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -41,6 +41,7 @@ import {
   CheckCircleIcon,
   ChevronUpDownIcon,
   ExclamationTriangleIcon,
+  MagnifyingGlassPlusIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -124,6 +125,11 @@ export default function IQrUnknownTable() {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
@@ -521,10 +527,10 @@ export default function IQrUnknownTable() {
             {iqrDetail?.image_confirm && (
               <Image
                 src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
-                width={192}
-                height={192}
+                width={500}
+                height={500}
                 alt="Product"
-                className="tw-object-cover tw-w-56 tw-h-56"
+                className="tw-object-cover tw-w-64 tw-h-64"
                 onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
               />
             )}
@@ -577,97 +583,91 @@ export default function IQrUnknownTable() {
           </Button>
         </DialogFooter>
       </Dialog>
-      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Hình ảnh xác thực</Typography>
-
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setPreviewImage("")}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
-
-        <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          {previewImage && (
-            <Image
-              src={`${previewImage || ""}?nocache=${Date.now()}`}
-              width={300}
-              height={300}
-              alt="Product"
-              className="tw-object-cover tw-w-[500px] tw-h-[500px]"
-            />
-          )}
-        </DialogBody>
-      </Dialog>
       <Dialog open={openEditForm} handler={setOpenEditForm}>
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Cập nhật thông tin</Typography>
         </DialogHeader>
 
-        <DialogBody className="tw-flex tw-flex-col tw-gap-3">
-          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
-            <Input
+        <DialogBody className="tw-flex tw-flex-row tw-gap-3 ">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center tw-relative">
+            <input
+              ref={fileInputRef}
               placeholder="Hình ảnh giấy chứng nhận"
-              label="Hình ảnh giấy chứng nhận"
               type="file"
-              onChange={(e) => {
-                handleFileChange(e);
-              }}
+              onChange={handleFileChange}
+              disabled={
+                localStorage.getItem("roles") === "ROLE_AGENT" ? true : false
+              }
+              className="tw-hidden"
             />
             {watch().image_confirm && (
               <Image
                 src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
-                width={450}
-                height={450}
+                width={500}
+                height={400}
                 alt="Image"
-                className="!tw-w-80 !tw-h-80"
+                className="tw-w-[500px] tw-h-80 tw-cursor-pointer"
+                onClick={
+                  localStorage.getItem("roles") !== "ROLE_AGENT"
+                    ? handleImageClick
+                    : () => {}
+                } // Trigger the file input click
               />
             )}
+            <IconButton
+              className="tw-bg-transparent !tw-absolute !tw-top-3 !tw-right-3 z-20 tw-w-6 tw-h-6"
+              onClick={() => setPreviewImage(watch().image_confirm)}
+            >
+              <MagnifyingGlassPlusIcon width={24} height={24} color="white" />
+            </IconButton>
           </div>
-
-          <Input
-            placeholder="Tên đăng ký"
-            label="Tên đăng ký"
-            {...register("name")}
-          />
-          <Select
-            variant="outlined"
-            id="province_name_agent"
-            label="Chọn tỉnh thành"
-            className="tw-text-black"
-            value={watch("province_name_agent")}
-            selected={(element) =>
-              element &&
-              React.cloneElement(element, {
-                disabled: true,
-                className:
-                  "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
-              })
-            }
-            onChange={(value) => {
-              setValue("province_name_agent", value || "");
-            }}
-          >
-            {/* <Option value="">Chọn tỉnh thành</Option> */}
-            {provinces?.map((province) => (
-              <Option
-                key={province.code}
-                value={province.code}
-                className="tw-text-black"
-              >
-                {province.name}
-              </Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="Địa chỉ"
-            label="Địa chỉ"
-            {...register("address")}
-          />
-          <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
+          <div className="tw-flex tw-flex-col tw-w-full tw-gap-2">
+            <Input
+              placeholder="Tên đăng ký"
+              label="Tên đăng ký"
+              disabled
+              {...register("name")}
+            />
+            <Select
+              variant="outlined"
+              id="province_name_agent"
+              label="Chọn tỉnh thành"
+              className="tw-text-black"
+              value={watch("province_name_agent")}
+              selected={(element) =>
+                element &&
+                React.cloneElement(element, {
+                  disabled: true,
+                  className:
+                    "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+                })
+              }
+              onChange={(value) => {
+                setValue("province_name_agent", value || "");
+              }}
+            >
+              {/* <Option value="">Chọn tỉnh thành</Option> */}
+              {provinces?.map((province) => (
+                <Option
+                  key={province.code}
+                  value={province.code}
+                  className="tw-text-black"
+                >
+                  {province.name}
+                </Option>
+              ))}
+            </Select>
+            <Input
+              placeholder="Địa chỉ"
+              label="Địa chỉ"
+              {...register("address")}
+            />
+            <Input
+              placeholder="Ghi chú"
+              label="Ghi chú"
+              {...register("note")}
+            />
+          </div>
         </DialogBody>
         <DialogFooter className="tw-gap-3">
           <Button
@@ -689,6 +689,31 @@ export default function IQrUnknownTable() {
             <span>Huỷ</span>
           </Button>
         </DialogFooter>
+      </Dialog>
+      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
+        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+          <Typography variant="h3">Hình ảnh xác thực</Typography>
+
+          <IconButton
+            variant="text"
+            className="!tw-absolute tw-top-5 tw-right-5"
+            onClick={() => setPreviewImage("")}
+          >
+            <XMarkIcon color="red" width={24} height={24} />
+          </IconButton>
+        </DialogHeader>
+
+        <DialogBody className="tw-flex tw-justify-center tw-items-center">
+          {previewImage && (
+            <Image
+              src={`${previewImage || ""}?nocache=${Date.now()}`}
+              width={300}
+              height={300}
+              alt="Product"
+              className="tw-object-cover tw-w-[800px] tw-h-[800px]"
+            />
+          )}
+        </DialogBody>
       </Dialog>
     </Card>
   );

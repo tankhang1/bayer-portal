@@ -42,6 +42,7 @@ import {
   ChevronUpDownIcon,
   ExclamationTriangleIcon,
   MagnifyingGlassIcon,
+  MagnifyingGlassPlusIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -593,38 +594,14 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
           </Button>
         </DialogFooter>
       </Dialog>
-      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Hình ảnh xác thực</Typography>
 
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setPreviewImage("")}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
-
-        <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          {previewImage && (
-            <Image
-              src={`${previewImage || ""}?nocache=${Date.now()}`}
-              width={300}
-              height={300}
-              alt="Product"
-              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
-            />
-          )}
-        </DialogBody>
-      </Dialog>
-      <Dialog open={openEditForm} handler={setOpenEditForm} size="lg">
+      <Dialog open={openEditForm} handler={setOpenEditForm}>
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Cập nhật thông tin</Typography>
         </DialogHeader>
 
         <DialogBody className="tw-flex tw-flex-row tw-gap-3 ">
-          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center tw-relative">
             <input
               ref={fileInputRef}
               placeholder="Hình ảnh giấy chứng nhận"
@@ -649,6 +626,12 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
                 } // Trigger the file input click
               />
             )}
+            <IconButton
+              className="tw-bg-transparent !tw-absolute !tw-top-3 !tw-right-3 z-20 tw-w-6 tw-h-6"
+              onClick={() => setPreviewImage(watch().image_confirm)}
+            >
+              <MagnifyingGlassPlusIcon width={24} height={24} color="white" />
+            </IconButton>
           </div>
           <div className="tw-flex tw-flex-col tw-w-full tw-gap-2">
             <Input
@@ -718,6 +701,31 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
             <span>Huỷ</span>
           </Button>
         </DialogFooter>
+      </Dialog>
+      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
+        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+          <Typography variant="h3">Hình ảnh xác thực</Typography>
+
+          <IconButton
+            variant="text"
+            className="!tw-absolute tw-top-5 tw-right-5"
+            onClick={() => setPreviewImage("")}
+          >
+            <XMarkIcon color="red" width={24} height={24} />
+          </IconButton>
+        </DialogHeader>
+
+        <DialogBody className="tw-flex tw-justify-center tw-items-center">
+          {previewImage && (
+            <Image
+              src={`${previewImage || ""}?nocache=${Date.now()}`}
+              width={300}
+              height={300}
+              alt="Product"
+              className="tw-object-cover tw-w-[800px] tw-h-[800px]"
+            />
+          )}
+        </DialogBody>
       </Dialog>
     </Card>
   );

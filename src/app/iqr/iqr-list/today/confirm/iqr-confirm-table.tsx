@@ -544,10 +544,10 @@ export default function IQrConfirmTable() {
             {iqrDetail?.image_confirm && (
               <Image
                 src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
-                width={192}
-                height={192}
+                width={500}
+                height={500}
                 alt="Product"
-                className="tw-object-cover tw-w-56 tw-h-56"
+                className="tw-object-cover tw-w-64 tw-h-64"
                 onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
               />
             )}
@@ -600,31 +600,7 @@ export default function IQrConfirmTable() {
           </Button>
         </DialogFooter>
       </Dialog>
-      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Hình ảnh xác thực</Typography>
 
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setPreviewImage("")}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
-
-        <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          {previewImage && (
-            <Image
-              src={`${previewImage || ""}?nocache=${Date.now()}`}
-              width={300}
-              height={300}
-              alt="Product"
-              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
-            />
-          )}
-        </DialogBody>
-      </Dialog>
       <Dialog open={openEditForm} handler={setOpenEditForm} size="lg">
         <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
           <Typography variant="h3">Cập nhật thông tin</Typography>
@@ -725,6 +701,31 @@ export default function IQrConfirmTable() {
             <span>Huỷ</span>
           </Button>
         </DialogFooter>
+      </Dialog>
+      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
+        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+          <Typography variant="h3">Hình ảnh xác thực</Typography>
+
+          <IconButton
+            variant="text"
+            className="!tw-absolute tw-top-5 tw-right-5"
+            onClick={() => setPreviewImage("")}
+          >
+            <XMarkIcon color="red" width={24} height={24} />
+          </IconButton>
+        </DialogHeader>
+
+        <DialogBody className="tw-flex tw-justify-center tw-items-center">
+          {previewImage && (
+            <Image
+              src={`${previewImage || ""}?nocache=${Date.now()}`}
+              width={300}
+              height={300}
+              alt="Product"
+              className="tw-object-cover tw-w-[800px] tw-h-[800px]"
+            />
+          )}
+        </DialogBody>
       </Dialog>
     </Card>
   );
