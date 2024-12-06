@@ -37,11 +37,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
+        {/* <Script
           defer
           data-site="YOUR_DOMAIN_HERE"
           src="https://api.nepcha.com/js/nepcha-analytics.js"
-        />
+        /> */}
         <link rel="icon" type="image/svg+xml" href="/img/yis.png" />
         <title>Yis Martech</title>
       </head>

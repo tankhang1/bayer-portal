@@ -410,8 +410,10 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
         <div className="tw-w-2/4">
           <Input
             variant="outlined"
-            value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
+            onChange={(e) => {
+              setQuery({ ...query, k: e.target.value });
+              table.setPageIndex(0);
+            }}
             label="Nhập mã số may mắn hoặc số điện thoại"
           />
         </div>

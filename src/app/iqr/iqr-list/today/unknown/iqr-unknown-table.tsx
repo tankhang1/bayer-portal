@@ -117,14 +117,26 @@ export default function IQrUnknownTable() {
     s: 4,
     k: "",
   });
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
-  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
+    {
+      ...query,
+      k: filtering,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  const { data: iqrCounter } = useIqrCounterTodayQuery(
+    {
+      ...query,
+      k: filtering,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageClick = () => {
@@ -414,7 +426,9 @@ export default function IQrUnknownTable() {
           <Input
             variant="outlined"
             value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
+            onChange={(e) => {
+              setFiltering(e.target.value);
+            }}
             label="Nhập mã số may mắn hoặc số điện thoại"
           />
         </div>

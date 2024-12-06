@@ -333,6 +333,7 @@ export default function SearchTable({ keyword }: Props) {
   };
   useEffect(() => {
     setQuery({ ...query, k: keyword });
+    table.setPageIndex(0);
   }, [keyword]);
   return (
     <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">

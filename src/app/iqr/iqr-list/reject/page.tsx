@@ -29,42 +29,40 @@ type TQueryIqr = {
 };
 
 export default function IqrRejectPage() {
-  const [openModal, setOpenModal] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<TQueryIqr>();
+  // const [openModal, setOpenModal] = useState(false);
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   setValue,
+  //   watch,
+  //   formState: { errors },
+  // } = useForm<TQueryIqr>();
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
     sz: 20,
     gateway: 2,
     s: 3,
-    st: +(format(new Date(), "yyyyMMdd") + "0000"),
-    ed: +(format(new Date(), "yyyyMMdd") + "2359"),
   });
 
-  const onSubmit = (params: TQueryIqr) => {
-    setQuery({
-      ...query,
-      st: +(format(params.st, "yyyyMMdd") + "0000"),
-      ed: +(format(params.ed, "yyyyMMdd") + "2359"),
-    });
-  };
-  const onReset = () => {
-    setQuery({
-      nu: 0,
-      sz: 20,
-      gateway: 2,
-      s: 3,
-      st: +(format(new Date(), "yyyyMMdd") + "0000"),
-      ed: +(format(new Date(), "yyyyMMdd") + "2359"),
-    });
-    setValue("st", new Date());
-    setValue("ed", new Date());
-  };
+  // const onSubmit = (params: TQueryIqr) => {
+  //   setQuery({
+  //     ...query,
+  //     st: +(format(params.st, "yyyyMMdd") + "0000"),
+  //     ed: +(format(params.ed, "yyyyMMdd") + "2359"),
+  //   });
+  // };
+  // const onReset = () => {
+  //   setQuery({
+  //     nu: 0,
+  //     sz: 20,
+  //     gateway: 2,
+  //     s: 3,
+  //     st: +(format(new Date(), "yyyyMMdd") + "0000"),
+  //     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
+  //   });
+  //   setValue("st", new Date());
+  //   setValue("ed", new Date());
+  // };
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -76,7 +74,7 @@ export default function IqrRejectPage() {
       <div className="tw-mt-8 tw-flex tw-items-center tw-justify-between">
         <h1 className="tw-text-3xl">Tìm kiếm thông tin</h1>
 
-        <div className="tw-flex tw-shrink-0 tw-gap-2">
+        {/* <div className="tw-flex tw-shrink-0 tw-gap-2">
           <Button
             className="tw-flex tw-items-center tw-gap-3"
             variant="outlined"
@@ -89,10 +87,10 @@ export default function IqrRejectPage() {
             />{" "}
             Lọc dữ liệu
           </Button>
-        </div>
+        </div> */}
       </div>
       <IQrTable query={query} setQuery={setQuery} />
-      <Dialog open={openModal} handler={setOpenModal}>
+      {/* <Dialog open={openModal} handler={setOpenModal}>
         <DialogHeader>Lọc thông tin</DialogHeader>
 
         <DialogBody className="tw-gap-5 tw-flex tw-flex-col">
@@ -131,7 +129,7 @@ export default function IqrRejectPage() {
             </Button>
           </div>
         </DialogFooter>
-      </Dialog>
+      </Dialog> */}
     </section>
   );
 }

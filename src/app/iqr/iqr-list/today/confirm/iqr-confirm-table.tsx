@@ -122,14 +122,26 @@ export default function IQrConfirmTable() {
     s: 2,
     k: "",
   });
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
-  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
+    {
+      ...query,
+      k: filtering,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  const { data: iqrCounter } = useIqrCounterTodayQuery(
+    {
+      ...query,
+      k: filtering,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();

@@ -120,14 +120,20 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
   const { data: provinces } = useGetProvincesQuery();
-  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
-  const { data: iqrCounter } = useIqrCounterQuery(query, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(
+    { ...query, k: filtering },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  const { data: iqrCounter } = useIqrCounterQuery(
+    { ...query, k: filtering },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
