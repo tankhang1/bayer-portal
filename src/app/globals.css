@@ -163,3 +163,17 @@ th {
 .fc-prev-button.fc-button.fc-button-primary {
   @apply !tw-mr-1;
 }
+
+.color-gradient {
+  background: linear-gradient(
+    270deg,
+    #fdc62d 0%,
+    #ffef7b 17.54%,
+    #fdc62d 43.9%,
+    #fff77c 69.89%,
+    #fdc62d 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

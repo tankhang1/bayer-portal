@@ -67,9 +67,9 @@ export default function SalesPage() {
       {/** Horizontal Bar Chart */}
       <div className="tw-flex tw-items-center tw-justify-between tw-gap-5 tw-mb-7">
         <AwardItem
-          image={Topup}
-          title="Giải khuyển khích"
-          value={mapValue["Topup"]?.[0]?.total}
+          image={Driver}
+          title="Giải nhất"
+          value={mapValue["xemay"]?.[0]?.total}
         />
         <AwardItem
           image={Fridge}
@@ -77,14 +77,14 @@ export default function SalesPage() {
           value={mapValue["tulanh"]?.[0]?.total}
         />
         <AwardItem
-          image={Driver}
-          title="Giải nhất"
-          value={mapValue["xemay"]?.[0]?.total}
-        />
-        <AwardItem
           image={Speaker}
           title="Giải ba"
           value={mapValue["loaJBL"]?.[0]?.total}
+        />
+        <AwardItem
+          image={Topup}
+          title="Giải khuyển khích"
+          value={mapValue["Topup"]?.[0]?.total}
         />
       </div>
       <h2 className="tw-text-[#40aea3] tw-text-3xl tw-font-bold tw-mt-7 tw-mb-2">

@@ -184,7 +184,7 @@ export default function IQrRejectTable() {
           <Chip
             color="amber"
             className="tw-justify-center"
-            value="Chờ xác nhận"
+            value="Chưa xử lý"
           ></Chip>
         ),
       footer: (info) => info.column.id,
@@ -427,8 +427,8 @@ export default function IQrRejectTable() {
                     className="tw-px-5 tw-py-2 tw-uppercase"
                   >
                     <Typography
-                      color="blue-gray"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
+                      color="black"
+                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none"
                     >
                       {flexRender(
                         header.column.columnDef.header,

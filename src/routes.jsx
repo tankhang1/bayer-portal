@@ -38,7 +38,7 @@ export const routes = [
         path: "/iqr/iqr-list",
       },
       {
-        name: "Chưa duyệt",
+        name: "Chưa xử lý",
         icon: <InformationCircleIcon {...icon} />,
         path: "/iqr/iqr-list/today/unknown",
       },
@@ -73,7 +73,7 @@ export const routes = [
         path: "/iqr/iqr-list/reject",
       },
       {
-        name: "Danh sách chưa duyệt",
+        name: "Danh sách chưa xử lý",
         icon: <InformationCircleIcon {...icon} />,
         path: "/iqr/iqr-list/unknown",
       },

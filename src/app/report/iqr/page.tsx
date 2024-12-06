@@ -43,7 +43,6 @@ export default function IqrConfirmPage() {
     nu: 0,
     sz: 20,
     gateway: 2,
-    s: 2,
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
   });
@@ -62,7 +61,6 @@ export default function IqrConfirmPage() {
       nu: 0,
       sz: 20,
       gateway: 2,
-      s: 2,
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),
     });

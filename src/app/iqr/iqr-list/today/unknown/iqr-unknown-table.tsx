@@ -183,7 +183,7 @@ export default function IQrUnknownTable() {
           <Chip
             color="amber"
             className="tw-justify-center"
-            value="Chờ xác nhận"
+            value="Chưa xử lý"
           ></Chip>
         ),
       footer: (info) => info.column.id,
@@ -425,8 +425,8 @@ export default function IQrUnknownTable() {
                     className="tw-px-5 tw-py-2 tw-uppercase"
                   >
                     <Typography
-                      color="blue-gray"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
+                      color="black"
+                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none"
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -597,7 +597,7 @@ export default function IQrUnknownTable() {
               width={300}
               height={300}
               alt="Product"
-              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
+              className="tw-object-cover tw-w-[500px] tw-h-[500px]"
             />
           )}
         </DialogBody>
@@ -620,10 +620,10 @@ export default function IQrUnknownTable() {
             {watch().image_confirm && (
               <Image
                 src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
-                width={300}
-                height={300}
+                width={450}
+                height={450}
                 alt="Image"
-                className="tw-w-64 tw-h-64"
+                className="!tw-w-80 !tw-h-80"
               />
             )}
           </div>

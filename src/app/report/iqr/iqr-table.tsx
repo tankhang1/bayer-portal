@@ -133,7 +133,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
           alt=""
           width={100}
           height={100}
-          className="tw-w-44 tw-h-44 tw-object-cover"
+          className="tw-w-32 tw-h-32 tw-object-cover"
         />
       ),
       footer: (info) => info.column.id,
@@ -167,7 +167,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
           <Chip
             color="amber"
             className="tw-justify-center"
-            value="Chờ xác nhận"
+            value="Chưa xử lý"
           ></Chip>
         ),
       footer: (info) => info.column.id,
@@ -388,8 +388,8 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
                     className="tw-px-5 tw-py-2 tw-uppercase"
                   >
                     <Typography
-                      color="blue-gray"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none tw-opacity-40"
+                      color="black"
+                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none"
                     >
                       {flexRender(
                         header.column.columnDef.header,
