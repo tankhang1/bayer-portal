@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Script from "next/script";
 import { Roboto } from "next/font/google";
 import ThemeProvider from "@/components/ThemeProvider";
 import theme from "@/theme";
@@ -36,15 +35,6 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <head>
-        {/* <Script
-          defer
-          data-site="YOUR_DOMAIN_HERE"
-          src="https://api.nepcha.com/js/nepcha-analytics.js"
-        /> */}
-        <link rel="icon" type="image/svg+xml" href="/img/yis.png" />
-        <title>Yis Martech</title>
-      </head>
       <body className={roboto.className}>
         <Provider store={store}>
           <ThemeProvider value={theme}>

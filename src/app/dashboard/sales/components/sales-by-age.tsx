@@ -108,11 +108,11 @@ export default function SalesByAge({ data }: Props) {
               data: data["iqr_total"]?.map((item) => item.total),
             },
             {
-              name: "Mã kích hoạt",
+              name: "Đã kích kích hoạt",
               data: data["iqr_active"]?.map((item) => item.total),
             },
             {
-              name: "Mã sử dụng",
+              name: "Đã sử dụng",
               data: data["iqr_used"]?.map((item) => item.total),
             },
           ]}

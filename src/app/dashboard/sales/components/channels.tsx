@@ -58,13 +58,13 @@ export default function Channels({ data }: Props) {
             height={270}
             series={[
               mapValue?.block,
-              mapValue?.total,
+              // mapValue?.total,
               mapValue?.active,
               mapValue?.used,
             ]}
             labels={[
               "Chưa kích hoạt",
-              "Tổng iQr",
+              // "Tổng iQr",
               "Đã kích hoạt",
               "Đã sử dụng",
             ]}

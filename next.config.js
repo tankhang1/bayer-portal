@@ -7,7 +7,12 @@ module.exports = {
     ignoreBuildErrors: true, // Remove this if possible and fix errors
   },
   images: {
-    domains: ["reactive.yis.vn"], // Add your image domain here
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "reactive.yis.vn",
+      },
+    ], // Update to remotePatterns
   },
   webpack: (
     config,

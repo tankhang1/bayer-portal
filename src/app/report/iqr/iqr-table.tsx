@@ -127,15 +127,16 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
   const columns: ColumnDef<TIqrRES, any>[] = [
     columnHelper.accessor("image_confirm", {
       header: "Hình ảnh tem",
-      cell: (info) => (
-        <Image
-          src={info.getValue()}
-          alt=""
-          width={100}
-          height={100}
-          className="tw-w-32 tw-h-32 tw-object-cover"
-        />
-      ),
+      cell: (info) =>
+        info.getValue() && (
+          <Image
+            src={info.getValue()}
+            alt=""
+            width={100}
+            height={100}
+            className="tw-w-32 tw-h-32 tw-object-cover"
+          />
+        ),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("seri", {
