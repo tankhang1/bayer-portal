@@ -50,7 +50,7 @@ export default function Channels({ data }: Props) {
           className="tw-mb-6 tw-flex tw-justify-between tw-gap-8 tw-overflow-visible"
         >
           <Typography variant="h6" color="blue-gray">
-            iQr
+            iQr (Tổng cộng: {mapValue.total.toLocaleString("vi")} mã)
           </Typography>
         </CardHeader>
         <CardBody className="tw-flex">
