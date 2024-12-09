@@ -382,7 +382,7 @@ export default function IQrRejectTable() {
       await uploadBase64Image(values.image_confirm, values.code);
       await updateIqr({
         ...values,
-        image_confirm: `https://reactive.yis.vn/${values.code}.jpg`,
+        image_confirm: `https://reactive.icampaign.vn/${values.code}.jpg`,
       })
         .unwrap()
         .then((value) => {
