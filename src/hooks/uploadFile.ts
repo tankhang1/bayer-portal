@@ -25,7 +25,7 @@ export const uploadBase64Image = async (
 
     // Send FormData via HTTP POST
     const response = await fetch(
-      `https://reactive.yis.vn/upload-files/bayer/${fileName}`,
+      `https://reactive.icampaign.vn/upload-files/bayer/${fileName}`,
       {
         method: "POST",
         body: formData,
