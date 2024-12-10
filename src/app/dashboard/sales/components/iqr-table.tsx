@@ -62,6 +62,7 @@ import { toast } from "react-toastify";
 import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
+import { BASE_URL } from "@/constants";
 
 const statusMap = new Map<number, string>([
   [-99, "Hệ thống bị gián đoạn"],
@@ -306,7 +307,7 @@ export default function IQrConfirmTable() {
       await uploadBase64Image(values.image_confirm, values.code);
       await updateIqr({
         ...values,
-        image_confirm: `https://reactive.icampaign.vn/${values.code}.jpg`,
+        image_confirm: `${BASE_URL}/${values.code}.jpg`,
       })
         .unwrap()
         .then((value) => {
@@ -360,23 +361,20 @@ export default function IQrConfirmTable() {
         <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={Math.random()}>
+              <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    key={Math.random()}
+                    key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     className="tw-px-5 tw-py-2 tw-uppercase !tw-text-black"
                   >
-                    <Typography
-                      color="black"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none"
-                    >
+                    <div className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none">
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
                       <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
-                    </Typography>
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -397,15 +395,12 @@ export default function IQrConfirmTable() {
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="!tw-border-y !tw-border-x-0">
-                      <Typography
-                        variant="small"
-                        className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
-                      >
+                      <div className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                      </Typography>
+                      </div>
                     </td>
                   ))}
                 </tr>
@@ -446,193 +441,211 @@ export default function IQrConfirmTable() {
           </Button>
         </div>
       </div>
-      <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Thông tin trúng giải</Typography>
-          <Typography variant="h5">Cào Nhanh Tay - Trúng Quà Ngay</Typography>
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setOpenDialog(false)}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
+      {openDialog && (
+        <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
+          <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+            <Typography variant="h3">Thông tin trúng giải</Typography>
+            <Typography variant="h5">Cào Nhanh Tay - Trúng Quà Ngay</Typography>
+            <IconButton
+              variant="text"
+              className="!tw-absolute tw-top-5 tw-right-5"
+              onClick={() => setOpenDialog(false)}
+            >
+              <XMarkIcon color="red" width={24} height={24} />
+            </IconButton>
+          </DialogHeader>
 
-        <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
-          <div className="tw-flex tw-gap-6">
-            {iqrDetail?.image_confirm && (
-              <Image
-                src={`${iqrDetail?.image_confirm || ""}?nocache=${Date.now()}`}
-                width={192}
-                height={192}
-                alt="Product"
-                className="tw-object-cover tw-w-56 tw-h-56"
-                onClick={() => setPreviewImage(iqrDetail?.image_confirm || "")}
-              />
-            )}
-            <div>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.time_active}
-              </Typography>
-              <Typography variant="h5" color="gray">
-                {iqrDetail?.product_name}
-              </Typography>
+          <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
+            <div className="tw-flex tw-gap-6">
+              {iqrDetail?.image_confirm && (
+                <Image
+                  src={`${
+                    iqrDetail?.image_confirm || ""
+                  }?nocache=${Date.now()}`}
+                  width={192}
+                  height={192}
+                  alt="Product"
+                  className="tw-object-cover tw-w-56 tw-h-56"
+                  onClick={() =>
+                    setPreviewImage(iqrDetail?.image_confirm || "")
+                  }
+                />
+              )}
+              <div>
+                <Typography variant="paragraph" color="black">
+                  {iqrDetail?.time_active}
+                </Typography>
+                <Typography variant="h5" color="gray">
+                  {iqrDetail?.product_name}
+                </Typography>
 
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.fullname}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.phone}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.code}
-              </Typography>
-              <Typography variant="paragraph" color="black">
-                {iqrDetail?.province_name}
-              </Typography>
-              <Typography variant="h5" color="black">
-                Giải thưởng:{" "}
-                {MapLabel.get(iqrDetail?.award1 || iqrDetail?.award2 || "") ||
-                  "Chúc bạn may mắn lần sau"}
-              </Typography>
+                <Typography variant="paragraph" color="black">
+                  {iqrDetail?.fullname}
+                </Typography>
+                <Typography variant="paragraph" color="black">
+                  {iqrDetail?.phone}
+                </Typography>
+                <Typography variant="paragraph" color="black">
+                  {iqrDetail?.code}
+                </Typography>
+                <Typography variant="paragraph" color="black">
+                  {iqrDetail?.province_name}
+                </Typography>
+                <Typography variant="h5" color="black">
+                  Giải thưởng:{" "}
+                  {MapLabel.get(iqrDetail?.award1 || iqrDetail?.award2 || "") ||
+                    "Chúc bạn may mắn lần sau"}
+                </Typography>
+              </div>
             </div>
-          </div>
-        </DialogBody>
-        <DialogFooter className="tw-gap-3">
-          <Button
-            variant="gradient"
-            color="green"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingConfirm}
-            onClick={() => onConfirm(iqrDetail?.code || "")}
-          >
-            <span>Duyệt</span>
-          </Button>
-          <Button
-            variant="text"
-            color="red"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingReject}
-            onClick={() => onReject(iqrDetail?.code || "")}
-          >
-            <span>Từ chối</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-      <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Hình ảnh xác thực</Typography>
+          </DialogBody>
+          <DialogFooter className="tw-gap-3">
+            <Button
+              variant="gradient"
+              color="green"
+              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+              loading={isLoadingConfirm}
+              onClick={() => onConfirm(iqrDetail?.code || "")}
+            >
+              <span>Duyệt</span>
+            </Button>
+            <Button
+              variant="text"
+              color="red"
+              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+              loading={isLoadingReject}
+              onClick={() => onReject(iqrDetail?.code || "")}
+            >
+              <span>Từ chối</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      )}
+      {previewImage !== "" && (
+        <Dialog open={previewImage !== ""} handler={() => setPreviewImage("")}>
+          <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+            <Typography variant="h3">Hình ảnh xác thực</Typography>
 
-          <IconButton
-            variant="text"
-            className="!tw-absolute tw-top-5 tw-right-5"
-            onClick={() => setPreviewImage("")}
-          >
-            <XMarkIcon color="red" width={24} height={24} />
-          </IconButton>
-        </DialogHeader>
+            <IconButton
+              variant="text"
+              className="!tw-absolute tw-top-5 tw-right-5"
+              onClick={() => setPreviewImage("")}
+            >
+              <XMarkIcon color="red" width={24} height={24} />
+            </IconButton>
+          </DialogHeader>
 
-        <DialogBody className="tw-flex tw-justify-center tw-items-center">
-          {previewImage && (
-            <Image
-              src={`${previewImage || ""}?nocache=${Date.now()}`}
-              width={300}
-              height={300}
-              alt="Product"
-              className="tw-object-cover tw-w-[420px] tw-h-[420px]"
-            />
-          )}
-        </DialogBody>
-      </Dialog>
-      <Dialog open={openEditForm} handler={setOpenEditForm}>
-        <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-          <Typography variant="h3">Cập nhật thông tin</Typography>
-        </DialogHeader>
-
-        <DialogBody className="tw-flex tw-flex-col tw-gap-3">
-          <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
-            <Input
-              placeholder="Hình ảnh giấy chứng nhận"
-              label="Hình ảnh giấy chứng nhận"
-              type="file"
-              onChange={(e) => {
-                handleFileChange(e);
-              }}
-            />
-            {watch().image_confirm && (
+          <DialogBody className="tw-flex tw-justify-center tw-items-center">
+            {previewImage && (
               <Image
-                src={`${watch().image_confirm || ""}?nocache=${Date.now()}`}
+                src={`${previewImage || ""}?nocache=${Date.now()}`}
                 width={300}
                 height={300}
-                alt="Image"
-                className="tw-w-64 tw-h-64"
+                alt="Product"
+                className="tw-object-cover tw-w-[420px] tw-h-[420px]"
               />
             )}
-          </div>
+          </DialogBody>
+        </Dialog>
+      )}
+      {openEditForm && (
+        <Dialog open={openEditForm} handler={setOpenEditForm}>
+          <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+            <Typography variant="h3">Cập nhật thông tin</Typography>
+          </DialogHeader>
 
-          <Input
-            placeholder="Tên đăng ký"
-            label="Tên đăng ký"
-            {...register("name")}
-          />
-          <Select
-            variant="outlined"
-            id="province_name_agent"
-            label="Chọn tỉnh thành"
-            className="tw-text-black"
-            value={watch("province_name_agent")}
-            selected={(element) =>
-              element &&
-              React.cloneElement(element, {
-                disabled: true,
-                className:
-                  "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
-              })
-            }
-            onChange={(value) => {
-              setValue("province_name_agent", value || "");
-            }}
-          >
-            {/* <Option value="">Chọn tỉnh thành</Option> */}
-            {provinces?.map((province) => (
-              <Option
-                key={province.code}
-                value={province.code}
-                className="tw-text-black"
-              >
-                {province.name}
-              </Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="Địa chỉ"
-            label="Địa chỉ"
-            {...register("address")}
-          />
-          <Input placeholder="Ghi chú" label="Ghi chú" {...register("note")} />
-        </DialogBody>
-        <DialogFooter className="tw-gap-3">
-          <Button
-            variant="gradient"
-            color="green"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingUpdate || isLoadingUploadImage}
-            onClick={handleSubmit(onUpdate)}
-          >
-            <span>Cập nhật</span>
-          </Button>
-          <Button
-            variant="text"
-            color="red"
-            className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-            loading={isLoadingReject}
-            onClick={() => setOpenEditForm(false)}
-          >
-            <span>Huỷ</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
+          <DialogBody className="tw-flex tw-flex-col tw-gap-3">
+            <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
+              <Input
+                placeholder="Hình ảnh giấy chứng nhận"
+                label="Hình ảnh giấy chứng nhận"
+                type="file"
+                onChange={(e) => {
+                  handleFileChange(e);
+                }}
+              />
+              {watch().image_confirm && (
+                <Image
+                  src={
+                    watch().image_confirm.startsWith("data:image")
+                      ? watch().image_confirm // Base64 image, no need for cache busting
+                      : `${watch().image_confirm || ""}?${new Date().getTime()}` // URL with cache-busting
+                  }
+                  width={300}
+                  height={300}
+                  alt="Image"
+                  className="tw-w-64 tw-h-64"
+                />
+              )}
+            </div>
+
+            <Input
+              placeholder="Tên đăng ký"
+              label="Tên đăng ký"
+              {...register("name")}
+            />
+            <Select
+              variant="outlined"
+              id="province_name_agent"
+              label="Chọn tỉnh thành"
+              className="tw-text-black"
+              value={watch("province_name_agent")}
+              selected={(element) =>
+                element &&
+                React.cloneElement(element, {
+                  disabled: true,
+                  className:
+                    "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+                })
+              }
+              onChange={(value) => {
+                setValue("province_name_agent", value || "");
+              }}
+            >
+              {/* <Option value="">Chọn tỉnh thành</Option> */}
+              {provinces?.map((province) => (
+                <Option
+                  key={province.code}
+                  value={province.code}
+                  className="tw-text-black"
+                >
+                  {province.name}
+                </Option>
+              ))}
+            </Select>
+            <Input
+              placeholder="Địa chỉ"
+              label="Địa chỉ"
+              {...register("address")}
+            />
+            <Input
+              placeholder="Ghi chú"
+              label="Ghi chú"
+              {...register("note")}
+            />
+          </DialogBody>
+          <DialogFooter className="tw-gap-3">
+            <Button
+              variant="gradient"
+              color="green"
+              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+              loading={isLoadingUpdate || isLoadingUploadImage}
+              onClick={handleSubmit(onUpdate)}
+            >
+              <span>Cập nhật</span>
+            </Button>
+            <Button
+              variant="text"
+              color="red"
+              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+              loading={isLoadingReject}
+              onClick={() => setOpenEditForm(false)}
+            >
+              <span>Huỷ</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      )}
     </Card>
   );
 }

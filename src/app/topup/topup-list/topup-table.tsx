@@ -188,17 +188,14 @@ export default function TopupTable({ query, setQuery }: Props) {
                     onClick={header.column.getToggleSortingHandler()}
                     className="tw-px-5 tw-py-2 tw-uppercase"
                   >
-                    <Typography
-                      color="black"
-                      className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none"
-                    >
+                    <div className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none">
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
 
                       <ChevronUpDownIcon className="tw-h-4 tw-w-4" />
-                    </Typography>
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -209,15 +206,12 @@ export default function TopupTable({ query, setQuery }: Props) {
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="!tw-border-y !tw-border-x-0">
-                    <Typography
-                      variant="small"
-                      className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4"
-                    >
+                    <div className="!tw-font-medium !tw-text-blue-gray-500 tw-py-2 tw-px-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </Typography>
+                    </div>
                   </td>
                 ))}
               </tr>

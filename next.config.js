@@ -10,7 +10,7 @@ module.exports = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "reactive.yis.vn",
+        hostname: "reactive.icampaign.vn",
       },
     ], // Update to remotePatterns
   },
