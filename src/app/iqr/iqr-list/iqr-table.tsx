@@ -260,8 +260,12 @@ export default function IQrTable() {
     state: {
       globalFilter: filtering,
       sorting: sorting,
+      pagination: {
+        pageIndex: query.nu || 0,
+        pageSize: query.sz || 20,
+      },
     },
-    pageCount: Math.ceil((iqrCounter ?? 0) / (query.sz || 1)),
+    manualPagination: true,
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,

@@ -120,8 +120,12 @@ export default function TopupTable({ query, setQuery }: Props) {
     state: {
       globalFilter: filtering,
       sorting: sorting,
+      pagination: {
+        pageIndex: query.nu || 0,
+        pageSize: query.sz || 20,
+      },
     },
-    pageCount: Math.ceil((topupCounter ?? 0) / query.sz),
+    manualPagination: true,
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,

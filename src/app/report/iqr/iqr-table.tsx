@@ -122,7 +122,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
-
+  console.log("data", data, query);
   const [iqrDetail, setIqrDetail] = useState<TIqrRES>();
   // Define columns with type safety
   const columns: ColumnDef<TIqrRES, any>[] = [
@@ -237,8 +237,12 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
     state: {
       globalFilter: filtering,
       sorting: sorting,
+      pagination: {
+        pageIndex: query.nu || 0,
+        pageSize: query.sz || 20,
+      },
     },
-    pageCount: Math.ceil((iqrCounter ?? 0) / (query?.sz || 1)),
+    manualPagination: true,
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,

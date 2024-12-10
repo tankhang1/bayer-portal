@@ -92,8 +92,12 @@ export default function SMSTable({ query, setQuery }: Props) {
     state: {
       globalFilter: filtering,
       sorting: sorting,
+      pagination: {
+        pageIndex: query.nu || 0,
+        pageSize: query.sz || 20,
+      },
     },
-    pageCount: Math.ceil((brandnameCounter ?? 0) / query.sz),
+    manualPagination: true,
     //@ts-ignore
     onPaginationChange: ({
       pageIndex,
