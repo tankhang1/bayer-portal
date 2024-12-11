@@ -39,7 +39,7 @@ export default function SMSPage() {
   } = useForm<TQuerySMS>();
   const [query, setQuery] = useState<TBrandnameRangeTimeREQ>({
     nu: 0,
-    sz: 20,
+    sz: 6,
     k: "",
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
@@ -56,7 +56,7 @@ export default function SMSPage() {
   const onReset = () => {
     setQuery({
       nu: 0,
-      sz: 20,
+      sz: 6,
       k: "",
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),

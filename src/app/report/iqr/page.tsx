@@ -41,7 +41,7 @@ export default function IqrConfirmPage() {
   } = useForm<TQueryIqr>();
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
-    sz: 20,
+    sz: 6,
     gateway: 2,
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
@@ -59,7 +59,7 @@ export default function IqrConfirmPage() {
   const onReset = () => {
     setQuery({
       nu: 0,
-      sz: 20,
+      sz: 6,
       gateway: 2,
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),

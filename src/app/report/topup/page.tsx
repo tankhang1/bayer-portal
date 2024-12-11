@@ -39,7 +39,7 @@ export default function TopupPage() {
   } = useForm<TQuery>();
   const [query, setQuery] = useState<TTopupRangeTimeREQ>({
     nu: 0,
-    sz: 20,
+    sz: 6,
     k: "",
     st: +(format(new Date(), "yyyyMMdd") + "0000"),
     ed: +(format(new Date(), "yyyyMMdd") + "2359"),
@@ -57,7 +57,7 @@ export default function TopupPage() {
   const onReset = () => {
     setQuery({
       nu: 0,
-      sz: 20,
+      sz: 6,
       k: "",
       st: +(format(new Date(), "yyyyMMdd") + "0000"),
       ed: +(format(new Date(), "yyyyMMdd") + "2359"),

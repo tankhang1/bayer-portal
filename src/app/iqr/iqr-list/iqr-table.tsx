@@ -109,32 +109,20 @@ export default function IQrTable() {
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
-    sz: 20,
+    sz: 10000,
     gateway: 2,
     k: "",
   });
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(
-    {
-      ...query,
-      k: filtering,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
-  const { data: iqrCounter } = useIqrCounterTodayQuery(
-    {
-      ...query,
-      k: filtering,
-    },
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageClick = () => {
@@ -258,28 +246,13 @@ export default function IQrTable() {
     data: (data || []) as TIqrRES[],
     columns,
     state: {
-      globalFilter: filtering,
       sorting: sorting,
       pagination: {
-        pageIndex: query.nu || 0,
-        pageSize: query.sz || 20,
+        pageIndex: 0,
+        pageSize: query.sz || 6,
       },
     },
-    manualPagination: true,
-    //@ts-ignore
-    onPaginationChange: ({
-      pageIndex,
-      pageSize,
-    }: {
-      pageIndex: number;
-      pageSize: number;
-    }) => {
-      setQuery({
-        ...query,
-        nu: pageIndex,
-        sz: pageSize,
-      });
-    },
+    pageCount: Math.ceil((iqrCounter || 1) / (query?.sz || 1)),
     // @ts-ignore
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
@@ -378,13 +351,13 @@ export default function IQrTable() {
       <CardBody className="tw-flex tw-items-center tw-px-4 tw-justify-end">
         <div className="tw-flex tw-gap-4 tw-w-full tw-items-center">
           <select
-            value={table.getState().pagination.pageSize}
+            value={query?.sz || 6}
             onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
+              setQuery({ ...query, nu: 0, sz: Number(e.target.value) });
             }}
             className="tw-border tw-p-2 tw-border-blue-gray-100 tw-rounded-lg tw-max-w-[70px] tw-w-full"
           >
-            {[20, 30, 40].map((pageSize) => (
+            {[6, 12, 18].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
@@ -400,9 +373,9 @@ export default function IQrTable() {
         <div className="tw-w-2/4">
           <Input
             variant="outlined"
-            value={filtering}
+            defaultValue={query.k}
             onChange={(e) => {
-              setFiltering(e.target.value);
+              setQuery({ ...query, nu: 0, k: e.target.value });
             }}
             label="Nhập mã số may mắn hoặc số điện thoại"
           />
@@ -464,7 +437,7 @@ export default function IQrTable() {
         <span className="tw-flex tw-items-center tw-gap-1">
           <Typography className="!tw-font-bold">Trang</Typography>
           <strong>
-            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+            {(query?.nu || 0) + 1} / {table.getPageCount()}
           </strong>
         </span>
         <div className="tw-flex tw-items-center tw-gap-2">
@@ -472,9 +445,9 @@ export default function IQrTable() {
             variant="outlined"
             size="sm"
             onClick={() => {
-              table.previousPage();
+              setQuery({ ...query, nu: (query?.nu || 0) - 1 });
             }}
-            disabled={!table.getCanPreviousPage()}
+            disabled={(query?.nu || 0) - 1 < 0}
             className="disabled:tw-opacity-30"
           >
             <ChevronLeftIcon className="tw-w-4 tw-h-4 tw-stroke-blue-gray-900 tw-stroke-2" />
@@ -483,9 +456,9 @@ export default function IQrTable() {
             variant="outlined"
             size="sm"
             onClick={() => {
-              table.nextPage();
+              setQuery({ ...query, nu: (query?.nu || 0) + 1 });
             }}
-            disabled={!table.getCanNextPage()}
+            disabled={(query?.nu || 0) + 1 >= table.getPageCount()}
             className="disabled:tw-opacity-30"
           >
             <ChevronRightIcon className="tw-w-4 tw-h-4 tw-stroke-blue-gray-900 tw-stroke-2" />

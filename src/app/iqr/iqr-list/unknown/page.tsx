@@ -39,7 +39,7 @@ export default function IqrRejectPage() {
   // } = useForm<TQueryIqr>();
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
-    sz: 20,
+    sz: 6,
     gateway: 2,
     s: 4,
     // st: +(format(new Date(), "yyyyMMdd") + "0000"),
