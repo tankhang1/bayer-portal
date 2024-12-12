@@ -65,7 +65,7 @@ export default function SalesPage() {
       </h2>
 
       {/** Horizontal Bar Chart */}
-      <div className="tw-flex tw-items-center tw-justify-between tw-gap-5 tw-mb-7">
+      <div className="tw-flex tw-items-start tw-justify-between tw-gap-5 tw-mb-7">
         <AwardItem
           image={Driver}
           title="Giải nhất"

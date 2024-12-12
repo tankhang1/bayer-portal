@@ -12,7 +12,11 @@ const AwardItem = ({ image, title, value }: TAwardItem) => {
         <p>{title}</p>
       </div>
       <div className="tw-flex tw-justify-center tw-items-center tw-py-4 tw-bg-white tw-border">
-        <Image src={image} className="!tw-w-64" alt="" />
+        <Image
+          src={image}
+          className="!tw-w-64 tw-h-64 tw-object-contain"
+          alt=""
+        />
       </div>
       <div className="tw-justify-center tw-items-center tw-flex tw-bg-white tw-py-4 tw-text-black tw-border tw-text-4xl tw-font-bold tw-rounded-b-lg">
         <p>{value}</p>
