@@ -15,7 +15,7 @@ const AwardItem = ({ image, title, value, imageStyle }: TAwardItem) => {
       <div className="tw-flex tw-justify-center tw-items-end tw-py-4 tw-bg-white tw-border tw-h-64">
         <Image
           src={image}
-          className={`tw-max-h-52 tw-w-4/5 tw-object-contain ${imageStyle}`}
+          className={`tw-h-52 tw-w-4/5 tw-object-contain ${imageStyle}`}
           alt=""
         />
       </div>

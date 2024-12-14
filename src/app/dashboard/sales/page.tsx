@@ -70,19 +70,18 @@ export default function SalesPage() {
           image={Driver}
           title="Giải nhất"
           value={mapValue["xemay"]?.[0]?.total}
-          imageStyle="tw-max-h-64 tw-mb-2"
         />
         <AwardItem
           image={Fridge}
           title="Giải nhì"
           value={mapValue["tulanh"]?.[0]?.total}
-          imageStyle="tw-max-h-44"
+          imageStyle="tw-h-44"
         />
         <AwardItem
           image={Speaker}
           title="Giải ba"
           value={mapValue["loaJBL"]?.[0]?.total}
-          imageStyle="tw-max-h-40"
+          imageStyle="tw-h-36"
         />
         <AwardItem
           image={Topup}
