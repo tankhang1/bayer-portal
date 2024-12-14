@@ -32,11 +32,11 @@ export const routes = [
   {
     name: "Danh sách trong ngày",
     pages: [
-      {
-        icon: <QrCodeIcon {...icon} />,
-        name: "Iqr trong ngày",
-        path: "/iqr/iqr-list",
-      },
+      // {
+      //   icon: <QrCodeIcon {...icon} />,
+      //   name: "Iqr trong ngày",
+      //   path: "/iqr/iqr-list",
+      // },
       {
         name: "Chưa xử lý",
         icon: <InformationCircleIcon {...icon} />,

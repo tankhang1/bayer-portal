@@ -109,7 +109,7 @@ export default function IQrTable() {
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
-    sz: 10000,
+    sz: 6,
     gateway: 2,
     k: "",
   });

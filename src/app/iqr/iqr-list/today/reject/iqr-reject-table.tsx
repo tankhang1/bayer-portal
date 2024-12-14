@@ -113,7 +113,7 @@ export default function IQrRejectTable() {
   const columnHelper = createColumnHelper<TIqrRES>();
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
-    sz: 10000,
+    sz: 6,
     gateway: 2,
     s: 3,
     k: "",

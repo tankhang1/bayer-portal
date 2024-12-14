@@ -110,9 +110,8 @@ export default function IQrConfirmTable() {
   const columnHelper = createColumnHelper<TIqrRES>();
   const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
     nu: 0,
-    sz: 1000,
+    sz: 6,
     gateway: 2,
-    s: 2,
     k: "",
   });
   const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
@@ -142,7 +141,31 @@ export default function IQrConfirmTable() {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-
+    columnHelper.accessor("status", {
+      id: "status_label", // Provide a unique ID for this column
+      header: "Trạng thái",
+      cell: (info) =>
+        info.getValue() == 2 ? (
+          <Chip
+            color="green"
+            value="Đã duyệt"
+            className="tw-justify-center"
+          ></Chip>
+        ) : info.getValue() == 3 ? (
+          <Chip
+            color="red"
+            className="tw-justify-center"
+            value="Từ chối"
+          ></Chip>
+        ) : (
+          <Chip
+            color="amber"
+            className="tw-justify-center"
+            value="Chưa xử lý"
+          ></Chip>
+        ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("product_name", {
       header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
@@ -187,16 +210,6 @@ export default function IQrConfirmTable() {
     }),
     columnHelper.accessor("note", {
       header: "Ghi chú",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("time_active", {
-      header: "Thời gian kích hoạt",
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor("time_finish", {
-      header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
