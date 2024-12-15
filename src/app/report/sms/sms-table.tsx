@@ -94,19 +94,7 @@ export default function SMSTable({ query, setQuery }: Props) {
     },
     pageCount: Math.ceil((brandnameCounter || 1) / (query?.sz || 1)),
     //@ts-ignore
-    onPaginationChange: ({
-      pageIndex,
-      pageSize,
-    }: {
-      pageIndex: number;
-      pageSize: number;
-    }) => {
-      setQuery({
-        ...query,
-        nu: pageIndex,
-        sz: pageSize,
-      });
-    },
+
     // @ts-ignore
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
