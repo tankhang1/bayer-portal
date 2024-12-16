@@ -152,7 +152,7 @@ export default function SearchTable({ keyword }: Props) {
           <IconButton
             variant="outlined"
             className="tw-border-blue-700"
-            disabled
+            onClick={() => handleOpenDialog(data?.[info.row.index])}
           >
             <CheckCircleIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
           </IconButton>
@@ -494,26 +494,28 @@ export default function SearchTable({ keyword }: Props) {
               </div>
             </div>
           </DialogBody>
-          <DialogFooter className="tw-gap-3">
-            <Button
-              variant="gradient"
-              color="green"
-              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-              loading={isLoadingConfirm}
-              onClick={() => onConfirm(iqrDetail?.code || "")}
-            >
-              <span>Duyệt</span>
-            </Button>
-            <Button
-              variant="text"
-              color="red"
-              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-              loading={isLoadingReject}
-              onClick={() => onReject(iqrDetail?.code || "")}
-            >
-              <span>Từ chối</span>
-            </Button>
-          </DialogFooter>
+          {iqrDetail?.status !== 2 && (
+            <DialogFooter className="tw-gap-3">
+              <Button
+                variant="gradient"
+                color="green"
+                className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+                loading={isLoadingConfirm}
+                onClick={() => onConfirm(iqrDetail?.code || "")}
+              >
+                <span>Duyệt</span>
+              </Button>
+              <Button
+                variant="text"
+                color="red"
+                className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+                loading={isLoadingReject}
+                onClick={() => onReject(iqrDetail?.code || "")}
+              >
+                <span>Từ chối</span>
+              </Button>
+            </DialogFooter>
+          )}
         </Dialog>
       )}
       {previewImage !== "" && (
