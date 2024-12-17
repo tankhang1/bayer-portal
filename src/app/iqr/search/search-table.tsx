@@ -167,6 +167,37 @@ export default function SearchTable({ keyword }: Props) {
         ),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("status", {
+      id: "status_label", // Provide a unique ID for this column
+      header: "Trạng thái",
+      cell: (info) =>
+        info.getValue() == 2 ? (
+          <Chip
+            color="green"
+            value="Đã xử lý xác nhận"
+            className="tw-justify-center"
+          ></Chip>
+        ) : info.getValue() == 3 ? (
+          <Chip
+            color="red"
+            className="tw-justify-center"
+            value="Từ chối"
+          ></Chip>
+        ) : info.getValue() == 5 ? (
+          <Chip
+            color="light-blue"
+            className="tw-justify-center"
+            value="Không trúng thưởng"
+          ></Chip>
+        ) : (
+          <Chip
+            color="amber"
+            className="tw-justify-center"
+            value="Chưa xử lý"
+          ></Chip>
+        ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("product_name", {
       header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
@@ -494,7 +525,7 @@ export default function SearchTable({ keyword }: Props) {
               </div>
             </div>
           </DialogBody>
-          {iqrDetail?.status !== 2 && (
+          {iqrDetail?.status === 4 && (
             <DialogFooter className="tw-gap-3">
               <Button
                 variant="gradient"

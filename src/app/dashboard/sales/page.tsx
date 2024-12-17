@@ -70,23 +70,27 @@ export default function SalesPage() {
           image={Driver}
           title="Giải nhất"
           value={mapValue["xemay"]?.[0]?.total}
+          note={10}
         />
         <AwardItem
           image={Fridge}
           title="Giải nhì"
           value={mapValue["tulanh"]?.[0]?.total}
           imageStyle="tw-h-44"
+          note={15}
         />
         <AwardItem
           image={Speaker}
           title="Giải ba"
           value={mapValue["loaJBL"]?.[0]?.total}
           imageStyle="tw-h-36"
+          note={30}
         />
         <AwardItem
           image={Topup}
           title="Giải khuyển khích"
           value={mapValue["Topup"]?.[0]?.total}
+          note={453023}
         />
       </div>
       <h2 className="tw-text-[#40aea3] tw-text-3xl tw-font-bold tw-mt-7 tw-mb-2">

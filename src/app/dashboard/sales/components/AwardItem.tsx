@@ -5,8 +5,9 @@ type TAwardItem = {
   title: string;
   value: number;
   imageStyle?: string;
+  note: number;
 };
-const AwardItem = ({ image, title, value, imageStyle }: TAwardItem) => {
+const AwardItem = ({ image, title, value, imageStyle, note }: TAwardItem) => {
   return (
     <div className="tw-flex tw-flex-col tw-gap-1 tw-w-full">
       <div className="tw-justify-center tw-items-center tw-flex tw-bg-white tw-border tw-py-4 tw-text-black tw-font-bold tw-text-xl tw-rounded-t-lg">
@@ -19,8 +20,11 @@ const AwardItem = ({ image, title, value, imageStyle }: TAwardItem) => {
           alt=""
         />
       </div>
-      <div className="tw-justify-center tw-items-center tw-flex tw-bg-white tw-py-4 tw-text-black tw-border tw-text-4xl tw-font-bold tw-rounded-b-lg">
-        <p>{value}</p>
+      <div className="tw-justify-center tw-items-center tw-flex tw-bg-white tw-py-4 tw-text-black tw-border tw-text-4xl tw-font-bold tw-rounded-b-lg tw-relative">
+        <p>{value?.toLocaleString("vi")}</p>
+        <p className="tw-absolute tw-right-2 tw-bottom-0 tw-text-sm tw-text-gray-600">
+          {note?.toLocaleString("vi")}
+        </p>
       </div>
     </div>
   );
