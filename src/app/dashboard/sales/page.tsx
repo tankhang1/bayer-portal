@@ -88,7 +88,7 @@ export default function SalesPage() {
         />
         <AwardItem
           image={Topup}
-          title="Giải khuyển khích"
+          title="Giải khuyến khích"
           value={mapValue["Topup"]?.[0]?.total}
           note={453023}
         />
