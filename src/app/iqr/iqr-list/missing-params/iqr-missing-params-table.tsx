@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 // @tanstack/react-table
 import {
@@ -39,6 +39,7 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
   ChevronUpDownIcon,
+  MagnifyingGlassPlusIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
@@ -48,7 +49,6 @@ import Image from "next/image";
 import {
   useGetProvincesQuery,
   useIqrCounterQuery,
-  useIqrCounterTodayQuery,
   useIqrRangeDateQuery,
   useIqrTodayQuery,
 } from "@/redux/api/iqr/iqr.api";
@@ -63,7 +63,10 @@ import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
 import { BASE_URL } from "@/constants";
-
+type Props = {
+  query: Partial<TIqrRangeTimeREQ>;
+  setQuery: (query: Partial<TIqrRangeTimeREQ>) => void;
+};
 const statusMap = new Map<number, string>([
   [-99, "Hệ thống bị gián đoạn"],
   [-1, "Thiết bị không hoạt động"],
@@ -91,7 +94,7 @@ const MapLabel = new Map([
   ["loaJBL", "Loa JBL Partybox110"],
   ["", "Không trúng thưởng"],
 ]);
-export default function IQrConfirmTable() {
+export default function IQrRejectTable({ query, setQuery }: Props) {
   const {
     register,
     handleSubmit,
@@ -108,21 +111,19 @@ export default function IQrConfirmTable() {
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   // Use the column helper for type safety
   const columnHelper = createColumnHelper<TIqrRES>();
-  const [query, setQuery] = useState<Partial<TIqrRangeTimeREQ>>({
-    nu: 0,
-    sz: 6,
-    gateway: 2,
-    k: "",
-  });
-  const { data, isFetching: isFetchingIqr } = useIqrTodayQuery(query, {
+  const { data, isFetching: isFetchingIqr } = useIqrRangeDateQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
-  const { data: iqrCounter } = useIqrCounterTodayQuery(query, {
+  const { data: iqrCounter } = useIqrCounterQuery(query, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
   const [rejectIqr, { isLoading: isLoadingReject }] = useRejectIqrMutation();
   const [confirmIqr, { isLoading: isLoadingConfirm }] = useConfirmIqrMutation();
   const [updateIqr, { isLoading: isLoadingUpdate }] = useUpdateIqrMutation();
@@ -139,6 +140,29 @@ export default function IQrConfirmTable() {
     columnHelper.accessor("code", {
       header: "Mã iQr",
       cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("status", {
+      id: "approval_status", // Provide a unique ID for this column
+      header: "Duyệt",
+      cell: (info) =>
+        info.getValue() == 2 ? (
+          <IconButton
+            variant="outlined"
+            className="tw-border-blue-700"
+            disabled
+          >
+            <ShieldCheckIcon className="tw-w-8 tw-h-8 tw-text-blue-700" />
+          </IconButton>
+        ) : (
+          <IconButton
+            onClick={() => handleOpenDialog(data?.[info.row.index])}
+            variant="outlined"
+            className="tw-border-red-700"
+          >
+            <ShieldExclamationIcon className="tw-w-8 tw-h-8 tw-text-red-700" />
+          </IconButton>
+        ),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor("status", {
@@ -172,12 +196,39 @@ export default function IQrConfirmTable() {
         ),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("status", {
+      id: "status_edit", // Provide a unique ID for this column
+      header: "Chỉnh sửa",
+      cell: (info) => (
+        <IconButton
+          variant="outlined"
+          className="tw-border-green-700"
+          onClick={() => {
+            setOpenEditForm(true);
+            setValue("address", data?.[info.row.index]?.address || "");
+            setValue("name", data?.[info.row.index]?.fullname || "");
+            setValue(
+              "image_confirm",
+              data?.[info.row.index]?.image_confirm || ""
+            );
+            setValue("code", data?.[info.row.index]?.code || "");
+            setValue("note", data?.[info.row.index]?.note || "");
+            setValue(
+              "province_name_agent",
+              data?.[info.row.index]?.province_name_agent || ""
+            );
+          }}
+        >
+          <PencilSquareIcon className="tw-w-6 tw-h-6 tw-text-green-700" />
+        </IconButton>
+      ),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("product_name", {
       header: "Tên sản phẩm",
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
-
     columnHelper.accessor("award1", {
       header: "Cơ hội 1",
       cell: (info) => MapLabel.get(info.getValue()),
@@ -219,6 +270,16 @@ export default function IQrConfirmTable() {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("time_active", {
+      header: "Thời gian kích hoạt",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("time_finish", {
+      header: "Thời gian xử lý",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
   ];
   const mapProvince = useCallback(
     (code: string) => {
@@ -227,7 +288,6 @@ export default function IQrConfirmTable() {
     },
     [provinces]
   );
-
   const table = useReactTable({
     data: (data || []) as TIqrRES[],
     columns,
@@ -371,12 +431,12 @@ export default function IQrConfirmTable() {
         <table className="tw-table-auto tw-text-left tw-w-full tw-min-w-max">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={Math.random()}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    key={header.id}
+                    key={Math.random()}
                     onClick={header.column.getToggleSortingHandler()}
-                    className="tw-px-5 tw-py-2 tw-uppercase !tw-text-black"
+                    className="tw-px-5 tw-py-2 tw-uppercase"
                   >
                     <div className="tw-flex tw-cursor-pointer tw-items-center tw-justify-between tw-gap-2 tw-text-xs !tw-font-bold tw-leading-none">
                       {flexRender(
@@ -472,10 +532,10 @@ export default function IQrConfirmTable() {
                   src={`${
                     iqrDetail?.image_confirm || ""
                   }?nocache=${Date.now()}`}
-                  width={192}
-                  height={192}
+                  width={500}
+                  height={500}
                   alt="Product"
-                  className="tw-object-cover tw-w-56 tw-h-56"
+                  className="tw-object-cover tw-w-64 tw-h-64"
                   onClick={() =>
                     setPreviewImage(iqrDetail?.image_confirm || "")
                   }
@@ -509,24 +569,140 @@ export default function IQrConfirmTable() {
               </div>
             </div>
           </DialogBody>
+          {iqrDetail?.status === 4 && (
+            <DialogFooter className="tw-gap-3">
+              <Button
+                variant="gradient"
+                color="green"
+                className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+                loading={isLoadingConfirm}
+                onClick={() => onConfirm(iqrDetail?.code || "")}
+              >
+                <span>Duyệt</span>
+              </Button>
+              <Button
+                variant="text"
+                color="red"
+                className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
+                loading={isLoadingReject}
+                onClick={() => onReject(iqrDetail?.code || "")}
+              >
+                <span>Từ chối</span>
+              </Button>
+            </DialogFooter>
+          )}
+        </Dialog>
+      )}
+
+      {openEditForm && (
+        <Dialog open={openEditForm} handler={setOpenEditForm}>
+          <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
+            <Typography variant="h3">Cập nhật thông tin</Typography>
+          </DialogHeader>
+
+          <DialogBody className="tw-flex tw-flex-row tw-gap-3 ">
+            <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center tw-relative">
+              <input
+                ref={fileInputRef}
+                placeholder="Hình ảnh giấy chứng nhận"
+                type="file"
+                onChange={handleFileChange}
+                disabled={
+                  localStorage.getItem("roles") === "ROLE_AGENT" ? true : false
+                }
+                className="tw-hidden"
+              />
+              {watch().image_confirm && (
+                <Image
+                  src={
+                    watch().image_confirm.startsWith("data:image")
+                      ? watch().image_confirm // Base64 image, no need for cache busting
+                      : `${watch().image_confirm || ""}?${new Date().getTime()}` // URL with cache-busting
+                  }
+                  width={500}
+                  height={400}
+                  alt="Image"
+                  className="tw-w-[500px] tw-h-80 tw-cursor-pointer"
+                  onClick={
+                    localStorage.getItem("roles") !== "ROLE_AGENT"
+                      ? handleImageClick
+                      : () => {}
+                  } // Trigger the file input click
+                />
+              )}
+              <IconButton
+                className="tw-bg-transparent !tw-absolute !tw-top-3 !tw-right-3 z-20 tw-w-6 tw-h-6"
+                onClick={() => setPreviewImage(watch().image_confirm)}
+              >
+                <MagnifyingGlassPlusIcon width={24} height={24} color="white" />
+              </IconButton>
+            </div>
+            <div className="tw-flex tw-flex-col tw-w-full tw-gap-2">
+              <Input
+                placeholder="Tên đăng ký"
+                label="Tên đăng ký"
+                disabled
+                {...register("name")}
+              />
+              <Select
+                variant="outlined"
+                id="province_name_agent"
+                label="Chọn tỉnh thành"
+                className="tw-text-black"
+                value={watch("province_name_agent")}
+                selected={(element) =>
+                  element &&
+                  React.cloneElement(element, {
+                    disabled: true,
+                    className:
+                      "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+                  })
+                }
+                onChange={(value) => {
+                  setValue("province_name_agent", value || "");
+                }}
+              >
+                {/* <Option value="">Chọn tỉnh thành</Option> */}
+                {provinces?.map((province) => (
+                  <Option
+                    key={province.code}
+                    value={province.code}
+                    className="tw-text-black"
+                  >
+                    {province.name}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                placeholder="Địa chỉ"
+                label="Địa chỉ"
+                {...register("address")}
+              />
+              <Input
+                placeholder="Ghi chú"
+                label="Ghi chú"
+                {...register("note")}
+              />
+            </div>
+          </DialogBody>
           <DialogFooter className="tw-gap-3">
             <Button
               variant="gradient"
               color="green"
               className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-              loading={isLoadingConfirm}
-              onClick={() => onConfirm(iqrDetail?.code || "")}
+              loading={isLoadingUpdate || isLoadingUploadImage}
+              onClick={handleSubmit(onUpdate)}
             >
-              <span>Duyệt</span>
+              <span>Cập nhật</span>
             </Button>
             <Button
               variant="text"
               color="red"
               className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
               loading={isLoadingReject}
-              onClick={() => onReject(iqrDetail?.code || "")}
+              onClick={() => setOpenEditForm(false)}
             >
-              <span>Từ chối</span>
+              <span>Huỷ</span>
             </Button>
           </DialogFooter>
         </Dialog>
@@ -552,108 +728,10 @@ export default function IQrConfirmTable() {
                 width={300}
                 height={300}
                 alt="Product"
-                className="tw-object-cover tw-w-[420px] tw-h-[420px]"
+                className="tw-object-cover tw-w-[800px] tw-h-[800px]"
               />
             )}
           </DialogBody>
-        </Dialog>
-      )}
-      {openEditForm && (
-        <Dialog open={openEditForm} handler={setOpenEditForm}>
-          <DialogHeader className="tw-text-green-500 tw-justify-center tw-items-center tw-flex-col tw-relative">
-            <Typography variant="h3">Cập nhật thông tin</Typography>
-          </DialogHeader>
-
-          <DialogBody className="tw-flex tw-flex-col tw-gap-3">
-            <div className="tw-flex tw-flex-col tw-gap-3 tw-justify-center tw-items-center">
-              <Input
-                placeholder="Hình ảnh giấy chứng nhận"
-                label="Hình ảnh giấy chứng nhận"
-                type="file"
-                onChange={(e) => {
-                  handleFileChange(e);
-                }}
-              />
-              {watch().image_confirm && (
-                <Image
-                  src={
-                    watch().image_confirm.startsWith("data:image")
-                      ? watch().image_confirm // Base64 image, no need for cache busting
-                      : `${watch().image_confirm || ""}?${new Date().getTime()}` // URL with cache-busting
-                  }
-                  width={300}
-                  height={300}
-                  alt="Image"
-                  className="tw-w-64 tw-h-64"
-                />
-              )}
-            </div>
-
-            <Input
-              placeholder="Tên đăng ký"
-              label="Tên đăng ký"
-              {...register("name")}
-            />
-            <Select
-              variant="outlined"
-              id="province_name_agent"
-              label="Chọn tỉnh thành"
-              className="tw-text-black"
-              value={watch("province_name_agent")}
-              selected={(element) =>
-                element &&
-                React.cloneElement(element, {
-                  disabled: true,
-                  className:
-                    "flex items-center opacity-100 px-0 gap-2 pointer-events-none",
-                })
-              }
-              onChange={(value) => {
-                setValue("province_name_agent", value || "");
-              }}
-            >
-              {/* <Option value="">Chọn tỉnh thành</Option> */}
-              {provinces?.map((province) => (
-                <Option
-                  key={province.code}
-                  value={province.code}
-                  className="tw-text-black"
-                >
-                  {province.name}
-                </Option>
-              ))}
-            </Select>
-            <Input
-              placeholder="Địa chỉ"
-              label="Địa chỉ"
-              {...register("address")}
-            />
-            <Input
-              placeholder="Ghi chú"
-              label="Ghi chú"
-              {...register("note")}
-            />
-          </DialogBody>
-          <DialogFooter className="tw-gap-3">
-            <Button
-              variant="gradient"
-              color="green"
-              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-              loading={isLoadingUpdate || isLoadingUploadImage}
-              onClick={handleSubmit(onUpdate)}
-            >
-              <span>Cập nhật</span>
-            </Button>
-            <Button
-              variant="text"
-              color="red"
-              className="!tw-flex tw-gap-2 !tw-justify-center !tw-items-center"
-              loading={isLoadingReject}
-              onClick={() => setOpenEditForm(false)}
-            >
-              <span>Huỷ</span>
-            </Button>
-          </DialogFooter>
         </Dialog>
       )}
     </Card>

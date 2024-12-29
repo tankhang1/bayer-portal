@@ -11,6 +11,7 @@ import {
   MagnifyingGlassCircleIcon,
   InformationCircleIcon,
   CurrencyDollarIcon,
+  SignalSlashIcon
 } from "@heroicons/react/24/solid";
 import { FolderIcon } from "@heroicons/react/24/outline";
 
@@ -73,10 +74,16 @@ export const routes = [
         path: "/iqr/iqr-list/reject",
       },
       {
+        name: "Danh sách thiếu thông tin",
+        icon: <SignalSlashIcon {...icon} />,
+        path: "/iqr/iqr-list/missing-params",
+      },
+      {
         name: "Danh sách chưa xử lý",
         icon: <InformationCircleIcon {...icon} />,
         path: "/iqr/iqr-list/unknown",
       },
+     
     ],
   },
   // {

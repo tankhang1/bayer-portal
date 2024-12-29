@@ -147,6 +147,12 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
             className="tw-justify-center"
             value="Từ chối"
           ></Chip>
+        ) : info.getValue() == 0 ? (
+          <Chip
+            color="deep-orange"
+            className="tw-justify-center"
+            value="Thiếu thông tin"
+          ></Chip>
         ) : (
           <Chip
             color="amber"
