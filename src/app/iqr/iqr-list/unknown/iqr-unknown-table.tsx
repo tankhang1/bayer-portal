@@ -258,6 +258,11 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("time_turn", {
+      header: "Thời gian sử dụng",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("time_finish", {
       header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
@@ -293,6 +298,7 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
   const handleOpenDialog = (info?: TIqrRES) => {
     setOpenDialog(!openDialog);
     setIqrDetail(info);
+    setValue("note", info?.note || "");
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -309,22 +315,26 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
     }
   };
   const onReject = async (code: string) => {
-    await rejectIqr({ code })
+    const { note } = getValues();
+    await rejectIqr({ code, note })
       .unwrap()
       .then((value) => {
         if (value.status === 0) toast.success("Từ chối thành công");
         else toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
+        setValue("note", "");
       })
       .catch(() => {
         toast.error("Từ chối thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
+        setValue("note", "");
       });
   };
   const onConfirm = async (code: string) => {
-    await confirmIqr({ code })
+    const { note } = getValues();
+    await confirmIqr({ code, note })
       .unwrap()
       .then((value) => {
         if (value.status === 0) {
@@ -332,11 +342,13 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
         } else toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
+        setValue("note", "");
       })
       .catch(() => {
         toast.error("Xác nhận thất bại");
         setOpenDialog(false);
         setIqrDetail(undefined);
+        setValue("note", "");
       });
   };
   const onUpdate = async (values: TIqrUpdateREQ) => {
@@ -549,6 +561,13 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
                   {MapLabel.get(iqrDetail?.award1 || iqrDetail?.award2 || "") ||
                     "Chúc bạn may mắn lần sau"}
                 </Typography>
+                <div className="tw-mt-3">
+                  <Input
+                    placeholder="Ghi chú"
+                    label="Ghi chú"
+                    {...register("note")}
+                  />
+                </div>
               </div>
             </div>
           </DialogBody>

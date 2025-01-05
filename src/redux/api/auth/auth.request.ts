@@ -4,4 +4,5 @@ export type TAuthREQ = {
 };
 export type TIqrConfirREQ = {
   code: string;
+  note?: string;
 };

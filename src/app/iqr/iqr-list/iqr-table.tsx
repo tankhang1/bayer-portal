@@ -229,6 +229,11 @@ export default function IQrTable() {
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor("time_turn", {
+      header: "Thời gian sử dụng",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id,
+    }),
     columnHelper.accessor("time_finish", {
       header: "Thời gian xử lý",
       cell: (info) => info.getValue(),
