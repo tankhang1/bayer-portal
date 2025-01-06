@@ -112,6 +112,11 @@ export const routes = [
         path: "/report/iqr",
       },
       {
+        icon: <QrCodeIcon {...icon} />,
+        name: "iQr Thiếu thông tin",
+        path: "/report/iqr-none",
+      },
+      {
         icon: <CurrencyDollarIcon {...icon} />,
         name: "Topup",
         path: "/report/topup",

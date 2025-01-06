@@ -96,6 +96,16 @@ export const iqrApi = createApi({
         body,
       }),
     }),
+    exportIqrNoneData: builder.mutation<
+      TIqrExportRES,
+      Partial<TIqrRangeTimeREQ>
+    >({
+      query: (body) => ({
+        url: `/api/report/iqr-none/excel`,
+        method: "POST",
+        body,
+      }),
+    }),
     getProvinces: builder.query<TProvince[], void>({
       query: () => ({
         url: `/api/report/province`,
@@ -123,4 +133,5 @@ export const {
   useIqrRangeDateQuery,
   useExportIqrDataMutation,
   useIqrCounterQuery,
+  useExportIqrNoneDataMutation,
 } = iqrApi;
