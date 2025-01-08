@@ -632,13 +632,26 @@ export default function IQrConfirmTable() {
                 }
                 className="tw-hidden"
               />
-              {watch().image_confirm && (
+              {watch().image_confirm ? (
                 <Image
                   src={
                     watch().image_confirm.startsWith("data:image")
                       ? watch().image_confirm // Base64 image, no need for cache busting
                       : `${watch().image_confirm || ""}?${new Date().getTime()}` // URL with cache-busting
                   }
+                  width={500}
+                  height={400}
+                  alt="Image"
+                  className="tw-w-[500px] tw-h-80 tw-cursor-pointer"
+                  onClick={
+                    localStorage.getItem("roles") !== "ROLE_AGENT"
+                      ? handleImageClick
+                      : () => {}
+                  } // Trigger the file input click
+                />
+              ) : (
+                <Image
+                  src={PLACEHOLDER_IMAGE}
                   width={500}
                   height={400}
                   alt="Image"

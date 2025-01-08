@@ -395,6 +395,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
         });
     }
   };
+  console.log("log", iqrDetail?.image_confirm);
   return (
     <Card className="tw-border tw-border-blue-gray-100 tw-shadow-sm tw-mt-4 tw-scroll-mt-4">
       <CardBody className="tw-flex tw-items-center tw-px-4 tw-justify-end">
@@ -530,7 +531,7 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
 
           <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
             <div className="tw-flex tw-gap-6">
-              {iqrDetail?.image_confirm && (
+              {iqrDetail?.image_confirm ? (
                 <Image
                   src={`${
                     iqrDetail?.image_confirm || ""
@@ -538,6 +539,17 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
                   width={500}
                   height={500}
                   alt="Product"
+                  className="tw-object-cover tw-w-64 tw-h-64"
+                  onClick={() =>
+                    setPreviewImage(iqrDetail?.image_confirm || "")
+                  }
+                />
+              ) : (
+                <Image
+                  src={PLACE_HOLDER_IMAGE}
+                  width={500}
+                  height={500}
+                  alt="Image"
                   className="tw-object-cover tw-w-64 tw-h-64"
                   onClick={() =>
                     setPreviewImage(iqrDetail?.image_confirm || "")
