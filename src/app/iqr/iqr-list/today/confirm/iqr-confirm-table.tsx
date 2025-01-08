@@ -65,6 +65,7 @@ import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
 import { BASE_URL } from "@/constants";
+import PLACEHOLDER_IMAGE from "@/assets/image/placeholder.png";
 
 const statusMap = new Map<number, string>([
   [-99, "Hệ thống bị gián đoạn"],
@@ -535,11 +536,22 @@ export default function IQrConfirmTable() {
 
           <DialogBody className="tw-flex tw-gap-4 tw-flex-col">
             <div className="tw-flex tw-gap-6">
-              {iqrDetail?.image_confirm && (
+              {iqrDetail?.image_confirm ? (
                 <Image
                   src={`${
                     iqrDetail?.image_confirm || ""
                   }?nocache=${Date.now()}`}
+                  width={500}
+                  height={500}
+                  alt="Product"
+                  className="tw-object-cover tw-w-64 tw-h-64"
+                  onClick={() =>
+                    setPreviewImage(iqrDetail?.image_confirm || "")
+                  }
+                />
+              ) : (
+                <Image
+                  src={PLACEHOLDER_IMAGE}
                   width={500}
                   height={500}
                   alt="Product"

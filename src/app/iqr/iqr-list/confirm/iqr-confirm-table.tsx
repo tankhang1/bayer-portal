@@ -66,6 +66,7 @@ import { TIqrRangeTimeREQ, TIqrUpdateREQ } from "@/redux/api/iqr/iqr.request";
 import { useForm } from "react-hook-form";
 import { uploadBase64Image } from "@/hooks/uploadFile";
 import { BASE_URL } from "@/constants";
+import PLACE_HOLDER_IMAGE from "@/assets/image/placeholder.png";
 type Props = {
   query: Partial<TIqrRangeTimeREQ>;
   setQuery: (query: Partial<TIqrRangeTimeREQ>) => void;
@@ -614,13 +615,26 @@ export default function IQrConfirmTable({ query, setQuery }: Props) {
                 }
                 className="tw-hidden"
               />
-              {watch().image_confirm && (
+              {watch().image_confirm ? (
                 <Image
                   src={
                     watch().image_confirm.startsWith("data:image")
                       ? watch().image_confirm // Base64 image, no need for cache busting
                       : `${watch().image_confirm || ""}?${new Date().getTime()}` // URL with cache-busting
                   }
+                  width={500}
+                  height={400}
+                  alt="Image"
+                  className="tw-w-[500px] tw-h-80 tw-cursor-pointer"
+                  onClick={
+                    localStorage.getItem("roles") !== "ROLE_AGENT"
+                      ? handleImageClick
+                      : () => {}
+                  } // Trigger the file input click
+                />
+              ) : (
+                <Image
+                  src={PLACE_HOLDER_IMAGE}
                   width={500}
                   height={400}
                   alt="Image"
