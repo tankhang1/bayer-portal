@@ -526,7 +526,7 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
                 <Image
                   src={`${
                     iqrDetail?.image_confirm || ""
-                  }?nocache=${Date.now()}`}
+                  }?timestamp=${new Date().getTime()}`}
                   width={500}
                   height={500}
                   alt="Product"
@@ -619,7 +619,9 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
                   src={
                     watch().image_confirm.startsWith("data:image")
                       ? watch().image_confirm // Base64 image, no need for cache busting
-                      : `${watch().image_confirm || ""}?${new Date().getTime()}` // URL with cache-busting
+                      : `${
+                          watch().image_confirm || ""
+                        }?timestamp=${new Date().getTime()}` // URL with cache-busting
                   }
                   width={500}
                   height={400}
@@ -726,7 +728,7 @@ export default function IQrUnknownTable({ query, setQuery }: Props) {
           <DialogBody className="tw-flex tw-justify-center tw-items-center">
             {previewImage && (
               <Image
-                src={`${previewImage || ""}?nocache=${Date.now()}`}
+                src={`${previewImage || ""}?timestamp=${new Date().getTime()}`}
                 width={300}
                 height={300}
                 alt="Product"

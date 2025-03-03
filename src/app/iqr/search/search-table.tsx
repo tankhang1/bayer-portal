@@ -491,7 +491,7 @@ export default function SearchTable({ keyword }: Props) {
                 <Image
                   src={`${
                     iqrDetail?.image_confirm || ""
-                  }?nocache=${Date.now()}`}
+                  }?timestamp=${new Date().getTime()}`}
                   width={192}
                   height={192}
                   alt="Product"
@@ -571,7 +571,7 @@ export default function SearchTable({ keyword }: Props) {
           <DialogBody className="tw-flex tw-justify-center tw-items-center">
             {previewImage && (
               <Image
-                src={`${previewImage || ""}?nocache=${Date.now()}`}
+                src={`${previewImage || ""}?timestamp=${new Date().getTime()}`}
                 width={300}
                 height={300}
                 alt="Product"
@@ -599,7 +599,9 @@ export default function SearchTable({ keyword }: Props) {
               />
               {watch().image_confirm && (
                 <Image
-                  src={`${watch().image_confirm}?nocache=${Date.now()}`}
+                  src={`${
+                    watch().image_confirm
+                  }?timestamp=${new Date().getTime()}`}
                   width={300}
                   height={300}
                   alt="Image"
